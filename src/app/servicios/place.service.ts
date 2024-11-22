@@ -17,6 +17,10 @@ export class PlaceService {
     return null;
   }  
 
+  getPlaces(user: string){
+    return null;
+  }
+
   deletePlace(idPlace: string){
     return null;
   }
