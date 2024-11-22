@@ -12,6 +12,10 @@ export class VehiculoService {
     return null;
   }
 
+  consultarVehiculo(user: string){
+    return null;
+  }
+
   eliminarVehiculo(matricula: string){
     return null;
   }
