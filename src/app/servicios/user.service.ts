@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Vehiculo } from '../modelos/vehiculo';
 
 @Injectable({
   providedIn: 'root'
@@ -15,4 +16,7 @@ export class UserService {
     return null;
   }
 
+  loginUser(user: string, password: string): any {
+    return null;
+  }
 }
