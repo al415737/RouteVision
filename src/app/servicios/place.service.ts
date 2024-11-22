@@ -13,6 +13,9 @@ export class PlaceService {
     return null;
   }
 
+  createPlaceT(idPlace: string, toponimo: string){
+    return null;
+  }  
 
   deletePlace(idPlace: string){
     return null;
