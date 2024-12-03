@@ -13,22 +13,45 @@
             <div class="form-group">
                 <label for="nombre">Nombre</label>
                 <input type="text" id="username" name="username" placeholder="Choose a username" formControlName="nombre" />
+                <!--PARA EL VALIDADOR:-->
+                @if (isRequired('nombre')) {
+                    <small class="text-red"> Este campo es requerido.</small>
+                }
             </div>
             <div class="form-group">
                 <label for="apellido">Apellido</label>
                 <input type="text" id="apellido" name="apellido" placeholder="Choose a username" formControlName="apellido" />
+                <!--PARA EL VALIDADOR:-->
+                @if (isRequired('apellido')) {
+                    <small class="text-red"> Este campo es requerido.</small>
+                }
             </div>
             <div class="form-group">
                 <label for="user">User</label>
                 <input type="text" id="user" name="user" placeholder="Choose a username" formControlName="user" />
+                <!--PARA EL VALIDADOR:-->
+                @if (isRequired('user')) {
+                    <small class="text-red"> Este campo es requerido.</small>
+                }
             </div>
             <div class="form-group">
                 <label for="email">Email</label>
                 <input type="email" id="email" name="email" placeholder="Enter your email" formControlName="email" />
+                <!--PARA EL VALIDADOR: (vacío y mal puesto el mail)-->
+                @if (isRequired('email')) {
+                    <small class="text-red"> Este campo es requerido.</small>
+                }
+                @if (isEmailIncorrect()){
+                    <small class="text-red"> El email debe ser válido.</small> 
+                }
             </div>
             <div class="form-group">
                 <label for="contraseña">Contraseña</label>
                 <input type="contraseña" id="contraseña" name="contraseña" placeholder="Create a password" formControlName="contraseña" />
+                <!--PARA EL VALIDADOR:-->
+                @if (isRequired('contraseña')) {
+                    <small class="text-red"> Este campo es requerido.</small>
+                }
             </div>
             <button type="submit" class="btn">SUBMIT</button>
         </form>
