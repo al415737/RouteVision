@@ -17,6 +17,7 @@ interface FormSignUp{
 })
 
 export default class SignUpComponent {
+  
   private _formBuilder = inject(FormBuilder);
 
   form = this._formBuilder.group<FormSignUp>({
