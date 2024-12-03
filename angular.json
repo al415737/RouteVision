@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "RouteVision": {
+    "routevision": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -59,10 +59,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "RouteVision:build:production"
+              "buildTarget": "routevision:build:production"
             },
             "development": {
-              "buildTarget": "RouteVision:build:development"
+              "buildTarget": "routevision:build:development"
             }
           },
           "defaultConfiguration": "development"
