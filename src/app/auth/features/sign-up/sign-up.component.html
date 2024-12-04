@@ -9,6 +9,7 @@
 <body>
     <div class="signup-container">
         <h2>Crea una cuenta. SIGN-UP</h2>
+        <app-google-button (onClick)="submitWithGoogle()"/>
         <form [formGroup]="form" (ngSubmit)="submit()">
             <div class="form-group">
                 <label for="nombre">Nombre</label>
@@ -56,7 +57,7 @@
             <button type="submit" class="btn">SUBMIT</button>
         </form>
         <div class="signup-footer">
-            <p>Already have an account? <a href="/login">Log in</a></p>
+            <p>¿Ya tienes una cuenta? <a href="/auth/sign-in">Log in</a></p>
         </div>
     </div>
 </body>

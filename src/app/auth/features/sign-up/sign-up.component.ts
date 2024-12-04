@@ -4,6 +4,8 @@ import { hasEmailError, isRequired } from '../../utils/validators';
 import { Auth } from '@angular/fire/auth';
 import { AuthService } from '../../data-access/auth.service';
 import { NgxSonnerToaster, toast } from 'ngx-sonner';
+import { Router } from '@angular/router';
+import { GoogleButtonComponent } from '../../UI/google-button/google-button.component';
 
 interface FormSignUp{
   nombre: FormControl<string | null>
@@ -16,7 +18,7 @@ interface FormSignUp{
 @Component({
   selector: 'app-sign-up',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, GoogleButtonComponent],
   templateUrl: './sign-up.component.html',
 })
 
@@ -24,6 +26,7 @@ export default class SignUpComponent {
   
   private _formBuilder = inject(FormBuilder);
   private _authService = inject(AuthService);
+  private _router = inject(Router);
 
   //para validar que los campos necesarios sí estén rellenados
   isRequired(field: 'nombre' | 'apellido' | 'email' | 'user' | 'contraseña') {
@@ -67,15 +70,28 @@ export default class SignUpComponent {
       const user = this.form.get('user')?.value;
       const contraseña = this.form.get('contraseña')?.value;
 
-      if(!nombre || !apellido || !email || !user || !contraseña) return;  //si faltan estos campos, no se deja hacer
-    
-      await this._authService.signUp({email, contraseña});  //faltarán añadir cosas!!!!!!!!!!!!!!!!!
+      if(!nombre || !apellido || !email || !user || !contraseña) return;  //esto es para más adelante, enviar todos los datos (APARTE DEL MAIL Y CONTRASEÑA)
+      
+      //if(!email || !contraseña) return;  //si faltan estos campos, no se deja hacer || PRUEBA FIREBASE
+
+      await this._authService.signUp({email, contraseña});  
       
       toast.success('Usuario creado correctamente.'); //NGX... Un toast es como un mensaje emergente to chulapo.
-
+      this._router.navigateByUrl('/task');  //cuando se registre, irá al path de tareas
+      
     } catch (error) {
       toast.error('Usuario NO creado. Ha ocurrido un error.')
       
+    }
+  }
+
+  async submitWithGoogle(){
+    try {
+      await this._authService.signInWithGoogle();
+      toast.success('Bienvenido de nuevo.');
+      this._router.navigateByUrl('/task');
+    } catch (error) {
+      toast.error('Ha ocurrido un error.')
     }
   }
 }

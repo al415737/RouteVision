@@ -3,26 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Page</title>
+    <title>Sign Up Page</title>
     <link rel="stylesheet" href="sign-in.component.css">
 </head>
-
 <body>
-    <div class="login-container">
-        <h2>Login</h2>
-        <form action="/login" method="POST">
+    <div class="signup-container">
+        <h2>Inicio de sesión. SIGN-IN</h2>
+        <app-google-button/>
+        <form [formGroup]="form" (ngSubmit)="submit()">
             <div class="form-group">
-                <label for="username">Username or Email</label>
-                <input type="text" id="username" name="username" placeholder="Enter your username or email" required>
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email" formControlName="email" />
+                <!--PARA EL VALIDADOR: (vacío y mal puesto el mail)-->
+                @if (isRequired('email')) {
+                    <small class="text-red"> Este campo es requerido.</small>
+                }
+                @if (isEmailIncorrect()){
+                    <small class="text-red"> El email debe ser válido.</small> 
+                }
             </div>
             <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                <label for="contraseña">Contraseña</label>
+                <input type="contraseña" id="contraseña" name="contraseña" placeholder="Create a password" formControlName="contraseña" />
+                <!--PARA EL VALIDADOR:-->
+                @if (isRequired('contraseña')) {
+                    <small class="text-red"> Este campo es requerido.</small>
+                }
             </div>
-            <button type="submit" class="btn">Login</button>
+            <button type="submit" class="btn">Acceder</button>
         </form>
-        <div class="login-footer">
-            <p>Don't have an account? <a href="/signup">Sign up</a></p>
+        <div class="signup-footer">
+            <p>¿Aún no tienes una cuenta? <a href="/auth/sign-up">Sign up</a></p>
         </div>
     </div>
 </body>

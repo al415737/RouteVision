@@ -67,4 +67,9 @@ body {
 .text-red {
     color: red; /* Cambia el texto a rojo */
     font-size: 0.875rem; /* Opcional: ajusta el tamaño del texto */
-  }
+}
+
+.text-purple {
+    color: purple; /* Cambia el texto a rojo */
+    font-size: 0.875rem; /* Opcional: ajusta el tamaño del texto */
+}
