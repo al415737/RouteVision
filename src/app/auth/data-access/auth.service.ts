@@ -25,6 +25,8 @@ export class AuthService {
   signInWithGoogle(){
     const provider = new GoogleAuthProvider();
 
+    //provider.setCustomParameters({prompt: 'select_account'}); Para resolver problema (si hay) de cuenta Google
+
     return signInWithPopup(this._auth, provider);
   }
 

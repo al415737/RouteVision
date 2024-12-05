@@ -77,5 +77,15 @@ export default class SignInComponent {
       
     }
   }
+
+  async submitWithGoogle(){
+    try {
+      await this._authService.signInWithGoogle();
+      toast.success('Bienvenido de nuevo.');
+      this._router.navigateByUrl('/task');
+    } catch (error) {
+      toast.error('Ha ocurrido un error.')
+    }
+  }
   
 }
