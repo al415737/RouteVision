@@ -1,0 +1,26 @@
+/* Estilo del botón */
+.button-top-right {
+    position: absolute; /* Posicionamiento absoluto dentro del contenedor relativo */
+    top: 10px; /* Separación de la parte superior */
+    right: 10px; /* Separación del lado derecho */
+    padding: 10px 20px; /* Espaciado interno */
+    background-color: #007acc; /* Color de fondo */
+    color: white; /* Color del texto */
+    border: none; /* Sin bordes */
+    border-radius: 5px; /* Bordes redondeados */
+    cursor: pointer; /* Cambia el cursor a un puntero al pasar sobre el botón */
+    font-size: 14px; /* Tamaño de la fuente */
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); /* Sombra del botón */
+    transition: background-color 0.3s ease; /* Animación de color suave */
+  }
+  
+  /* Efecto hover */
+  .button-top-right:hover {
+    background-color: #005a99; /* Cambia el color al pasar el cursor */
+  }
+  
+  /* Efecto activo */
+  .button-top-right:active {
+    background-color: #004c80; /* Cambia el color cuando se presiona */
+  }
+  

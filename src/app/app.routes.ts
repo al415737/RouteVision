@@ -11,7 +11,8 @@ export const routes: Routes = [
     {
         canActivateChild: [privateGuard()], 
         path: 'task',
-        loadChildren: () => import('./task/features/task.routes')
+        loadComponent: () => import('./shared/UI/layout.component'), 
+        loadChildren: () => import('./task/features/task.routes'),
     },
 
     {   //para redirigir a Task aunque no haya ninguna ruta puesta en el link O no sea una ruta existente --> localhost:qu4o2i3u4oi123u --> task

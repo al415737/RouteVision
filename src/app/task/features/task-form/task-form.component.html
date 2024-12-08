@@ -1,0 +1,30 @@
+<section class="mx-auto w-full max-screen-lg px-4">
+    <form [formGroup]="form" (ngSubmit)="submit()">
+        <div class="form-group">
+            <label for="toponimo">Toponimo</label>
+            <input type="toponimo" id="toponimo" name="toponimo" placeholder="Escribe el toponimo" formControlName="toponimo" />
+            <!--PARA EL VALIDADOR: (vacío y mal puesto el mail)-->
+            <!--
+                @if (isRequired('email')) {
+                    <small class="text-red"> Este campo es requerido.</small>
+                }
+                @if (isEmailIncorrect()){
+                    <small class="text-red"> El email debe ser válido.</small> 
+                }
+            -->
+            
+        </div>
+        <div class="form-group"> 
+            <label for="coordenadas">Coordenadas</label>
+            <input type="coordenadas" id="coordenadas" name="coordenadas" placeholder="Escribe las coordenadas" formControlName="coordenadas" />
+            <!--PARA EL VALIDADOR:-->
+            <!--@if (isRequired('contraseña')) {
+                <small class="text-red"> Este campo es requerido.</small>
+            }
+            -->
+        </div>
+        <button type="submit" class="btn">Registrar lugar de interes</button>
+    </form>
+</section>
+
+
