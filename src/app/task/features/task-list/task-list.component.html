@@ -1,4 +1,4 @@
-<section class="mx-auto w-full max-screen-lg px-4">
+r<section class="mx-auto w-full max-screen-lg px-4">
 
     <a 
         routerLink="/task/new"
@@ -7,5 +7,6 @@
         Nuevo lugar de interés
     </a>
 
-    <app-table></app-table>
+    <app-table [task] = "task()" />
+
 </section>
