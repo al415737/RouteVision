@@ -8,7 +8,7 @@ import { TaskService } from '../../data-access/task.service';
   standalone: true,
   imports: [TableComponent, RouterLink],
   templateUrl: './task-list.component.html',
-  styles: ``
+  providers: [TaskService],
 })
 export default class TaskListComponent {
   task = inject(TaskService).getLugarInteres;
