@@ -1,5 +1,5 @@
 import { Component, effect, input } from '@angular/core';
-import {Task} from '../../data-access/task.service';
+import {Task, TaskService} from '../../data-access/task.service';
 import { RouterLink } from '@angular/router';
 import { toast } from 'ngx-sonner';
 
@@ -12,21 +12,14 @@ import { toast } from 'ngx-sonner';
 export default class TableComponent {
   
   task = input.required<Task[]>();
-  private _taskService: any;
-  private _router: any;
 
-  async delete(){
-    try {
-      const id = this.task();
+  constructor(private _taskService: TaskService) {}
+
+  async delete(task: string){
+    try {      
+      await this._taskService.delete(task);
       
-      if(id){
-        await this._taskService.delete(id);
-      }
-
       toast.success(`Lugar de Interés eliminado correctamente.`);
-      this._router.navigateByUrl('/task');
-
-
     }catch(error){
         toast.success("Ha ocurrido un problema.");
     }
