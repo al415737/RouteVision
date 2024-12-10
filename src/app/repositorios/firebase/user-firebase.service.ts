@@ -11,18 +11,17 @@ const PATH = 'user';
 })
 export class UserFirebaseService implements UserRepository{
 
-  _firestore: FirestoreService = inject(FirestoreService);
-
-  constructor() { }
+  constructor(private _firestore: FirestoreService) { }
 
   async createUser(nombre: string, apellidos: string, email: string, user: string, password: string): Promise<User>{
     const userRegister: User = new User(nombre, apellidos, email, user);
     
-    this._firestore.create(userRegister, "user");
+    await this._firestore.createUser(userRegister, password);
     return userRegister;
   }
 
   async deleteUser(email: string) {
-    // Por implementar
+    const id = await this._firestore.get('email', email, 'user');
+    await this._firestore.delete(id, 'user');
   }
 }

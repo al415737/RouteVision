@@ -18,4 +18,8 @@ export class User {
         this.places = [];
     }
 
+    getEmail() {
+        return this.email;
+    }
+
 }

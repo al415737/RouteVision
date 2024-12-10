@@ -7,20 +7,18 @@ import { UserFirebaseService } from '../repositorios/firebase/user-firebase.serv
 import { firebaseConfig } from '../app.config';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
-import { FIREBASE_OPTIONS } from '@angular/fire/compat';
+import { getAuth, provideAuth } from '@angular/fire/auth';
 
 describe('UserService', () => {
   let service: UserService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        provideFirebaseApp(() => initializeApp(firebaseConfig)), 
-        provideFirestore(() => getFirestore()),  
-      ],
       providers: [
+        provideFirebaseApp(() => initializeApp(firebaseConfig)), 
+        provideFirestore(() => getFirestore()), 
+        provideAuth(() => getAuth()),
         UserService,
-        { provide: FIREBASE_OPTIONS, useValue: firebaseConfig },
         { provide: USER_REPOSITORY_TOKEN, useClass: UserFirebaseService },
       ]
     }).compileComponents();
@@ -35,18 +33,19 @@ describe('UserService', () => {
        THEN: El sistema registra a Manuel  y se almacena en la base de datos → ListaUsuarios=[{Nombre=”Manuel”, Apellido=”García”, User=”Manu33”, Email=”manu33@gmail.com”, Contraseña=”Manu-33”}]. 
     */
     const result = await service.createUser("Manuel", "García", "manu033@gmail.com", "Manu-33", "Manu-33");
-    expect(result).toBeInstanceOf(Promise<User>);
+    expect(result).toBeInstanceOf(User);
+    service.deleteUser("manu033@gmail.com");
   });
 
   it('HU1E05. User registration with email already registered in the system with another account (Invalid Scenario)', async () => {
     // GIVEN: El usuario JorgeGarcía no está registrado en el sistema y se tiene conexión con la base de datos. ListaUsuarios=[{Nombre=”Manuel”, Apellido=”García”, User=”Manu33”, Email=”manu33@gmail.com”, Contraseña=”Manu-33”}].
-    await service.createUser("Manuel", "García", "manu033@gmail.com", "Manu-33", "Manu-33");
+    await service.createUser("Manuel", "García", "manu034@gmail.com", "Manu-34", "Manu-34");
     /* WHEN: Jorge intenta registrarse → [Nombre=”Jorge”, Apellido=”García”, User=”JorgeGarcía”, Email=”manu33@gmail.com”, Contraseña=”JorgeGarcía-02”].
        THEN: El sistema no registra al usuario y se lanza la excepción MailExistingException().
     */
-    await expectAsync(() => {
-      service.createUser("Jorge", "García", "manu033@gmail.com", "Manu-33", "Manu-33");
-    }).toBeRejectedWith(new MailExistingException());
-    service.deleteUser("manu033@gmail.com");
+    await expectAsync(
+      service.createUser("Jorge", "García", "manu034@gmail.com", "JorgeGarcía", "JorgeGarcía-02")
+    ).toBeRejectedWith(new MailExistingException());
+    service.deleteUser("manu034@gmail.com");
   });
 });
