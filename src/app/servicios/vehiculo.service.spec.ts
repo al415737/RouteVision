@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { VehiculoService } from './vehiculo.service';
 import { Vehiculo } from '../modelos/vehiculo';
 import { NullLicenseException } from '../excepciones/null-license-exception';
+import { ServerNotOperativeException } from '../excepciones/server-not-operative-exception';
 
 describe('VehiculoService', () => {
   let service: VehiculoService;
@@ -30,6 +31,27 @@ describe('VehiculoService', () => {
       Then: El sistema no registra el vehículo y lanza una excepción NullLicenseException() →  listaVehículos-Ana2002= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}].
     */
     expect(service.crearVehiculo("", "Seat", "Ibiza", "2003", "4,3L/100km")).toThrow(NullLicenseException);
+  }); 
+
+  it('HU10E01. Consulta de vehículos dados de alta (Escenario Válido)', () => {
+    /*
+      Given: El usuario Ana con la sesión iniciada y la listaVehículos = [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}].
+      When: El usuario pide mostrar sus vehículos.
+      Then: El sistema devuelve la lista de listaVehículos =  [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}]
+    */
+    
+    service.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", "8,1L/100km");
+    expect(service.consultarVehiculo("ana03")).toBeInstanceOf(Array); 
+    service.eliminarVehiculo("1234 BBB");
+  }); 
+
+  it('HU10E02. Fallo en la conexión con el servidor (Escenario Inválido)', () => {
+    /*
+      Given: El usuario Ana con la sesión iniciada y la listaVehículos =  {{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}}.
+      When: El usuario pide mostrar sus vehículos.
+      Then: El sistema no consigue mostrar los vehículos y lanza la excepción ServerNotOperativeException().
+    */
+    expect(service.consultarVehiculo("ana03")).toThrow(ServerNotOperativeException);
   }); 
 
 });
