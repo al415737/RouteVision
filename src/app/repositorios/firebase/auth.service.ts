@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { Auth, createUserWithEmailAndPassword } from '@angular/fire/auth';
-import { deleteUser } from 'firebase/auth';
+import { deleteUser, getAuth } from 'firebase/auth';
 
 @Injectable({
   providedIn: 'root'
@@ -22,5 +22,9 @@ export class AuthService {
 
     if(currentUser)
       await deleteUser(currentUser);
+  }
+
+  get currentUser(){
+    return getAuth().currentUser;
   }
 }

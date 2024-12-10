@@ -4,12 +4,26 @@ import { VehiculoService } from './vehiculo.service';
 import { Vehiculo } from '../modelos/vehiculo';
 import { NullLicenseException } from '../excepciones/null-license-exception';
 import { ServerNotOperativeException } from '../excepciones/server-not-operative-exception';
+import { provideFirebaseApp } from '@angular/fire/app';
+import { initializeApp } from 'firebase/app';
+import { firebaseConfig } from '../app.config';
+import { provideFirestore } from '@angular/fire/firestore';
+import { getFirestore } from 'firebase/firestore';
+import { getAuth, provideAuth } from '@angular/fire/auth';
 
 describe('VehiculoService', () => {
   let service: VehiculoService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
+    providers: [
+      provideFirebaseApp(() => initializeApp(firebaseConfig)),
+      provideFirestore(() => getFirestore()),
+      provideAuth(() => getAuth()),
+      VehiculoService,
+      { provide:  }
+      
+    ]
     service = TestBed.inject(VehiculoService);
   });
 

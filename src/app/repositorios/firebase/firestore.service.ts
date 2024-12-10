@@ -1,14 +1,17 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { addDoc, collection, Firestore } from '@angular/fire/firestore';
 import { deleteDoc, doc, getDocs, query, where } from 'firebase/firestore';
 import { User } from '../../modelos/user';
 import { AuthService } from './auth.service';
 import { MailExistingException } from '../../excepciones/mail-existing-exception';
+import { Vehiculo } from '../../modelos/vehiculo';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FirestoreService {
+
+  private _authState = inject(AuthService);
 
   private constructor(private _firestore: Firestore, private _auth: AuthService) { }
 
@@ -53,5 +56,10 @@ export class FirestoreService {
 
     if (PATH == 'user')
       await this._auth.delete();
+  }
+
+  async createVehiculo(vehiculo: Vehiculo, path: string) {
+      const _collection = collection(this._firestore, path); 
+      return addDoc(_collection, vehiculo);
   }
 }
