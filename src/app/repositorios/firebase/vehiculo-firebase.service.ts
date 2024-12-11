@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { VehiculoRepository } from '../interfaces/vehiculo-repository';
 import { Vehiculo } from '../../modelos/vehiculo';
 import { FirestoreService } from './firestore.service';
+import { NullLicenseException } from '../../excepciones/null-license-exception';
 
 
 const PATHVEHICULO = 'vehiculo';
@@ -15,14 +16,19 @@ export class VehiculoFirebaseService implements VehiculoRepository{
 
   constructor() { }
 
-    async crearVehiculo(matricula: string, marca: string, modelo: string, año_fabricacion: string, consumo: string): Promise<Vehiculo> {
+    async crearVehiculo(matricula: string, marca: string, modelo: string, año_fabricacion: string, consumo: number): Promise<Vehiculo> {
+        if(matricula == '' || matricula == null){
+            throw new NullLicenseException();
+        }
+
         const vehRegister: Vehiculo = new Vehiculo(matricula, marca, modelo, año_fabricacion, consumo);
 
         await this.firestore.createVehiculo(vehRegister, PATHVEHICULO);
         return vehRegister;
     }
     async eliminarVehiculo(matricula: string) {
-        // Por implementar
+        const id = await this.firestore.get('matricula', matricula, PATHVEHICULO);
+        await this.firestore.eliminarVehiculo(PATHVEHICULO, id);
     }
 
 

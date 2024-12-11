@@ -60,6 +60,12 @@ export class FirestoreService {
 
   async createVehiculo(vehiculo: Vehiculo, path: string) {
       const _collection = collection(this._firestore, path); 
-      return addDoc(_collection, vehiculo);
+      const objetoPlano = { ...vehiculo };
+      return addDoc(_collection, objetoPlano);
+  }
+
+  async eliminarVehiculo(path: string, id: string){
+      const docRef = doc(this._firestore, path, id);
+      await deleteDoc(docRef);
   }
 }

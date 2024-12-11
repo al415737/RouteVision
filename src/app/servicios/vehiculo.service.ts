@@ -10,7 +10,7 @@ export class VehiculoService {
   constructor(@Inject(VEHICULO_REPOSITORY_TOKEN) private vehiRepo: VehiculoRepository) { 
   }
 
-  crearVehiculo(matricula: string, marca: string, modelo: string, año_fabricacion: string, consumo: string){
+  crearVehiculo(matricula: string, marca: string, modelo: string, año_fabricacion: string, consumo: number){
     return this.vehiRepo.crearVehiculo(matricula, marca, modelo, año_fabricacion, consumo);
   }
 
