@@ -5,6 +5,7 @@ export default [
     path: '',
     loadComponent: () => import('./home/home.component')
   },
+  //Creo que esto no hace falta
  /*
     path: 'vehiculos
     loadComponent: () => import(''),
