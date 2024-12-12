@@ -60,7 +60,9 @@ export class FirestoreService {
 
   async createVehiculo(vehiculo: Vehiculo, path: string) {
       const _collection = collection(this._firestore, path); 
-      const objetoPlano = { ...vehiculo };
+      const uid = this._auth.currentUser;
+
+      const objetoPlano = { ...vehiculo, uid };
       return addDoc(_collection, objetoPlano);
   }
 
