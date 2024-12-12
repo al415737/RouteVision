@@ -68,4 +68,22 @@ export class FirestoreService {
       const docRef = doc(this._firestore, path, id);
       await deleteDoc(docRef);
   }
+
+  async consultarVehiculo(matricula: string, path: string){
+    const _collection = collection(this._firestore, path);
+    const uid = this._auth.currentUser;
+
+
+    const consulta = query(_collection, where("uid", '==', uid?.uid));
+    
+
+
+    const querySnapshot = await getDocs(q);
+    if (querySnapshot.empty) 
+      return '';
+    
+    const firstDocument = querySnapshot.docs[0];
+
+    return firstDocument.id;
+  }
 }

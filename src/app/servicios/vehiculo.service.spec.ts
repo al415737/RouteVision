@@ -59,5 +59,27 @@ describe('VehiculoService', () => {
           await service.eliminarVehiculo("1234 BBB");
       }
     }); 
+
+    it('HU10E01. Consulta de vehículos dados de alta (Escenario Válido)', () => {
+      /*
+        Given: El usuario Ana con la sesión iniciada y la listaVehículos = [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}].
+        When: El usuario pide mostrar sus vehículos.
+        Then: El sistema devuelve la lista de listaVehículos =  [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}]
+      */
+      
+      service.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1);
+      expect(service.consultarVehiculo("ana03")).toBeInstanceOf(Array); 
+      service.eliminarVehiculo("1234 BBB");
+    }); 
+  
+    it('HU10E02. Fallo en la conexión con el servidor (Escenario Inválido)', () => {
+      /*
+        Given: El usuario Ana con la sesión iniciada y la listaVehículos =  {{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}}.
+        When: El usuario pide mostrar sus vehículos.
+        Then: El sistema no consigue mostrar los vehículos y lanza la excepción ServerNotOperativeException().
+      */
+      expect(service.consultarVehiculo("ana03")).toThrow(ServerNotOperativeException);
+    }); 
+  
   });
 });
