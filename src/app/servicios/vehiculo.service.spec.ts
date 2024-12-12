@@ -56,7 +56,7 @@ describe('VehiculoService', () => {
         ).toBeRejectedWith(new NullLicenseException());
 
       } finally {
-          await service.eliminarVehiculo("1234 BBB");
+          //await service.eliminarVehiculo("1234 BBB");
       }
     }); 
   });
