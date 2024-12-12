@@ -14,7 +14,7 @@ interface FormSignUp {
   templateUrl: './sign-up.component.html',
   styleUrl: './sign-up.component.css'
 })
-export class SignUpComponent {
+export default class SignUpComponent {
   private _formBuilder = inject(FormBuilder);
   private _service = inject(UserService);
 
