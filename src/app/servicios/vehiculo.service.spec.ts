@@ -12,9 +12,12 @@ import { getFirestore } from 'firebase/firestore';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { VEHICULO_REPOSITORY_TOKEN } from '../repositorios/interfaces/vehiculo-repository';
 import { VehiculoFirebaseService } from '../repositorios/firebase/vehiculo-firebase.service';
+import { User } from '../modelos/user';
+import { UserService } from './user.service';
 
 describe('VehiculoService', () => {
   let service: VehiculoService;
+  let servicioUser: UserService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -27,16 +30,16 @@ describe('VehiculoService', () => {
       ]
     });
     service = TestBed.inject(VehiculoService);
+    servicioUser = TestBed.inject(UserService);
   });
 
 
   fdescribe('VehiculoService', () => {
     it('HU9E01. Vehículo registrado en el sistema (Escenario Válido)', async () => {
-      /*
-        GIVEN: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] con listaVehículos-Ana2002 = [ ].
-        WHEN: El usuario intenta dar de alta un vehículo → [Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km].
-        THEN: El sistema registra el vehículo en la parte de la base de datos dirigida a Ana2002 →  listaVehículos-Ana2002= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}].
-      */ 
+        //GIVEN: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] con listaVehículos-Ana2002 = [ ].
+        //Login del usuario ya registrado de prueba.
+        //WHEN: El usuario intenta dar de alta un vehículo → [Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km].
+        //THEN: El sistema registra el vehículo en la parte de la base de datos dirigida a Ana2002 →  listaVehículos-Ana2002= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}].
 
       const resul = await service.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1);
       expect(resul).toBeInstanceOf(Vehiculo);
@@ -61,11 +64,13 @@ describe('VehiculoService', () => {
     }); 
 
     it('HU10E01. Consulta de vehículos dados de alta (Escenario Válido)', () => {
-      /*
-        Given: El usuario Ana con la sesión iniciada y la listaVehículos = [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}].
-        When: El usuario pide mostrar sus vehículos.
-        Then: El sistema devuelve la lista de listaVehículos =  [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}]
-      */
+      
+        //Given: El usuario Ana con la sesión iniciada y la listaVehículos = [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}].
+        //Crear usuario (se logea automáticamente)
+          servicioUser.createUser("testNombre", "testApellidos", "test@test.com", "test", "123");
+        //When: El usuario pide mostrar sus vehículos.
+        //Then: El sistema devuelve la lista de listaVehículos =  [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}]
+      
       
       service.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1);
       expect(service.consultarVehiculo("ana03")).toBeInstanceOf(Array); 

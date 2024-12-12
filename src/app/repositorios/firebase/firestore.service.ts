@@ -73,8 +73,11 @@ export class FirestoreService {
     const _collection = collection(this._firestore, path);
     const uid = this._auth.currentUser;
 
+    
 
     const consulta = query(_collection, where("uid", '==', uid?.uid));
+
+
     
 
 
