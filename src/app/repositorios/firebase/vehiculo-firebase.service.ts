@@ -27,13 +27,12 @@ export class VehiculoFirebaseService implements VehiculoRepository{
         return vehRegister;
     }
 
-    async consultarVehiculo(matricula: string) {
-        await this.firestore.consultarVehiculo(matricula, PATHVEHICULO);
-        // return ...
+    async consultarVehiculo() {
+        return await this.firestore.consultarVehiculo(PATHVEHICULO);
     }
 
     async eliminarVehiculo(matricula: string) {
-        const id = await this.firestore.get('matricula', matricula, PATHVEHICULO);
+        const id = await this.firestore.get('matricula', matricula, PATHVEHICULO); 
         await this.firestore.eliminarVehiculo(PATHVEHICULO, id);
     }
 

@@ -5,6 +5,7 @@ import { User } from '../../modelos/user';
 import { AuthService } from './auth.service';
 import { MailExistingException } from '../../excepciones/mail-existing-exception';
 import { Vehiculo } from '../../modelos/vehiculo';
+import { Auth, getAuth } from '@angular/fire/auth';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,7 @@ import { Vehiculo } from '../../modelos/vehiculo';
 export class FirestoreService {
 
   private _authState = inject(AuthService);
+  private auth = inject(Auth);
 
   private constructor(private _firestore: Firestore, private _auth: AuthService) { }
 
@@ -60,7 +62,7 @@ export class FirestoreService {
 
   async createVehiculo(vehiculo: Vehiculo, path: string) {
       const _collection = collection(this._firestore, path); 
-      const uid = this._auth.currentUser;
+      const uid = getAuth().currentUser;
 
       const objetoPlano = { ...vehiculo, uid };
       return addDoc(_collection, objetoPlano);
@@ -71,12 +73,12 @@ export class FirestoreService {
       await deleteDoc(docRef);
   }
 
-  async consultarVehiculo(matricula: string, path: string){
+  async consultarVehiculo(path: string){
     const _collection = collection(this._firestore, path);
-    const uid = this._auth.currentUser;
-
-    
+    const uid = getAuth().currentUser;
 
     const consulta = query(_collection, where("uid", '==', uid?.uid));
+    const documentos = await getDocs(consulta);
+    return documentos;
   }
 }

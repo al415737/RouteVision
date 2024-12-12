@@ -14,8 +14,8 @@ export class VehiculoService {
     return this.vehiRepo.crearVehiculo(matricula, marca, modelo, año_fabricacion, consumo);
   }
 
-  consultarVehiculo(user: string){
-    return null;
+  consultarVehiculo(){
+    return this.vehiRepo.consultarVehiculo();
   }
 
   eliminarVehiculo(matricula: string){

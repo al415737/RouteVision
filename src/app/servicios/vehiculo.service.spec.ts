@@ -57,24 +57,29 @@ describe('VehiculoService', () => {
         await expectAsync(
           service.crearVehiculo("", "Seat", "Ibiza", "2003", 4.3)
         ).toBeRejectedWith(new NullLicenseException());
-
       } finally {
-          //await service.eliminarVehiculo("1234 BBB");
+          await service.eliminarVehiculo("1234 BBB");
       }
     }); 
 
-    it('HU10E01. Consulta de vehículos dados de alta (Escenario Válido)', () => {
+    it('HU10E01. Consulta de vehículos dados de alta (Escenario Válido)', async () => {
       
         //Given: El usuario Ana con la sesión iniciada y la listaVehículos = [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}].
-        //Crear usuario (se logea automáticamente)
-          servicioUser.createUser("testNombre", "testApellidos", "test@test.com", "test", "123");
+        await servicioUser.loginUser("test@test.com", "test123"); //Crear usuario (se logea automáticamente)
+        await service.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1);
+        
         //When: El usuario pide mostrar sus vehículos.
+        const vehiculos = await service.consultarVehiculo();
+        
         //Then: El sistema devuelve la lista de listaVehículos =  [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}]
-      
-      
-      service.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1);
-      expect(service.consultarVehiculo("ana03")).toBeInstanceOf(Array); 
-      service.eliminarVehiculo("1234 BBB");
+        expect(vehiculos.length).toBe(1);
+
+        //Bucle que comprueba que cada documento es un vehículo válido.
+        vehiculos.forEach((doc) => {
+          expect(doc).toBeInstanceOf(Vehiculo);
+        })
+
+        service.eliminarVehiculo("1234 BBB");
     }); 
   
     it('HU10E02. Fallo en la conexión con el servidor (Escenario Inválido)', () => {
