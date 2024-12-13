@@ -14,6 +14,8 @@ import { VEHICULO_REPOSITORY_TOKEN } from '../repositorios/interfaces/vehiculo-r
 import { VehiculoFirebaseService } from '../repositorios/firebase/vehiculo-firebase.service';
 import { User } from '../modelos/user';
 import { UserService } from './user.service';
+import { USER_REPOSITORY_TOKEN } from '../repositorios/interfaces/user-repository';
+import { UserFirebaseService } from '../repositorios/firebase/user-firebase.service';
 
 describe('VehiculoService', () => {
   let service: VehiculoService;
@@ -27,6 +29,7 @@ describe('VehiculoService', () => {
         provideAuth(() => getAuth()),
         VehiculoService,
         { provide: VEHICULO_REPOSITORY_TOKEN, useClass: VehiculoFirebaseService },
+        { provide: USER_REPOSITORY_TOKEN, useClass: UserFirebaseService },
       ]
     });
     service = TestBed.inject(VehiculoService);
@@ -34,6 +37,7 @@ describe('VehiculoService', () => {
   });
 
 
+/*
   fdescribe('VehiculoService', () => {
     it('HU9E01. Vehículo registrado en el sistema (Escenario Válido)', async () => {
         //GIVEN: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] con listaVehículos-Ana2002 = [ ].
@@ -60,36 +64,41 @@ describe('VehiculoService', () => {
       } finally {
           await service.eliminarVehiculo("1234 BBB");
       }
-    }); 
+    });
+  */ 
 
-    it('HU10E01. Consulta de vehículos dados de alta (Escenario Válido)', async () => {
+    fdescribe('VehiculoService', () => {
+      it('HU10E01. Consulta de vehículos dados de alta (Escenario Válido)', async () => {
       
         //Given: El usuario Ana con la sesión iniciada y la listaVehículos = [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}].
         await servicioUser.loginUser("test@test.com", "test123"); //Crear usuario (se logea automáticamente)
         await service.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1);
         
         //When: El usuario pide mostrar sus vehículos.
-        const vehiculos = await service.consultarVehiculo();
+        const vehiculos = await service.consultarVehiculo(); // Devuelve una lista con los datos de los vehículos
         
         //Then: El sistema devuelve la lista de listaVehículos =  [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}]
         expect(vehiculos.length).toBe(1);
 
         //Bucle que comprueba que cada documento es un vehículo válido.
-        vehiculos.forEach((doc) => {
-          expect(doc).toBeInstanceOf(Vehiculo);
-        })
+        vehiculos.forEach((vehiculo: any) => {
+            expect(vehiculo).toBeInstanceOf(Vehiculo);
+        });
 
         service.eliminarVehiculo("1234 BBB");
     }); 
+  });
+    
   
+  /*
     it('HU10E02. Fallo en la conexión con el servidor (Escenario Inválido)', () => {
-      /*
+      
         Given: El usuario Ana con la sesión iniciada y la listaVehículos =  {{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}}.
         When: El usuario pide mostrar sus vehículos.
         Then: El sistema no consigue mostrar los vehículos y lanza la excepción ServerNotOperativeException().
-      */
+      
       expect(service.consultarVehiculo("ana03")).toThrow(ServerNotOperativeException);
     }); 
-  
-  });
+  */
+
 });

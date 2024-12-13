@@ -63,7 +63,7 @@ describe('UserService', () => {
   it('HU2E01. Login with correct data (Valid Escenary)', async () => {
     // GIVEN: El usuario Pepito está registrado y la base de datos está disponible.  Usuario Pepito: [nombre: “Pepito”, User=”pepito23”, email: “pepito@gmail.com”,  contraseña: “Pepito123?_”].
     await service.createUser("Pepito", "Gonzalez", "pepito@gmail.com", "pepito23", "Pepito123?_");
-    vehicleService.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", "8,1L/100 km");
+    vehicleService.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1);
     placeService.createPlaceC("000", [39.98, -0.049]);
     service.logoutUser();
     
