@@ -1,0 +1,57 @@
+<!--<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Places</title>
+  <link rel="stylesheet" href="place.component.css">
+</head>
+<body>
+  <header class="navbar">
+    <div class="navbar-left">
+      <span class="app-name">RouteVision</span>
+    </div>
+    <div class="navbar-right">
+      <button class="logout-button" routerLink="/home">Home</button>
+      <div class="dropdown">
+        <button class="profile-button">⚙️</button>
+        <div class="dropdown-menu">
+          <div class="profile-info">
+            <img src="" alt="User Icon" class="profile-img">
+            <span>Usuario</span>
+          </div>
+          <hr>
+          <a routerLink="/rutas">Rutas</a>
+          <a routerLink="/vehiculos">Vehículos</a>
+          <a routerLink="/lugares">Lugares</a>
+          <hr>
+          <a routerLink="/ajustes">Ajustes</a>
+          <a routerLink="/logout">Cerrar sesión</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="table-container">
+    <h1>Lugares</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Topónimo</th>
+          <th>Coordenadas</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (place of places; track place.getIdPlace) {
+        <tr>
+          <td>{{ place.getIdPlace() }}</td>
+          <td>{{ place.getToponimo() }}</td>
+          <td>{{ place.getCoordenadas()}}</td>
+        </tr>
+    }
+      </tbody>
+    </table>
+  </main>
+</body>
+</html>-->

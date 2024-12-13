@@ -6,6 +6,8 @@ import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { USER_REPOSITORY_TOKEN } from './repositorios/interfaces/user-repository';
 import { UserFirebaseService } from './repositorios/firebase/user-firebase.service';
+import { PlaceFirebaseService } from './repositorios/firebase/place-firebase.service';
+import { PLACE_REPOSITORY_TOKEN } from './repositorios/interfaces/place-repository';
 
 export const firebaseConfig = {
   apiKey: "AIzaSyCRNYco212t9-485Csb1LyYvzHGpWhak08",
@@ -23,6 +25,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withComponentInputBinding()), 
     provideFirebaseApp(() => initializeApp(firebaseConfig)),
     provideAuth(() => getAuth()), provideFirestore(() => getFirestore()),
-    { provide: USER_REPOSITORY_TOKEN, useClass: UserFirebaseService }
+    { provide: USER_REPOSITORY_TOKEN, useClass: UserFirebaseService },
+    { provide: PLACE_REPOSITORY_TOKEN, useClass: PlaceFirebaseService }
   ]
 };

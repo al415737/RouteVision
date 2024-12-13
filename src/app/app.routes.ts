@@ -18,14 +18,16 @@ export const routes: Routes = [
       path: 'vehiculos
       loadChildren: () => import('./componentes/home.routes'),
     },
+    */
     {
-      canActivateChild: [privateGuard()],
-      path: 'lugares
-      loadChildren: () => import('./componentes/home.routes'),
+      //canActivateChild: [privateGuard()],
+      path: 'lugares',
+      loadChildren: () => import('./componentes/place.routes'),
     },
+    /*
     {
       canActivateChild: [privateGuard()],
-      path: 'rutas
+      path: 'rutas',
       loadChildren: () => import('./componentes/home.routes'),
     },
     */

@@ -1,14 +1,18 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { addDoc, collection, Firestore } from '@angular/fire/firestore';
 import { deleteDoc, doc, getDocs, query, where } from 'firebase/firestore';
 import { User } from '../../modelos/user';
 import { AuthService } from './auth.service';
 import { MailExistingException } from '../../excepciones/mail-existing-exception';
+import { getAuth } from 'firebase/auth';
+import { Place } from '../../modelos/place';
+import { AuthStateService } from '../../utils/auth-state.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FirestoreService {
+  private _authState: AuthStateService = inject(AuthStateService);
 
   private constructor(private _firestore: Firestore, private _auth: AuthService) { }
 
@@ -54,4 +58,22 @@ export class FirestoreService {
     if (PATH == 'user')
       await this._auth.delete();
   }
+
+  async getPlaces(){
+    const _collection = collection(this._firestore, "place");
+    //const consulta = query(_collection, where("uid", '==', this._authState.currentUser?.uid));
+    const consulta = query(_collection);
+
+    const docs = await getDocs(consulta);
+
+    return docs.docs.map(doc => { 
+      const data = doc.data();
+      return new Place(
+        data['idPlace'], 
+        data['toponimo'],
+        data['coordenadas']
+      );
+     }); 
+  }
 }
+

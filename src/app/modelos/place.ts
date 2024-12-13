@@ -8,4 +8,16 @@ export class Place {
         this.toponimo = toponimo;
         this.coordenadas = coordenadas;
     }
+
+    getIdPlace(){
+        return this.idPlace;
+    }
+
+    getToponimo(){
+        return this.toponimo
+    }
+
+    getCoordenadas(){
+        return this.coordenadas;
+    }
 }
