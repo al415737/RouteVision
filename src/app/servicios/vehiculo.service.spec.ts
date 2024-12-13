@@ -16,6 +16,7 @@ import { User } from '../modelos/user';
 import { UserService } from './user.service';
 import { USER_REPOSITORY_TOKEN } from '../repositorios/interfaces/user-repository';
 import { UserFirebaseService } from '../repositorios/firebase/user-firebase.service';
+import { InvalidEmailException } from '../excepciones/invalid-email-exception';
 
 describe('VehiculoService', () => {
   let service: VehiculoService;
@@ -24,12 +25,12 @@ describe('VehiculoService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        provideFirebaseApp(() => initializeApp(firebaseConfig)),
+        provideFirebaseApp(() => initializeApp(firebaseConfig)),     
         provideFirestore(() => getFirestore()),
         provideAuth(() => getAuth()),
         VehiculoService,
-        { provide: VEHICULO_REPOSITORY_TOKEN, useClass: VehiculoFirebaseService },
-        { provide: USER_REPOSITORY_TOKEN, useClass: UserFirebaseService },
+        { provide: VEHICULO_REPOSITORY_TOKEN, useClass: VehiculoFirebaseService },  
+        { provide: USER_REPOSITORY_TOKEN, useClass: UserFirebaseService }, 
       ]
     });
     service = TestBed.inject(VehiculoService);
@@ -42,8 +43,8 @@ describe('VehiculoService', () => {
     it('HU9E01. Vehículo registrado en el sistema (Escenario Válido)', async () => {
         //GIVEN: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] con listaVehículos-Ana2002 = [ ].
         //Login del usuario ya registrado de prueba.
-        //WHEN: El usuario intenta dar de alta un vehículo → [Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km].
-        //THEN: El sistema registra el vehículo en la parte de la base de datos dirigida a Ana2002 →  listaVehículos-Ana2002= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}].
+        //WHEN: El usuario intenta dar de alta un vehículo → [Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1].
+        //THEN: El sistema registra el vehículo en la parte de la base de datos dirigida a Ana2002 →  listaVehículos-Ana2002= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1}].
 
       const resul = await service.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1);
       expect(resul).toBeInstanceOf(Vehiculo);
@@ -53,10 +54,10 @@ describe('VehiculoService', () => {
   
     it('HU9E05. Registro de vehículo sin matricula (Escenario Inválido)', async () => {
       try {
-        //Given: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] con listaVehículos-Ana2002= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}].
+        //Given: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] con listaVehículos-Ana2002= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1}].
         const resul = await service.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1);
-        //When: El usuario intenta dar de alta un vehículo → [Matrícula=” ”, Marca=”Seat”, Modelo=”Ibiza”, Año Fabricación=”2003”, Consumo=4,3L/100 km].
-        //Then: El sistema no registra el vehículo y lanza una excepción NullLicenseException() →  listaVehículos-Ana2002= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}].
+        //When: El usuario intenta dar de alta un vehículo → [Matrícula=” ”, Marca=”Seat”, Modelo=”Ibiza”, Año Fabricación=”2003”, Consumo=4.3].
+        //Then: El sistema no registra el vehículo y lanza una excepción NullLicenseException() →  listaVehículos-Ana2002= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1}].
         
         await expectAsync(
           service.crearVehiculo("", "Seat", "Ibiza", "2003", 4.3)
@@ -65,12 +66,11 @@ describe('VehiculoService', () => {
           await service.eliminarVehiculo("1234 BBB");
       }
     });
-  */ 
 
     fdescribe('VehiculoService', () => {
       it('HU10E01. Consulta de vehículos dados de alta (Escenario Válido)', async () => {
       
-        //Given: El usuario Ana con la sesión iniciada y la listaVehículos = [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}].
+        //Given: El usuario Ana con la sesión iniciada y la listaVehículos = [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1}].
         await servicioUser.loginUser("test@test.com", "test123"); //Crear usuario (se logea automáticamente)
         await service.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1);
         
@@ -88,17 +88,18 @@ describe('VehiculoService', () => {
         service.eliminarVehiculo("1234 BBB");
     }); 
   });
+*/
+
+    it('HU10E04. Usuario utiliza un correo electrónico inexistente en la base de datos (Escenario Inválido)', async () => {
+      //Given: El usuario Ana ha accedido a la página con la dirección de correo: test1@test.com. Los datos de Ana están almacenados en la cuenta asociada al correo test@test.com. Y tiene la siguiente lista de vehículos = {{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}}.
+      await servicioUser.createUser("HolaTest", "TestRodrigez", "test1@test.com", "test1", "test123")
+
+      //When: Ana consulta los vehículos que tiene registrados.
+     const vehiculos = await service.consultarVehiculo()
+          
+      //Then: El sistema no le muestra sus vehículos
+      expect(vehiculos.length).toBe(0);
     
-  
-  /*
-    it('HU10E02. Fallo en la conexión con el servidor (Escenario Inválido)', () => {
-      
-        Given: El usuario Ana con la sesión iniciada y la listaVehículos =  {{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}}.
-        When: El usuario pide mostrar sus vehículos.
-        Then: El sistema no consigue mostrar los vehículos y lanza la excepción ServerNotOperativeException().
-      
-      expect(service.consultarVehiculo("ana03")).toThrow(ServerNotOperativeException);
-    }); 
-  */
+    })
 
 });
