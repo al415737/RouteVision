@@ -6,12 +6,12 @@ import { AuthService } from './auth.service';
 import { MailExistingException } from '../../excepciones/mail-existing-exception';
 import { Vehiculo } from '../../modelos/vehiculo';
 import { Auth, getAuth } from '@angular/fire/auth';
+import { Place } from '../../modelos/place';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FirestoreService {
-
   private _authState = inject(AuthService);
   private auth = inject(Auth);
 
@@ -92,6 +92,29 @@ export class FirestoreService {
         data['consumo']
       );
      }); 
+  }
+
+  async createPlaceC(place: Place, path: string) {  //igual que placeT??
+    const _collection = collection(this._firestore, path); 
+    const usuario = getAuth().currentUser;
+    const uid = usuario?.uid;
     
+    const objetoPlano = { ...Place, uid };
+    return addDoc(_collection, objetoPlano);
+  }
+
+  async createPlaceT(place: Place, path: string) {  //igual que placeC??
+    const _collection = collection(this._firestore, path); 
+    const usuario = getAuth().currentUser;
+    const uid = usuario?.uid;
+    
+    const objetoPlano = { ...Place, uid };
+    return addDoc(_collection, objetoPlano);
+  }
+
+
+  async deletePlace(path: string, idPlace: string){
+    const docRef = doc(this._firestore, path, idPlace);
+    await deleteDoc(docRef);
   }
 }

@@ -27,30 +27,24 @@ export class PlaceFirebaseService implements PlaceRepository{
 
         const placeRegisterT: Place = new Place(idPlace, toponimo, coordenadas);
 
-        await this.firestore.createPlace(placeRegisterT, PATHPLACE);
+        await this.firestore.createPlaceC(placeRegisterT, PATHPLACE);
         return placeRegisterT;
     }
 
     async createPlaceT(idPlace: string, topponimo: string): Promise<Place> {
-        if(idPlace == '' || idPlace == null){
+        if(){   //COMO HAGO PARA SABER 
             throw new InvalidPlaceException();
         }
 
         const placeRegisterT: Place = new Place(idPlace, toponimo, coordenadas);
 
-        await this.firestore.createPlace(placeRegisterT, PATHPLACE);
+        await this.firestore.createPlaceT(placeRegisterT, PATHPLACE);
         return placeRegisterT;
     }
 
-    
-
-    async consultarVehiculo() {
-        return await this.firestore.consultarVehiculo(PATHVEHICULO);
-    }
-
-    async eliminarVehiculo(matricula: string) {
-        const id = await this.firestore.get('matricula', matricula, PATHVEHICULO); 
-        await this.firestore.eliminarVehiculo(PATHVEHICULO, id);
+    async deletePlace(idPlace: string) {
+        const id = await this.firestore.get('idPlace', idPlace, PATHPLACE); 
+        await this.firestore.deletePlace(PATHPLACE, id);
     }
 
 
