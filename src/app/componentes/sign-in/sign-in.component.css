@@ -86,3 +86,33 @@ body {
     color: red;
     font-size: 0.875rem;
 }
+
+/* Responsive design for wider screens */
+@media (min-width: 1024px) {
+    .signup-container {
+        max-width: 500px;
+        padding: 30px;
+    }
+
+    .signup-container h2 {
+        font-size: 2rem;
+    }
+
+    .form-group label {
+        font-size: 1rem;
+    }
+
+    .form-group input {
+        font-size: 1rem;
+        padding: 12px;
+    }
+
+    .btn {
+        font-size: 18px;
+        padding: 12px;
+    }
+
+    .signup-footer {
+        font-size: 15px;
+    }
+}
