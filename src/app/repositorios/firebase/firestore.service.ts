@@ -61,8 +61,8 @@ export class FirestoreService {
 
   async getPlaces(){
     const _collection = collection(this._firestore, "place");
-    //const consulta = query(_collection, where("uid", '==', this._authState.currentUser?.uid));
-    const consulta = query(_collection);
+    const consulta = query(_collection, where("uid", '==', this._authState.currentUser?.uid));
+    //const consulta = query(_collection);
 
     const docs = await getDocs(consulta);
 
