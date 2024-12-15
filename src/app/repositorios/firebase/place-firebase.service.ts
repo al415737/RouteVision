@@ -50,7 +50,6 @@ export class PlaceFirebaseService implements PlaceRepository{
     }
 
     async deletePlace(idPlace: string) {
-        const id = await this.firestore.get('idPlace', idPlace, PATHPLACE); 
-        await this.firestore.deletePlace(PATHPLACE, id);
+        await this.firestore.deletePlace(PATHPLACE, idPlace);
     }
 }

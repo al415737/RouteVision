@@ -118,7 +118,7 @@ export class FirestoreService {
   }
 
   async deletePlace(path: string, idPlace: string){
-    const docRef = doc(this._firestore, path, idPlace);
+    const docRef: DocumentReference = doc(this._firestore, path, idPlace);
     await deleteDoc(docRef);
   }
 }
