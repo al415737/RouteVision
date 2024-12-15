@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { addDoc, collection, Firestore } from '@angular/fire/firestore';
-import { deleteDoc, doc, DocumentReference, getDocs, query, where } from 'firebase/firestore';
+import { deleteDoc, doc, DocumentReference, getDocs, query, setDoc, where } from 'firebase/firestore';
 import { User } from '../../modelos/user';
 import { AuthService } from './auth.service';
 import { MailExistingException } from '../../excepciones/mail-existing-exception';
@@ -110,15 +110,16 @@ export class FirestoreService {
     const usuario = getAuth().currentUser;
     const uid = usuario?.uid;
     
-    const docRef = doc(_collection); // Crea una referencia con un ID único
+    const docRef = doc(_collection, place.idPlace); // Crea una referencia con un ID único
     const idPlace = docRef.id;
     
     const objetoPlano = { ...place, idPlace, uid };   //se sobreescribe el idPlace de la clase
-    return addDoc(_collection, objetoPlano);
+    return setDoc(docRef, objetoPlano);
   }
 
   async deletePlace(path: string, idPlace: string){
     const docRef: DocumentReference = doc(this._firestore, path, idPlace);
     await deleteDoc(docRef);
   }
+
 }

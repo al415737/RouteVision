@@ -17,6 +17,7 @@ import { GeocodingService } from '../APIs/Geocoding/geocoding.service';
 import { of } from 'rxjs';
 import { FirestoreService } from '../repositorios/firebase/firestore.service';
 import { GeocodingPlaceMockComponent } from '../Mocks/geocoding-place-mock/geocoding-place-mock.component';
+import { getPerformance } from 'firebase/performance';
 
 
 
@@ -25,14 +26,16 @@ describe('PlaceService', () => {
   let serviceUser: UserService;
   let component: GeocodingPlaceMockComponent;
   let fixture: ComponentFixture<GeocodingPlaceMockComponent>;
-  let mockGeocoding;
+  //let mockGeocoding;
   let resultado: boolean;
   let firestore: FirestoreService;
+  let geocodinRepositorio: GeocodingService;
 
   beforeEach(() => {
+    geocodinRepositorio = new GeocodingService();
     const mockData = {toponimo: ["Castellón de la Plana"]};
-    mockGeocoding = jasmine.createSpyObj('GeocodingService', ['getToponimo']);
-    mockGeocoding.getToponimo.and.returnValue(of(mockData));
+    // mockGeocoding = jasmine.createSpyObj('GeocodingService', ['getToponimo']);
+    // mockGeocoding.getToponimo.and.returnValue(of(mockData));
 
     TestBed.configureTestingModule({
       providers: [
@@ -42,16 +45,17 @@ describe('PlaceService', () => {
         PlaceService,
         { provide: PLACE_REPOSITORY_TOKEN, useClass: PlaceFirebaseService },
         { provide: USER_REPOSITORY_TOKEN, useClass: UserFirebaseService },
-        { provide: GeocodingService, useValue: mockGeocoding},
+        //{ provide: GeocodingService, useValue: mockGeocoding},
       ] 
-    }).compileComponents();
+    })//.compileComponents();
 
-    fixture = TestBed.createComponent(GeocodingPlaceMockComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    // fixture = TestBed.createComponent(GeocodingPlaceMockComponent);
+    // component = fixture.componentInstance;
+    // fixture.detectChanges();
 
     // mockGeocoding = new geocodingPlaceMock;
-    resultado = component.conexionAPI([39.98, -0.049]);
+    
+    //resultado = component.conexionAPI([39.98, -0.049]);
 
     servicePlace = TestBed.inject(PlaceService);
     serviceUser = TestBed.inject(UserService);
@@ -63,15 +67,18 @@ describe('PlaceService', () => {
 
       //GIVEN: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] quiere dar de alta un nuevo lugar de interés. La API está disponible → lugaresInteres-Ana2002 = [ ].
       await serviceUser.loginUser("test@test.com", "test123");     // Crear usuario (se logea automáticamente)
-      expect(resultado).toBe(true);
+      // expect(resultado).toBe(true);
+      spyOn(notesRepository, "getNoteChanges").and.returnValue(
+        new Observable((subscriber) => subscriber.next([]))
+      );
 
       //  WHEN: Intenta dar de alta un lugar de interés → Coordenadas = [Latitud: 39.98, Longitud: -0.049]
-      const placeCreado = await servicePlace.createPlaceC([39.98, -0.049]);
+      const createPlace = await servicePlace.createPlaceC([39.98, -0.049]);
 
       //THEN: El sistema registra el lugar de interés de Ana2002. → placeListAna2002 = [{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049]}, idLugar = “000”}.    
-      expect(placeCreado).toBeInstanceOf(Place);
-//      expect(placeCreado.idPlace).toBeDefined(); 
-      servicePlace.deletePlace(placeCreado.idPlace);
+      expect(createPlace).toBeInstanceOf(Place);
+      expect(createPlace.idPlace).toBeDefined(); 
+      servicePlace.deletePlace(createPlace.idPlace);
     });
   });
 
