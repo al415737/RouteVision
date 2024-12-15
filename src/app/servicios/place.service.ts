@@ -11,15 +11,7 @@ export class PlaceService {
 
   createPlaceC(idPlace: string, coordenadas: number[]){
     return null;
-  }
-
-  createPlaceT(idPlace: string, toponimo: string){
-    return null;
-  }  
-
-  getPlaces(user: string){
-    return null;
-  }
+  } 
 
   deletePlace(idPlace: string){
     return null;

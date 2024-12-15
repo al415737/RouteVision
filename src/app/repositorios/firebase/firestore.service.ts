@@ -94,7 +94,7 @@ export class FirestoreService {
      }); 
   }
 
-  async createPlaceC(place: Place, path: string) {  //igual que placeT??
+  async createPlaceC(place: Place, path: string) {
     const _collection = collection(this._firestore, path); 
     const usuario = getAuth().currentUser;
     const uid = usuario?.uid;
@@ -102,16 +102,6 @@ export class FirestoreService {
     const objetoPlano = { ...Place, uid };
     return addDoc(_collection, objetoPlano);
   }
-
-  async createPlaceT(place: Place, path: string) {  //igual que placeC??
-    const _collection = collection(this._firestore, path); 
-    const usuario = getAuth().currentUser;
-    const uid = usuario?.uid;
-    
-    const objetoPlano = { ...Place, uid };
-    return addDoc(_collection, objetoPlano);
-  }
-
 
   async deletePlace(path: string, idPlace: string){
     const docRef = doc(this._firestore, path, idPlace);

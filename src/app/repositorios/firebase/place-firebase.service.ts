@@ -5,6 +5,8 @@ import { FirestoreService } from './firestore.service';
 import { NullLicenseException } from '../../excepciones/null-license-exception';
 import { InvalidPlaceException } from '../../excepciones/invalid-place-exception';
 import { InvalidCoordenatesException } from '../../excepciones/invalid-coordenates-exception';
+import { GeocodingService } from '../../APIs/Geocoding/geocoding.service';
+import { subscribe } from 'firebase/data-connect';
 
 
 const PATHPLACE = 'place';
@@ -15,6 +17,9 @@ const PATHPLACE = 'place';
 export class PlaceFirebaseService implements PlaceRepository{
 
   firestore: FirestoreService = inject(FirestoreService);
+  geocoding: GeocodingService = inject(GeocodingService);
+
+  private toponimo: any;
 
   constructor() { }
 
@@ -25,27 +30,21 @@ export class PlaceFirebaseService implements PlaceRepository{
             throw new InvalidCoordenatesException();
         }
 
-        const placeRegisterT: Place = new Place(idPlace, toponimo, coordenadas);
-
-        await this.firestore.createPlaceC(placeRegisterT, PATHPLACE);
-        return placeRegisterT;
-    }
-
-    async createPlaceT(idPlace: string, topponimo: string): Promise<Place> {
-        if(){   //COMO HAGO PARA SABER 
-            throw new InvalidPlaceException();
+        //suscribirse a api geocoding
+        this.geocoding.getToponimo(coordenadas).subscribe{
+            (respone: any) => {
+                this.toponimo = respone;    
+            }
         }
 
-        const placeRegisterT: Place = new Place(idPlace, toponimo, coordenadas);
+        const placeRegisterC: Place = new Place(idPlace, this.toponimo, coordenadas);
 
-        await this.firestore.createPlaceT(placeRegisterT, PATHPLACE);
-        return placeRegisterT;
+        await this.firestore.createPlaceC(placeRegisterC, PATHPLACE);
+        return placeRegisterC;
     }
 
     async deletePlace(idPlace: string) {
         const id = await this.firestore.get('idPlace', idPlace, PATHPLACE); 
         await this.firestore.deletePlace(PATHPLACE, id);
     }
-
-
 }
