@@ -1,4 +1,4 @@
-import { inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { GeocodingService } from '../APIs/Geocoding/geocoding.service';
 
 export class geocodingPlaceMock {
