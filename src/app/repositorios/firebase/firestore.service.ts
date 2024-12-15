@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { addDoc, collection, Firestore } from '@angular/fire/firestore';
-import { deleteDoc, doc, getDocs, query, where } from 'firebase/firestore';
+import { deleteDoc, doc, DocumentReference, getDocs, query, where } from 'firebase/firestore';
 import { User } from '../../modelos/user';
 import { AuthService } from './auth.service';
 import { MailExistingException } from '../../excepciones/mail-existing-exception';
@@ -94,12 +94,26 @@ export class FirestoreService {
      }); 
   }
 
+
+  //IRENE ------------------------------------------------------------------------------------------------------------------------
+
+  async getAutoIdReference(collectionPath: string): Promise<DocumentReference> {
+    // Crea una referencia con un ID único automáticamente
+    const _collection = collection(this._firestore, collectionPath); // Obtener la colección
+    const docRef = doc(_collection); // Crear una referencia sin ID especificado
+    return docRef; // Retorna la referencia con ID único
+  }
+
   async createPlaceC(place: Place, path: string) {
-    const _collection = collection(this._firestore, path); 
+    const _collection = collection(this._firestore, path);
+
     const usuario = getAuth().currentUser;
     const uid = usuario?.uid;
     
-    const objetoPlano = { ...Place, uid };
+    const docRef = doc(_collection); // Crea una referencia con un ID único
+    const idPlace = docRef.id;
+    
+    const objetoPlano = { ...place, idPlace, uid };   //se sobreescribe el idPlace de la clase
     return addDoc(_collection, objetoPlano);
   }
 

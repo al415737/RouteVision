@@ -23,19 +23,25 @@ export class PlaceFirebaseService implements PlaceRepository{
 
   constructor() { }
 
-    async createPlaceC(idPlace: string, coordenadas: number[]): Promise<Place> {
+    async createPlaceC(coordenadas: number[]): Promise<Place> {         //faltaría idPlace?
         //latitud - coordenadas[0] --> [-90 y +90]
         //longitud - coordenadas[1] --> [-180 y +180]
         if(coordenadas[0] < -90 || coordenadas[0] > 90){
             throw new InvalidCoordenatesException();
+        } else if(coordenadas[1] < -180 || coordenadas[1] > 180){
+            throw new InvalidCoordenatesException();
         }
 
         //suscribirse a api geocoding
-        this.geocoding.getToponimo(coordenadas).subscribe{
+        this.geocoding.getToponimo(coordenadas).subscribe(
             (respone: any) => {
                 this.toponimo = respone;    
-            }
-        }
+            },
+        );
+
+        const docRef = await this.firestore.getAutoIdReference(PATHPLACE); // Método que retorna un `DocumentReference`
+        const idPlace = docRef.id;
+    
 
         const placeRegisterC: Place = new Place(idPlace, this.toponimo, coordenadas);
 

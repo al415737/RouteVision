@@ -9,7 +9,7 @@ import { Place } from '../modelos/place';
 export class PlaceService {
   constructor() { }
 
-  createPlaceC(idPlace: string, coordenadas: number[]){
+  createPlaceC(coordenadas: number[]){
     return null;
   } 
 
