@@ -16,6 +16,7 @@ import { PlaceFirebaseService } from '../repositorios/firebase/place-firebase.se
 import { geocodingPlaceMock } from '../Mocks/geocodingPlaceMock';
 import { GeocodingService } from '../APIs/Geocoding/geocoding.service';
 import { of } from 'rxjs';
+import { FirestoreService } from '../repositorios/firebase/firestore.service';
 
 
 
@@ -26,6 +27,7 @@ describe('PlaceService', () => {
   let fixture: ComponentFixture<geocodingPlaceMock>;
   let mockGeocoding;
   let resultado: boolean;
+  let firestore: FirestoreService;
 
   beforeEach(() => {
     const mockData = {toponimo: ["Castellón de la Plana"]};
@@ -58,11 +60,13 @@ describe('PlaceService', () => {
     expect(resultado).toBe(true);
 
     //  WHEN: Intenta dar de alta un lugar de interés → Coordenadas = [Latitud: 39.98, Longitud: -0.049]
-    await servicePlace.createPlaceC([39.98, -0.049]);
+    const createPlace = await servicePlace.createPlaceC([39.98, -0.049]);
 
     //THEN: El sistema registra el lugar de interés de Ana2002. → placeListAna2002 = [{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049]}, idLugar = “000”}.    
-    expect(servicePlace.createPlaceC([39.98, -0.049])).toBeInstanceOf(Place);
-    servicePlace.deletePlace("001");
+    expect(createPlace).toBeInstanceOf(Place);
+    expect(createPlace.idPlace).toBeDefined(); 
+    servicePlace.deletePlace(createPlace.idPlace);
+
   });
 
   //it('HU5E02. Registro de un lugar de interés incorrecto (Caso Inválido):', () => {
