@@ -28,7 +28,7 @@ export class PlaceService {
     return this.placeRepositorio.createPlaceC(coordenadas);
   } 
 
-  deletePlace(idPlace: string, pathPlace: string){
+  deletePlace(idPlace: string){
     return this.placeRepositorio.deletePlace(idPlace);
   }
 }

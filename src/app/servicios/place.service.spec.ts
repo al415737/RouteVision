@@ -14,10 +14,12 @@ import { UserFirebaseService } from '../repositorios/firebase/user-firebase.serv
 import { USER_REPOSITORY_TOKEN } from '../repositorios/interfaces/user-repository';
 import { PlaceFirebaseService } from '../repositorios/firebase/place-firebase.service';
 import { GeocodingService } from '../APIs/Geocoding/geocoding.service';
-import { of } from 'rxjs';
+import { of, firstValueFrom } from 'rxjs';
 import { FirestoreService } from '../repositorios/firebase/firestore.service';
 import { GeocodingPlaceMockComponent } from '../Mocks/geocoding-place-mock/geocoding-place-mock.component';
-import { getPerformance } from 'firebase/performance';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+
 
 
 
@@ -32,20 +34,19 @@ describe('PlaceService', () => {
   let geocodinRepositorio: GeocodingService;
 
   beforeEach(() => {
-    geocodinRepositorio = new GeocodingService();
-    const mockData = {toponimo: ["Castellón de la Plana"]};
-    // mockGeocoding = jasmine.createSpyObj('GeocodingService', ['getToponimo']);
-    // mockGeocoding.getToponimo.and.returnValue(of(mockData));
-
     TestBed.configureTestingModule({
+      imports: [
+        HttpClientTestingModule, // Agregado para manejar HttpClient
+      ],
       providers: [
+        provideHttpClient(), // Configuración moderna para HttpClient
         provideFirebaseApp(() => initializeApp(firebaseConfig)),
         provideFirestore(() => getFirestore()),
         provideAuth(() => getAuth()),
         PlaceService,
         { provide: PLACE_REPOSITORY_TOKEN, useClass: PlaceFirebaseService },
         { provide: USER_REPOSITORY_TOKEN, useClass: UserFirebaseService },
-        //{ provide: GeocodingService, useValue: mockGeocoding},
+        FirestoreService,
       ] 
     })//.compileComponents();
 
@@ -59,23 +60,23 @@ describe('PlaceService', () => {
 
     servicePlace = TestBed.inject(PlaceService);
     serviceUser = TestBed.inject(UserService);
+    geocodinRepositorio = TestBed.inject(GeocodingService); 
   });
 
   fdescribe('PlaceService', () => {
     it('HU5E01. Registrar nuevo lugar de interés (Caso Válido):', async () => {
-      //fixture.detectChanges();
 
-      //GIVEN: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] quiere dar de alta un nuevo lugar de interés. La API está disponible → lugaresInteres-Ana2002 = [ ].
+      // GIVEN: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] quiere dar de alta un nuevo lugar de interés. La API está disponible → lugaresInteres-Ana2002 = [ ].
       await serviceUser.loginUser("test@test.com", "test123");     // Crear usuario (se logea automáticamente)
-      // expect(resultado).toBe(true);
-      spyOn(notesRepository, "getNoteChanges").and.returnValue(
-        new Observable((subscriber) => subscriber.next([]))
-      );
+      spyOn(geocodinRepositorio, "getToponimo").and.returnValue(of({toponimo: 'Castellón de la Plana'}));
+      
+      const result = await firstValueFrom(geocodinRepositorio.getToponimo([39.98, -0.049]));
+      expect(result).toEqual({toponimo: 'Castellón de la Plana'});
 
-      //  WHEN: Intenta dar de alta un lugar de interés → Coordenadas = [Latitud: 39.98, Longitud: -0.049]
+      // WHEN: Intenta dar de alta un lugar de interés → Coordenadas = [Latitud: 39.98, Longitud: -0.049]
       const createPlace = await servicePlace.createPlaceC([39.98, -0.049]);
 
-      //THEN: El sistema registra el lugar de interés de Ana2002. → placeListAna2002 = [{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049]}, idLugar = “000”}.    
+      // THEN: El sistema registra el lugar de interés de Ana2002. → placeListAna2002 = [{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049]}, idLugar = “000”}.    
       expect(createPlace).toBeInstanceOf(Place);
       expect(createPlace.idPlace).toBeDefined(); 
       servicePlace.deletePlace(createPlace.idPlace);
