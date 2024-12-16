@@ -90,16 +90,18 @@ describe('VehiculoService', () => {
   });
 */
 
-    it('HU10E04. Usuario utiliza un correo electrónico inexistente en la base de datos (Escenario Inválido)', async () => {
-      //Given: El usuario Ana ha accedido a la página con la dirección de correo: test1@test.com. Los datos de Ana están almacenados en la cuenta asociada al correo test@test.com. Y tiene la siguiente lista de vehículos = {{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}}.
-      await servicioUser.createUser("HolaTest", "TestRodrigez", "test1@test.com", "test1", "test123")
+fdescribe('VehiculoService', () => {
+  it('HU10E04. El usuario accede con una dirección de correo electrónico en la que no tiene datos guardados (Escenario Inválido)', async () => {
+      //Given:  El usuario Ana ha accedido con la dirección de correo: test1@test.com donde no tiene datos guardados. ListaVehículos = {}
 
-      //When: Ana consulta los vehículos que tiene registrados.
-     const vehiculos = await service.consultarVehiculo()
-          
-      //Then: El sistema no le muestra sus vehículos
+        await servicioUser.loginUser("test1@test.com", "test123");
+
+      //When: Ana consulta los vehículos.
+        const vehiculos = await service.consultarVehiculo();
+
+      //Then: El sistema no muestra ningún dato.
       expect(vehiculos.length).toBe(0);
-    
-    })
+  }); 
+});
 
 });
