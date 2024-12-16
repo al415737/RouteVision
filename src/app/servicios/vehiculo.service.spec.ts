@@ -38,70 +38,66 @@ describe('VehiculoService', () => {
   });
 
 
-/*
+
   fdescribe('VehiculoService', () => {
     it('HU9E01. Vehículo registrado en el sistema (Escenario Válido)', async () => {
         //GIVEN: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] con listaVehículos-Ana2002 = [ ].
-        //Login del usuario ya registrado de prueba.
-        //WHEN: El usuario intenta dar de alta un vehículo → [Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1].
-        //THEN: El sistema registra el vehículo en la parte de la base de datos dirigida a Ana2002 →  listaVehículos-Ana2002= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1}].
+        servicioUser.loginUser("test@test.com", "test123");
 
-      const resul = await service.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1);
-      expect(resul).toBeInstanceOf(Vehiculo);
-      service.eliminarVehiculo("1234 BBB");
+        //WHEN: El usuario intenta dar de alta un vehículo → [Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1].
+        const resul = await service.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1);
+
+        //THEN: El sistema registra el vehículo en la parte de la base de datos dirigida a Ana2002 →  listaVehículos-Ana2002= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1}].      
+        expect(resul).toBeInstanceOf(Vehiculo);
+        service.eliminarVehiculo("1234 BBB"); 
     });
-  
   
     it('HU9E05. Registro de vehículo sin matricula (Escenario Inválido)', async () => {
       try {
         //Given: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] con listaVehículos-Ana2002= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1}].
+        servicioUser.loginUser("test@tets.com", "test123");
         const resul = await service.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1);
-        //When: El usuario intenta dar de alta un vehículo → [Matrícula=” ”, Marca=”Seat”, Modelo=”Ibiza”, Año Fabricación=”2003”, Consumo=4.3].
-        //Then: El sistema no registra el vehículo y lanza una excepción NullLicenseException() →  listaVehículos-Ana2002= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1}].
-        
+
         await expectAsync(
+          //When: El usuario intenta dar de alta un vehículo → [Matrícula=” ”, Marca=”Seat”, Modelo=”Ibiza”, Año Fabricación=”2003”, Consumo=4.3].
           service.crearVehiculo("", "Seat", "Ibiza", "2003", 4.3)
+
+          //Then: El sistema no registra el vehículo y lanza una excepción NullLicenseException() →  listaVehículos-Ana2002= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1}].
         ).toBeRejectedWith(new NullLicenseException());
       } finally {
           await service.eliminarVehiculo("1234 BBB");
       }
     });
-
-    fdescribe('VehiculoService', () => {
+    
       it('HU10E01. Consulta de vehículos dados de alta (Escenario Válido)', async () => {
       
         //Given: El usuario Ana con la sesión iniciada y la listaVehículos = [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1}].
-        await servicioUser.loginUser("test@test.com", "test123"); //Crear usuario (se logea automáticamente)
+        await servicioUser.loginUser("test@test.com", "test123"); 
         await service.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1);
         
         //When: El usuario pide mostrar sus vehículos.
-        const vehiculos = await service.consultarVehiculo(); // Devuelve una lista con los datos de los vehículos
+        const vehiculos = await service.consultarVehiculo(); 
         
         //Then: El sistema devuelve la lista de listaVehículos =  [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}]
         expect(vehiculos.length).toBe(1);
 
-        //Bucle que comprueba que cada documento es un vehículo válido.
         vehiculos.forEach((vehiculo: any) => {
             expect(vehiculo).toBeInstanceOf(Vehiculo);
         });
 
         service.eliminarVehiculo("1234 BBB");
-    }); 
+    
+      });
+
+      it('HU10E04. El usuario accede con una dirección de correo electrónico en la que no tiene datos guardados (Escenario Inválido)', async () => {
+          //Given:  El usuario Ana ha accedido con la dirección de correo: test1@test.com donde no tiene datos guardados. ListaVehículos = {}
+            await servicioUser.loginUser("test1@test.com", "test123");
+
+          //When: Ana consulta los vehículos.
+            const vehiculos = await service.consultarVehiculo();
+
+          //Then: El sistema no muestra ningún dato.
+          expect(vehiculos.length).toBe(0);
+      }); 
   });
-*/
-
-fdescribe('VehiculoService', () => {
-  it('HU10E04. El usuario accede con una dirección de correo electrónico en la que no tiene datos guardados (Escenario Inválido)', async () => {
-      //Given:  El usuario Ana ha accedido con la dirección de correo: test1@test.com donde no tiene datos guardados. ListaVehículos = {}
-
-        await servicioUser.loginUser("test1@test.com", "test123");
-
-      //When: Ana consulta los vehículos.
-        const vehiculos = await service.consultarVehiculo();
-
-      //Then: El sistema no muestra ningún dato.
-      expect(vehiculos.length).toBe(0);
-  }); 
-});
-
 });
