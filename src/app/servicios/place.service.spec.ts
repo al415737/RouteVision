@@ -1,9 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { PlaceService } from './place.service';
-import { InvalidCoordenatesException } from '../excepciones/invalid-coordenates-exception';
 import { Place } from '../modelos/place';
-import { InvalidPlaceException } from '../excepciones/invalid-place-exception';
-import { ServerNotOperativeException } from '../excepciones/server-not-operative-exception';
 import { UserService } from './user.service';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
@@ -16,28 +13,17 @@ import { PlaceFirebaseService } from '../repositorios/firebase/place-firebase.se
 import { GeocodingService } from '../APIs/Geocoding/geocoding.service';
 import { of, firstValueFrom } from 'rxjs';
 import { FirestoreService } from '../repositorios/firebase/firestore.service';
-import { GeocodingPlaceMockComponent } from '../Mocks/geocoding-place-mock/geocoding-place-mock.component';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
-
+import { provideHttpClient } from '@angular/common/http';
 
 
 
 describe('PlaceService', () => {
   let servicePlace: PlaceService;
   let serviceUser: UserService;
-  let component: GeocodingPlaceMockComponent;
-  let fixture: ComponentFixture<GeocodingPlaceMockComponent>;
-  //let mockGeocoding;
-  let resultado: boolean;
-  let firestore: FirestoreService;
   let geocodinRepositorio: GeocodingService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        HttpClientTestingModule, // Agregado para manejar HttpClient
-      ],
       providers: [
         provideHttpClient(), // Configuración moderna para HttpClient
         provideFirebaseApp(() => initializeApp(firebaseConfig)),
@@ -48,15 +34,7 @@ describe('PlaceService', () => {
         { provide: USER_REPOSITORY_TOKEN, useClass: UserFirebaseService },
         FirestoreService,
       ] 
-    })//.compileComponents();
-
-    // fixture = TestBed.createComponent(GeocodingPlaceMockComponent);
-    // component = fixture.componentInstance;
-    // fixture.detectChanges();
-
-    // mockGeocoding = new geocodingPlaceMock;
-    
-    //resultado = component.conexionAPI([39.98, -0.049]);
+    })
 
     servicePlace = TestBed.inject(PlaceService);
     serviceUser = TestBed.inject(UserService);
@@ -79,7 +57,7 @@ describe('PlaceService', () => {
       // THEN: El sistema registra el lugar de interés de Ana2002. → placeListAna2002 = [{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049]}, idLugar = “000”}.    
       expect(createPlace).toBeInstanceOf(Place);
       expect(createPlace.idPlace).toBeDefined(); 
-      servicePlace.deletePlace(createPlace.idPlace);
+      await servicePlace.deletePlace(createPlace.idPlace);
     });
   });
 
