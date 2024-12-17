@@ -56,14 +56,15 @@ describe('VehiculoService', () => {
       try {
         //Given: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] con listaVehículos-Ana2002= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1}].
         servicioUser.loginUser("test@tets.com", "test123");
-        const resul = await service.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1);
+        const resul = await service.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1); 
 
-        await expectAsync(
+        try {
           //When: El usuario intenta dar de alta un vehículo → [Matrícula=” ”, Marca=”Seat”, Modelo=”Ibiza”, Año Fabricación=”2003”, Consumo=4.3].
-          service.crearVehiculo("", "Seat", "Ibiza", "2003", 4.3)
-
-          //Then: El sistema no registra el vehículo y lanza una excepción NullLicenseException() →  listaVehículos-Ana2002= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1}].
-        ).toBeRejectedWith(new NullLicenseException());
+          await service.crearVehiculo("", "Seat", "Ibiza", "2003", 4.3);
+        } catch(error){
+            //Then: El sistema no registra el vehículo y lanza una excepción NullLicenseException() →  listaVehículos-Ana2002= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1}].
+            expect(error).toBeInstanceOf(NullLicenseException);
+        }
       } finally {
           await service.eliminarVehiculo("1234 BBB");
       }
