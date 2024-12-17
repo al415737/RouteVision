@@ -7,24 +7,25 @@ import { InvalidPlaceException } from '../../excepciones/invalid-place-exception
 import { InvalidCoordenatesException } from '../../excepciones/invalid-coordenates-exception';
 import { GeocodingService } from '../../APIs/Geocoding/geocoding.service';
 import { subscribe } from 'firebase/data-connect';
-
-
-const PATHPLACE = 'place';
+import { getAuth } from 'firebase/auth';
 
 @Injectable({
   providedIn: 'root'
 })
+
 export class PlaceFirebaseService implements PlaceRepository{
+
+  private toponimo: any;
 
   firestore: FirestoreService = inject(FirestoreService);
   geocoding: GeocodingService = inject(GeocodingService);
 
-  private toponimo: any;
 
-  constructor() { }
+  constructor() {}
 
-    async createPlaceC(coordenadas: number[]): Promise<Place> {         //faltaría idPlace?
-        //suscribirse a api geocoding
+    async createPlaceC(coordenadas: number[]): Promise<Place> { 
+        const uid = getAuth().currentUser?.uid;
+        const PATHPLACE = `Lugar/${uid}/listaLugaresInterés`
 
         this.geocoding.getToponimo(coordenadas).subscribe(
             (respone: any) => {
@@ -43,6 +44,10 @@ export class PlaceFirebaseService implements PlaceRepository{
     }
 
     async deletePlace(idPlace: string) {
+        //para sacar el usuario y meter los lugares en su colección
+        const uid = getAuth().currentUser?.uid; 
+        const PATHPLACE = `Lugar/${uid}/listaLugaresInterés`
+
         await this.firestore.deletePlace(PATHPLACE, idPlace);
     }
 }

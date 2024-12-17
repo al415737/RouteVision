@@ -61,6 +61,7 @@ describe('PlaceService', () => {
     });
   });
 
+  
   fdescribe('PlaceService', () => {
     it('HU5E02. Registro de un lugar de interés incorrecto (Caso Inválido):', async () => {
       // GIVEN: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] quiere dar de alta un nuevo lugar de interés. La API está disponible → lugaresInteres-Ana2002 = [ ].
@@ -68,7 +69,7 @@ describe('PlaceService', () => {
 
       try{
         // WHEN: Intenta dar de alta un lugar de interés → Coordenadas = [Latitud: 899,98, Longitud:].
-        const createPlaceInvalid = await servicePlace.createPlaceC([899.98, ]);
+        await servicePlace.createPlaceC([899.98, ]);
       } catch (error){  
         // THEN: El sistema no registra el lugar de interés y lanza la excepción InvalidCoordinatesException().
         expect(error).toBeInstanceOf(InvalidCoordenatesException);
