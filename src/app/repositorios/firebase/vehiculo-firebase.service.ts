@@ -10,30 +10,31 @@ import { NullLicenseException } from '../../excepciones/null-license-exception';
 })
 export class VehiculoFirebaseService implements VehiculoRepository{
 
-    private PATHVEHICULO: string;
-
     firestore: FirestoreService = inject(FirestoreService);
 
   constructor() { 
-        const uid = getAuth().currentUser?.uid;
-        this.PATHVEHICULO = `vehiculo/${uid}/listaVehiculos`;
   }
 
     async crearVehiculo(matricula: string, marca: string, modelo: string, año_fabricacion: string, consumo: number): Promise<Vehiculo> {
+        const uid = getAuth().currentUser?.uid;
+        const PATHVEHICULO = `vehiculo/${uid}/listaVehiculos`;
         const vehRegister: Vehiculo = new Vehiculo(matricula, marca, modelo, año_fabricacion, consumo);
 
-        await this.firestore.createVehiculo(vehRegister, this.PATHVEHICULO);
+        await this.firestore.createVehiculo(vehRegister, PATHVEHICULO);
         return vehRegister;
     }
 
     async consultarVehiculo() {
-        return await this.firestore.consultarVehiculo(this.PATHVEHICULO);
+        const uid = getAuth().currentUser?.uid;
+        const PATHVEHICULO = `vehiculo/${uid}/listaVehiculos`;
+        return await this.firestore.consultarVehiculo(PATHVEHICULO);
     }
 
     async eliminarVehiculo(matricula: string) {
-        
-        const id = await this.firestore.get('matricula', matricula, this.PATHVEHICULO); 
-        await this.firestore.eliminarVehiculo(this.PATHVEHICULO, id);
+        const uid = getAuth().currentUser?.uid;
+        const PATHVEHICULO = `vehiculo/${uid}/listaVehiculos`;
+        const id = await this.firestore.get('matricula', matricula, PATHVEHICULO); 
+        await this.firestore.eliminarVehiculo(PATHVEHICULO, id);
     }
 
 
