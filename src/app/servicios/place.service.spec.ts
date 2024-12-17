@@ -14,7 +14,7 @@ import { GeocodingService } from '../APIs/Geocoding/geocoding.service';
 import { of, firstValueFrom } from 'rxjs';
 import { FirestoreService } from '../repositorios/firebase/firestore.service';
 import { provideHttpClient } from '@angular/common/http';
-
+import { InvalidCoordenatesException } from '../excepciones/invalid-coordenates-exception';
 
 
 describe('PlaceService', () => {
@@ -45,7 +45,7 @@ describe('PlaceService', () => {
     it('HU5E01. Registrar nuevo lugar de interés (Caso Válido):', async () => {
 
       // GIVEN: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] quiere dar de alta un nuevo lugar de interés. La API está disponible → lugaresInteres-Ana2002 = [ ].
-      await serviceUser.loginUser("test@test.com", "test123");     // Crear usuario (se logea automáticamente)
+      await serviceUser.loginUser("test@test.com", "test123"); 
       spyOn(geocodinRepositorio, "getToponimo").and.returnValue(of({toponimo: 'Castellón de la Plana'}));
       
       const result = await firstValueFrom(geocodinRepositorio.getToponimo([39.98, -0.049]));
@@ -61,11 +61,18 @@ describe('PlaceService', () => {
     });
   });
 
-  //it('HU5E02. Registro de un lugar de interés incorrecto (Caso Inválido):', () => {
-    /*  GIVEN: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] quiere dar de alta un nuevo lugar de interés. La API está disponible → lugaresInteres-Ana2002 = [ ].
-        WHEN: Intenta dar de alta un lugar de interés → Coordenadas = [Latitud: 899,98, Longitud:].
-        THEN: El sistema no registra el lugar de interés y lanza la excepción InvalidCoordinatesException().
-    */ 
-    //expect(service.createPlaceC("001", [39.98, -8888])).toThrow(InvalidCoordenatesException);
-  //});
+  fdescribe('PlaceService', () => {
+    it('HU5E02. Registro de un lugar de interés incorrecto (Caso Inválido):', async () => {
+      // GIVEN: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] quiere dar de alta un nuevo lugar de interés. La API está disponible → lugaresInteres-Ana2002 = [ ].
+      await serviceUser.loginUser("test@test.com", "test123");
+
+      try{
+        // WHEN: Intenta dar de alta un lugar de interés → Coordenadas = [Latitud: 899,98, Longitud:].
+        const createPlaceInvalid = await servicePlace.createPlaceC([899.98, ]);
+      } catch (error){  
+        // THEN: El sistema no registra el lugar de interés y lanza la excepción InvalidCoordinatesException().
+        expect(error).toBeInstanceOf(InvalidCoordenatesException);
+      }
+    });
+  });
 });
