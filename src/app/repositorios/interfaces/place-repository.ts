@@ -5,6 +5,6 @@ export const PLACE_REPOSITORY_TOKEN = new InjectionToken<PlaceRepository>('Place
 
 export interface PlaceRepository {
     createPlaceC(coordenadas: number[]): Promise<Place>;
-    
+    createPlaceT(toponimo: string): Promise<Place>;
     deletePlace(idPlace: string): Promise<void>;
 }

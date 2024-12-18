@@ -13,4 +13,9 @@ export class GeocodingService {
     const url = `https://api.openrouteservice.org/geocode/reverse?api_key=${this.apiKey}&point.lon=${coordenadas[1]}&point.lat=${coordenadas[0]}`;
     return this.http.get(url);
   }
+
+  getCoordenadas(toponimo: string) {
+    const url = `https://api.openrouteservice.org/geocode/search?api_key=${this.apiKey}&text=${toponimo}`;
+    return this.http.get(url);
+  }
 }

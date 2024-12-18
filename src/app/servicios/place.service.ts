@@ -35,4 +35,12 @@ export class PlaceService {
   deletePlace(idPlace: string){
     return this.placeRepositorio.deletePlace(idPlace);
   }
+
+  createPlaceT(toponimo: string){
+    if (toponimo == null || toponimo == '') {
+      throw new InvalidCoordenatesException();
+    }
+    
+    return this.placeRepositorio.createPlaceT(toponimo);
+  }
 }

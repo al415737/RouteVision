@@ -122,4 +122,16 @@ export class FirestoreService {
     await deleteDoc(docRef);
   }
 
+  async createPlaceT(place: Place, path: string) {
+    const _collection = collection(this._firestore, path);
+
+    const usuario = getAuth().currentUser;
+    const uid = usuario?.uid;
+    
+    const docRef = doc(_collection, place.idPlace); // Crea una referencia con un ID único
+    const idPlace = docRef.id;
+    
+    const objetoPlano = { ...place, idPlace, uid };   //se sobreescribe el idPlace de la clase
+    return setDoc(docRef, objetoPlano);
+  }
 }

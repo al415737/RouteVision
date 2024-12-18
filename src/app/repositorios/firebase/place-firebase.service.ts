@@ -16,6 +16,7 @@ import { getAuth } from 'firebase/auth';
 export class PlaceFirebaseService implements PlaceRepository{
 
   private toponimo: any;
+  private coordenadas: any;
 
   firestore: FirestoreService = inject(FirestoreService);
   geocoding: GeocodingService = inject(GeocodingService);
@@ -50,4 +51,31 @@ export class PlaceFirebaseService implements PlaceRepository{
 
         await this.firestore.deletePlace(PATHPLACE, idPlace);
     }
+
+    async createPlaceT(toponimo: string): Promise<Place> { 
+        const uid = getAuth().currentUser?.uid;
+        const PATHPLACE = `Lugar/${uid}/listaLugaresInterés`
+
+        try {
+            // Usar promesa para obtener coordenadas en lugar de suscribirse directamente
+            this.coordenadas = await new Promise((resolve, reject) => {
+                this.geocoding.getCoordenadas(toponimo).subscribe({
+                    next: (response: any) => resolve(response),  // Resolvemos la promesa con la respuesta
+                    error: (error) => reject(error)               // Rechazamos la promesa con el error
+                });
+            });
+            
+                const docRef = await this.firestore.getAutoIdReference(PATHPLACE); // Método que retorna un `DocumentReference`
+                const idPlace = docRef.id;
+        
+
+            const placeRegisterT: Place = new Place(idPlace, this.toponimo, this.coordenadas);
+
+            await this.firestore.createPlaceT(placeRegisterT, PATHPLACE);
+            return placeRegisterT;
+
+        } catch (error){
+            console.error('Error en crreatePlaceT: ', error);
+            throw new InvalidPlaceException();
+        }   
 }
