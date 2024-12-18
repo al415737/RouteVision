@@ -52,6 +52,8 @@ export class PlaceFirebaseService implements PlaceRepository{
         await this.firestore.deletePlace(PATHPLACE, idPlace);
     }
 
+
+
     async createPlaceT(toponimo: string): Promise<Place> { 
         const uid = getAuth().currentUser?.uid;
         const PATHPLACE = `Lugar/${uid}/listaLugaresInterés`
@@ -64,18 +66,18 @@ export class PlaceFirebaseService implements PlaceRepository{
                     error: (error) => reject(error)               // Rechazamos la promesa con el error
                 });
             });
-            
-                const docRef = await this.firestore.getAutoIdReference(PATHPLACE); // Método que retorna un `DocumentReference`
-                const idPlace = docRef.id;
-        
-
-            const placeRegisterT: Place = new Place(idPlace, this.toponimo, this.coordenadas);
-
-            await this.firestore.createPlaceT(placeRegisterT, PATHPLACE);
-            return placeRegisterT;
-
         } catch (error){
-            console.error('Error en crreatePlaceT: ', error);
+            console.error('Error en createPlaceT: ', error);
             throw new InvalidPlaceException();
         }   
-}
+
+        const docRef = await this.firestore.getAutoIdReference(PATHPLACE); // Método que retorna un `DocumentReference`
+        const idPlace = docRef.id;
+    
+
+        const placeRegisterT: Place = new Place(idPlace, toponimo, this.coordenadas);
+
+        await this.firestore.createPlaceT(placeRegisterT, PATHPLACE);
+        return placeRegisterT;
+    }
+};

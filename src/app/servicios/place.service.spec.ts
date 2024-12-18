@@ -1,6 +1,5 @@
 import { TestBed } from '@angular/core/testing';
 import { PlaceService } from './place.service';
-import { Place } from '../modelos/place';
 import { UserService } from './user.service';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
@@ -11,11 +10,12 @@ import { UserFirebaseService } from '../repositorios/firebase/user-firebase.serv
 import { USER_REPOSITORY_TOKEN } from '../repositorios/interfaces/user-repository';
 import { PlaceFirebaseService } from '../repositorios/firebase/place-firebase.service';
 import { GeocodingService } from '../APIs/Geocoding/geocoding.service';
-import { of, firstValueFrom } from 'rxjs';
 import { FirestoreService } from '../repositorios/firebase/firestore.service';
 import { provideHttpClient } from '@angular/common/http';
-import { InvalidCoordenatesException } from '../excepciones/invalid-coordenates-exception';
 import { InvalidPlaceException } from '../excepciones/invalid-place-exception';
+import { InvalidCoordenatesException } from '../excepciones/invalid-coordenates-exception';
+import { Place } from '../modelos/place';
+import { firstValueFrom, of } from 'rxjs';
 
 
 describe('PlaceService', () => {
@@ -41,7 +41,7 @@ describe('PlaceService', () => {
     serviceUser = TestBed.inject(UserService);
     geocodinRepositorio = TestBed.inject(GeocodingService); 
   });
-
+  
   //HISTORIA 5
   fdescribe('PlaceService', () => {
     it('HU5E01. Registrar nuevo lugar de interés (Caso Válido):', async () => {
@@ -78,10 +78,11 @@ describe('PlaceService', () => {
     });
   });
 
-  //HISTORIA 6 -------------------------------------
 
+
+  //HISTORIA 6 -------------------------------------
   fdescribe('PlaceService', () => {
-    it('Registro de lugar de interés con un topónimo correcto (Escenario Válido):', async () => {
+    it('HU6E01. Registro de lugar de interés con un topónimo correcto (Escenario Válido):', async () => {
 
       // GIVEN: La API está disponible y el usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] con
       // listaLugaresInteres-Ana2002 = [{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud:
@@ -104,25 +105,33 @@ describe('PlaceService', () => {
       await servicePlace.deletePlace(place.idPlace);
 
     });
-  });
+  }); 
 
+
+  //ESTA ES LA QUE VA RARO
+  
   fdescribe('PlaceService', () => {
-    it('HU5E03. Registro de lugar de interés con un topónimo incorrecto (Escenario Inválido):', async () => {
+    it('HU6E03. Registro de lugar de interés con un topónimo incorrecto (Escenario Inválido):', async () => {
       // GIVEN: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] quiere dar de alta un nuevo lugar de
       // interés. La API está disponible → lugaresInteres-Ana2002= [{NombreCiudad = “Castelló de la Plana”,
       // Coordenadas = [Latitud: 39.98, Longitud: -0.049]}, {NombreCiudad = “Bilbao”, Coordenadas = [Latitud:
       // 43.26271, Longitud: -2.92528]}].     
       await serviceUser.loginUser("test@test.com", "test123");
+      console.log('asda:');    
       const place = await servicePlace.createPlaceT('Castellón de la Plana');
+      console.log('Hey:');    
 
       try{
-        // WHEN: Intenta dar de alta un lugar de interés → Topónimo = “Cassjdlftellfisonon”.       
+        // WHEN: Intenta dar de alta un lugar de interés → Topónimo = “Cassjdlftellfisonon”.   
+        console.log('Hola:');    
         await servicePlace.createPlaceT('Cassjdlftellfisonon');
-
+        console.log('Adios:');      
       } catch (error){  
-        // THEN: El sistema no registra el lugar de interés y se genera la excepción InvalidPlaceException().
+        console.log('Error capturado:', error);
+        // THEN: El sistem+a no registra el lugar de interés y se genera la excepción InvalidPlaceException().
         expect(error).toBeInstanceOf(InvalidPlaceException);
       }
+      await servicePlace.deletePlace(place.idPlace);
     });
   });
   
