@@ -61,7 +61,6 @@ describe('PlaceService', () => {
     });
   });
 
-  
   fdescribe('PlaceService', () => {
     it('HU5E02. Registro de un lugar de interés incorrecto (Caso Inválido):', async () => {
       // GIVEN: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] quiere dar de alta un nuevo lugar de interés. La API está disponible → lugaresInteres-Ana2002 = [ ].
