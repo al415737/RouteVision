@@ -89,7 +89,7 @@ describe('PlaceService', () => {
       // listaLugaresInteres-Ana2002 = [{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud:
       // 39.98, Longitud: -0.049]}].      
       await serviceUser.loginUser("test@test.com", "test123"); 
-      //const place = await servicePlace.createPlaceT('Castellón de la Plana')
+      const place = await servicePlace.createPlaceT('Castellón de la Plana')
       spyOn(geocodinRepositorio, "getCoordenadas").and.returnValue(of({coordenadas: [43.26, -2.93]}));
       
       const result = await firstValueFrom(geocodinRepositorio.getCoordenadas('Bilbao'));
@@ -103,7 +103,7 @@ describe('PlaceService', () => {
       // {NombreCiudad = “Bilbao”, Coordenadas = [Latitud: 43.26271, Longitud: -2.92528]}].      expect(createPlace).toBeInstanceOf(Place);
       expect(createPlaceT.idPlace).toBeDefined(); 
       await servicePlace.deletePlace(createPlaceT.idPlace);
-      //await servicePlace.deletePlace(place.idPlace);
+      await servicePlace.deletePlace(place.idPlace);
 
     });
   }); 
