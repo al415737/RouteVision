@@ -58,18 +58,22 @@ export class PlaceFirebaseService implements PlaceRepository{
         const uid = getAuth().currentUser?.uid;
         const PATHPLACE = `Lugar/${uid}/listaLugaresInterés`
 
-        try {
+        
             // Usar promesa para obtener coordenadas en lugar de suscribirse directamente
             this.coordenadas = await new Promise((resolve, reject) => {
                 this.geocoding.getCoordenadas(toponimo).subscribe({
-                    next: (response: any) => resolve(response),  // Resolvemos la promesa con la respuesta
-                    error: (error) => reject(error)               // Rechazamos la promesa con el error
+                    next: (response: any) => {
+                        console.log('Respuesta de geocoding:', response.features);
+                        if (!response.features || response.features.length === 0) {
+                            reject(new InvalidPlaceException());
+                        } else {
+                            console.log('HOLA:', response);
+                            resolve(response.features[0].geometry.coordinates);
+                        }
+                    },
                 });
             });
-        } catch (error){
-            console.error('Error en createPlaceT: ', error);
-            throw new InvalidPlaceException();
-        }   
+        
 
         const docRef = await this.firestore.getAutoIdReference(PATHPLACE); // Método que retorna un `DocumentReference`
         const idPlace = docRef.id;
