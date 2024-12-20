@@ -1,4 +1,3 @@
-
 import { TestBed } from '@angular/core/testing';
 import { VehiculoService } from './vehiculo.service';
 import { Vehiculo } from '../modelos/vehiculo';
@@ -19,8 +18,8 @@ import { UserFirebaseService } from '../repositorios/firebase/user-firebase.serv
 import { InvalidEmailException } from '../excepciones/invalid-email-exception';
 
 describe('VehiculoService', () => {
-  let service: VehiculoService;
-  let servicioUser: UserService;
+let service: VehiculoService;
+let servicioUser: UserService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({

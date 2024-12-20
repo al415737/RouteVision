@@ -1,17 +1,17 @@
 import { inject, Injectable } from '@angular/core';
 import { addDoc, collection, Firestore } from '@angular/fire/firestore';
-import { deleteDoc, doc, getDocs, query, where } from 'firebase/firestore';
+import { deleteDoc, doc, DocumentReference, getDocs, query, setDoc, where } from 'firebase/firestore';
 import { User } from '../../modelos/user';
 import { AuthService } from './auth.service';
 import { MailExistingException } from '../../excepciones/mail-existing-exception';
 import { Vehiculo } from '../../modelos/vehiculo';
 import { Auth, getAuth } from '@angular/fire/auth';
+import { Place } from '../../modelos/place';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FirestoreService {
-
   private _authState = inject(AuthService);
   private auth = inject(Auth);
 
@@ -87,6 +87,46 @@ export class FirestoreService {
         data['consumo']
       );
      }); 
+  }
+
+
+  //IRENE ------------------------------------------------------------------------------------------------------------------------
+
+  async getAutoIdReference(collectionPath: string): Promise<DocumentReference> {
+    // Crea una referencia con un ID único automáticamente
+    const _collection = collection(this._firestore, collectionPath); // Obtener la colección
+    const docRef = doc(_collection); // Crear una referencia sin ID especificado
+    return docRef; // Retorna la referencia con ID único
+  }
+
+  async createPlaceC(place: Place, path: string) {
+    const _collection = collection(this._firestore, path);
+
+    const usuario = getAuth().currentUser;
+    const uid = usuario?.uid;
     
+    const docRef = doc(_collection, place.idPlace); // Crea una referencia con un ID único
+    const idPlace = docRef.id;
+    
+    const objetoPlano = { ...place, idPlace, uid };   //se sobreescribe el idPlace de la clase
+    return setDoc(docRef, objetoPlano);
+  }
+
+  async deletePlace(path: string, idPlace: string){
+    const docRef: DocumentReference = doc(this._firestore, path, idPlace);
+    await deleteDoc(docRef);
+  }
+
+  async createPlaceT(place: Place, path: string) {
+    const _collection = collection(this._firestore, path);
+
+    const usuario = getAuth().currentUser;
+    //const uid = usuario?.uid;
+    
+    const docRef = doc(_collection, place.idPlace); // Crea una referencia con un ID único
+    const idPlace = docRef.id;
+    
+    const objetoPlano = { ...place, idPlace};   //se sobreescribe el idPlace de la clase -- hemos quitado uid
+    return setDoc(docRef, objetoPlano);
   }
 }
