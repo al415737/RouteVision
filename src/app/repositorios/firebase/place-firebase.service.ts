@@ -31,6 +31,7 @@ export class PlaceFirebaseService implements PlaceRepository{
 
         this.toponimo = await firstValueFrom(this.geocoding.getToponimo(coordenadas));
         //esta línea convierte el valor a una promesa
+        let lugar = this.toponimo.features[0].properties.name;
         
         /*.subscribe(
             (respone: any) => {
@@ -42,7 +43,7 @@ export class PlaceFirebaseService implements PlaceRepository{
         const idPlace = docRef.id;
     
 
-        const placeRegisterC: Place = new Place(idPlace, this.toponimo, coordenadas);
+        const placeRegisterC: Place = new Place(idPlace, lugar, coordenadas);
 
         await this.firestore.createPlaceC(placeRegisterC, PATHPLACE);
         return placeRegisterC;

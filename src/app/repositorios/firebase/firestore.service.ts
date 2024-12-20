@@ -114,7 +114,6 @@ export class FirestoreService {
     const idPlace = docRef.id;
     
     const objetoPlano = { ...place, idPlace, uid }; 
-      //se sobreescribe el idPlace de la clase
     console.log(objetoPlano);
     return setDoc(docRef, objetoPlano);
   }

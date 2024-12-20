@@ -18,4 +18,7 @@ export class GeocodingService {
     const url = `https://api.openrouteservice.org/geocode/search?api_key=${this.apiKey}&text=${toponimo}`;
     return this.http.get(url);
   }
+
+
+  
 }
