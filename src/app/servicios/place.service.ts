@@ -1,21 +1,15 @@
 import { Inject, Injectable } from '@angular/core'; 
-import { Inject, Injectable } from '@angular/core'; 
 import { InvalidCoordenatesException } from '../excepciones/invalid-coordenates-exception';
 import { Place } from '../modelos/place';
-import { PLACE_REPOSITORY_TOKEN, PlaceRepository } from '../repositorios/interfaces/place-repository';
-
+import { PlaceRepository, PLACE_REPOSITORY_TOKEN } from '../repositorios/interfaces/place-repository';
 
 const pathPlace = 'place';
-import { PlaceRepository, PLACE_REPOSITORY_TOKEN } from '../repositorios/interfaces/place-repository';
 
 @Injectable({
   providedIn: 'root'
 })
 
 export class PlaceService {
-  static createPlaceC(arg0: number[]) {
-    throw new Error('Method not implemented.');
-  }
   constructor(@Inject(PLACE_REPOSITORY_TOKEN) private placeRepositorio: PlaceRepository) { }
 
   createPlaceC(coordenadas: number[]){
@@ -33,23 +27,6 @@ export class PlaceService {
     
     return this.placeRepositorio.createPlaceC(coordenadas);
   } 
-  constructor(@Inject(PLACE_REPOSITORY_TOKEN) private placeRepo: PlaceRepository) { }
-
-  createPlaceC(idPlace: string, coordenadas: number[]){
-    return null;
-  }
-
-  createPlaceT(idPlace: string, toponimo: string){
-    return null;
-  }  
-
-  getPlaces(){
-    return this.placeRepo.getPlaces();
-    }
-
-  deletePlace(idPlace: string){
-    return this.placeRepositorio.deletePlace(idPlace);
-  }
 
   createPlaceT(toponimo: string){
     if (toponimo == null || toponimo == '') {
@@ -58,4 +35,13 @@ export class PlaceService {
     
     return this.placeRepositorio.createPlaceT(toponimo);
   }
+
+  getPlaces(){
+    return this.placeRepositorio.getPlaces();
+    }
+
+  deletePlace(idPlace: string){
+    return this.placeRepositorio.deletePlace(idPlace);
+  }
+
 }

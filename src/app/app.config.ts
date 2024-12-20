@@ -10,6 +10,7 @@ import { VEHICULO_REPOSITORY_TOKEN } from './repositorios/interfaces/vehiculo-re
 import { VehiculoFirebaseService } from './repositorios/firebase/vehiculo-firebase.service';
 import { PlaceFirebaseService } from './repositorios/firebase/place-firebase.service';
 import { PLACE_REPOSITORY_TOKEN } from './repositorios/interfaces/place-repository';
+import { provideHttpClient } from '@angular/common/http';
 
 export const firebaseConfig = {
   apiKey: "AIzaSyCRNYco212t9-485Csb1LyYvzHGpWhak08",
@@ -24,6 +25,7 @@ export const firebaseConfig = {
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }), 
+    provideHttpClient(),
     provideRouter(routes, withComponentInputBinding()), 
     provideFirebaseApp(() => initializeApp(firebaseConfig)),
     provideAuth(() => getAuth()), provideFirestore(() => getFirestore()),
@@ -31,8 +33,7 @@ export const appConfig: ApplicationConfig = {
      },
      {
       provide: VEHICULO_REPOSITORY_TOKEN, useClass: VehiculoFirebaseService
-     }
-    { provide: USER_REPOSITORY_TOKEN, useClass: UserFirebaseService },
+     }, 
     { provide: PLACE_REPOSITORY_TOKEN, useClass: PlaceFirebaseService }
   ]
 };
