@@ -21,7 +21,7 @@ import { firstValueFrom, of } from 'rxjs';
 describe('PlaceService', () => {
   let servicePlace: PlaceService;
   let serviceUser: UserService;
-  let geocodinRepositorio: GeocodingService;
+  let geocodingRepositorio: GeocodingService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -39,7 +39,7 @@ describe('PlaceService', () => {
 
     servicePlace = TestBed.inject(PlaceService);
     serviceUser = TestBed.inject(UserService);
-    geocodinRepositorio = TestBed.inject(GeocodingService); 
+    geocodingRepositorio = TestBed.inject(GeocodingService); 
   });
   
 
@@ -98,6 +98,7 @@ describe('PlaceService', () => {
       // {NombreCiudad = “Bilbao”, Coordenadas = [Latitud: 43.26271, Longitud: -2.92528]}].      expect(createPlace).toBeInstanceOf(Place);
       expect(createPlaceT).toBeInstanceOf(Place);
       expect(createPlaceT.idPlace).toBeDefined(); 
+      await servicePlace.deletePlace(createPlaceT.idPlace);
       await servicePlace.deletePlace(place.idPlace);
     });
   }); 

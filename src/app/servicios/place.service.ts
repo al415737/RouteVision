@@ -11,6 +11,9 @@ const pathPlace = 'place';
 })
 
 export class PlaceService {
+  static deletePlace(arg0: string) {
+      throw new Error('Method not implemented.');
+  }
   static createPlaceC(arg0: number[]) {
     throw new Error('Method not implemented.');
   }
