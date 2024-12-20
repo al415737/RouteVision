@@ -1,10 +1,11 @@
 import { inject, Injectable } from '@angular/core';
 import { addDoc, collection, Firestore } from '@angular/fire/firestore';
-import { deleteDoc, doc, getDocs, query, where } from 'firebase/firestore';
+import { deleteDoc, doc, DocumentReference, getDocs, query, setDoc, where } from 'firebase/firestore';
 import { User } from '../../modelos/user';
 import { AuthService } from './auth.service';
 import { MailExistingException } from '../../excepciones/mail-existing-exception';
-import { getAuth } from 'firebase/auth';
+import { Vehiculo } from '../../modelos/vehiculo';
+import { getAuth } from '@angular/fire/auth';
 import { Place } from '../../modelos/place';
 import { AuthStateService } from '../../utils/auth-state.service';
 
@@ -59,21 +60,97 @@ export class FirestoreService {
       await this._auth.delete();
   }
 
-  async getPlaces(){
-    const _collection = collection(this._firestore, "place");
-    const consulta = query(_collection, where("uid", '==', this._authState.currentUser?.uid));
-    //const consulta = query(_collection);
+  async createVehiculo(vehiculo: Vehiculo, path: string) {
+      const _collection = collection(this._firestore, path); 
+      const usuario = getAuth().currentUser;
+      const uid = usuario?.uid;
+    
+      const objetoPlano = { ...vehiculo, uid };
+      return addDoc(_collection, objetoPlano);
+  }
 
-    const docs = await getDocs(consulta);
+  async eliminarVehiculo(path: string, id: string){
+      const docRef = doc(this._firestore, path, id);
+      await deleteDoc(docRef);
+  }
 
-    return docs.docs.map(doc => { 
+  async consultarVehiculo(path: string){
+    const _collection = collection(this._firestore, path);
+    const uid = getAuth().currentUser;
+
+    const consulta = query(_collection, where("uid", '==', uid?.uid));
+    const documentos = await getDocs(consulta);
+
+    //Se puede hacer de dos manera: devolviendo directamente objetos planos o transformando los documentos en instancias de la clase vehículo
+    return documentos.docs.map(doc => { 
+      const data = doc.data();
+      return new Vehiculo(
+        data['matricula'], 
+        data['marca'],
+        data['modelo'],
+        data['año_fabricacion'],
+        data['consumo']
+      );
+     }); 
+  }
+
+
+  //IRENE ------------------------------------------------------------------------------------------------------------------------
+
+  async getAutoIdReference(collectionPath: string): Promise<DocumentReference> {
+    // Crea una referencia con un ID único automáticamente
+    const _collection = collection(this._firestore, collectionPath); // Obtener la colección
+    const docRef = doc(_collection); // Crear una referencia sin ID especificado
+    return docRef; // Retorna la referencia con ID único
+  }
+
+  async createPlaceC(place: Place, path: string) {
+    const _collection = collection(this._firestore, path);
+
+    const usuario = getAuth().currentUser;
+    const uid = usuario?.uid;
+    
+    const docRef = doc(_collection, place.idPlace); // Crea una referencia con un ID único
+    const idPlace = docRef.id;
+    
+    const objetoPlano = { ...place, idPlace, uid };   //se sobreescribe el idPlace de la clase
+    return setDoc(docRef, objetoPlano);
+  }
+
+  async deletePlace(path: string, idPlace: string){
+    const docRef: DocumentReference = doc(this._firestore, path, idPlace);
+    await deleteDoc(docRef);
+  }
+
+  async createPlaceT(place: Place, path: string) {
+    const _collection = collection(this._firestore, path);
+
+    const usuario = getAuth().currentUser;
+    //const uid = usuario?.uid;
+    
+    const docRef = doc(_collection, place.idPlace); // Crea una referencia con un ID único
+    const idPlace = docRef.id;
+    
+    const objetoPlano = { ...place, idPlace};   //se sobreescribe el idPlace de la clase -- hemos quitado uid
+    return setDoc(docRef, objetoPlano);
+  }
+
+  async getPlaces(): Promise<any[]> {
+    const places: any[] = [];
+
+    // Referencia a la subcolección listaLugares dentro del documento del usuario
+    const listaLugaresRef = collection(this._firestore, `Lugar/${this._authState.currentUser?.uid}/listaLugaresInterés`);
+    
+    // Obtener todos los documentos de la subcolección
+    const querySnapshot = await getDocs(listaLugaresRef);
+
+    return querySnapshot.docs.map(doc => { 
       const data = doc.data();
       return new Place(
-        data['idPlace'], 
+        data['IdPlace'], 
         data['toponimo'],
-        data['coordenadas']
+        data['coordenadas'],
       );
      }); 
   }
 }
-

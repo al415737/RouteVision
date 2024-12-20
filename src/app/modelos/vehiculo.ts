@@ -3,9 +3,9 @@ export class Vehiculo {
     private marca: string;
     private modelo: string;
     private año_fabricacion: string;
-    private consumo: string;
+    private consumo: number;
 
-    constructor (matricula: string, marca: string, modelo: string, año_fabricacion: string, consumo: string) {
+    constructor (matricula: string, marca: string, modelo: string, año_fabricacion: string, consumo: number) {
         this.matricula = matricula;
         this.marca = marca;
         this.modelo = modelo;

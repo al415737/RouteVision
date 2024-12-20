@@ -6,6 +6,8 @@ import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { USER_REPOSITORY_TOKEN } from './repositorios/interfaces/user-repository';
 import { UserFirebaseService } from './repositorios/firebase/user-firebase.service';
+import { VEHICULO_REPOSITORY_TOKEN } from './repositorios/interfaces/vehiculo-repository';
+import { VehiculoFirebaseService } from './repositorios/firebase/vehiculo-firebase.service';
 import { PlaceFirebaseService } from './repositorios/firebase/place-firebase.service';
 import { PLACE_REPOSITORY_TOKEN } from './repositorios/interfaces/place-repository';
 
@@ -25,6 +27,11 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withComponentInputBinding()), 
     provideFirebaseApp(() => initializeApp(firebaseConfig)),
     provideAuth(() => getAuth()), provideFirestore(() => getFirestore()),
+    { provide: USER_REPOSITORY_TOKEN, useClass: UserFirebaseService
+     },
+     {
+      provide: VEHICULO_REPOSITORY_TOKEN, useClass: VehiculoFirebaseService
+     }
     { provide: USER_REPOSITORY_TOKEN, useClass: UserFirebaseService },
     { provide: PLACE_REPOSITORY_TOKEN, useClass: PlaceFirebaseService }
   ]
