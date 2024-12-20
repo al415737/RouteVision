@@ -105,7 +105,7 @@ describe('VehiculoIntegrationService', () => {
         spyOn(vehiRepo, 'consultarVehiculo').and.resolveTo(mockData);
 
         //When: Ana consulta los vehículos.
-        const vehiculos = await vehiculoService.consultarVehiculo();
+        const vehiculos = await vehiculoService.consultarVehiculo(); 
 
         expect(vehiRepo.consultarVehiculo).toHaveBeenCalled();
 
