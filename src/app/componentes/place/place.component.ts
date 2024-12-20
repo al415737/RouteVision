@@ -21,6 +21,7 @@ export default class PlaceComponent {
     this._userService.loginUser("test@test.com", "test123");
     await new Promise(f => setTimeout(f, 1000));
     this.places = await this._placeService.getPlaces();
+    console.log(this.places);
   }
 
 }

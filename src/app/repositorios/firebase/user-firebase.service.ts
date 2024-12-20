@@ -34,7 +34,7 @@ export class UserFirebaseService implements UserRepository{
     return [[],[]];
   }
 
-  async logoutUser() {
+  async logoutUser(): Promise<void> {
     await this._auth.logout();
   }
 }

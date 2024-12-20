@@ -9,5 +9,5 @@ export interface UserRepository {
     createUser(nombre: string, apellidos: string, email: string, user: string, password: string): Promise<User>;
     deleteUser(email: string): void;
     loginUser(email: string, password: string): Promise<[Vehiculo[], Place[]]>;
-    logoutUser(): any;
+    logoutUser(): Promise<void>;
 }

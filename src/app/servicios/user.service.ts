@@ -20,8 +20,8 @@ export class UserService {
     return this.userRepo.loginUser(email, password);
   }
 
-  logoutUser() {
-    this.userRepo.logoutUser();
+  async logoutUser(): Promise<void> {
+    await this.userRepo.logoutUser();
   }
 
 }

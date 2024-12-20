@@ -37,15 +37,13 @@
     <table>
       <thead>
         <tr>
-          <th>ID</th>
           <th>Topónimo</th>
           <th>Coordenadas</th>
         </tr>
       </thead>
       <tbody>
-        @for (place of places; track place.getIdPlace) {
+        @for (place of places; track place.idPlace) {
         <tr>
-          <td>{{ place.getIdPlace() }}</td>
           <td>{{ place.getToponimo() }}</td>
           <td>{{ place.getCoordenadas()}}</td>
         </tr>

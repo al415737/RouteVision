@@ -10,7 +10,7 @@ export class GeocodingService {
   constructor(private http: HttpClient) { }
 
   getToponimo(coordenadas: number[]) {
-    const url = `https://api.openrouteservice.org/geocode/reverse?api_key=${this.apiKey}&point.lon=${coordenadas[1]}&point.lat=${coordenadas[0]}`;
+    const url = `https://api.openrouteservice.org/geocode/reverse?api_key=${this.apiKey}&point.lon=${coordenadas[1]}&point.lat=${coordenadas[0]}&boundary.circle.radius=1`;
     return this.http.get(url);
   }
 

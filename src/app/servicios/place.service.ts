@@ -1,7 +1,10 @@
-import { Inject, Injectable } from '@angular/core'; 
+import { inject, Inject, Injectable } from '@angular/core'; 
 import { InvalidCoordenatesException } from '../excepciones/invalid-coordenates-exception';
 import { Place } from '../modelos/place';
 import { PlaceRepository, PLACE_REPOSITORY_TOKEN } from '../repositorios/interfaces/place-repository';
+import { AuthStateService } from '../utils/auth-state.service';
+import { throwError } from 'rxjs';
+import { ServerNotOperativeException } from '../excepciones/server-not-operative-exception';
 
 const pathPlace = 'place';
 
@@ -10,6 +13,7 @@ const pathPlace = 'place';
 })
 
 export class PlaceService {
+  private _authState: AuthStateService = inject(AuthStateService);
   constructor(@Inject(PLACE_REPOSITORY_TOKEN) private placeRepositorio: PlaceRepository) { }
 
   createPlaceC(coordenadas: number[]){

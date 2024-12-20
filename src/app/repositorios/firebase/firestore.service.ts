@@ -8,6 +8,7 @@ import { Vehiculo } from '../../modelos/vehiculo';
 import { getAuth } from '@angular/fire/auth';
 import { Place } from '../../modelos/place';
 import { AuthStateService } from '../../utils/auth-state.service';
+import { ServerNotOperativeException } from '../../excepciones/server-not-operative-exception';
 
 @Injectable({
   providedIn: 'root'
@@ -107,13 +108,12 @@ export class FirestoreService {
   async createPlaceC(place: Place, path: string) {
     const _collection = collection(this._firestore, path);
 
-    const usuario = getAuth().currentUser;
-    const uid = usuario?.uid;
     
     const docRef = doc(_collection, place.idPlace); // Crea una referencia con un ID único
     const idPlace = docRef.id;
     
-    const objetoPlano = { ...place, idPlace, uid };   //se sobreescribe el idPlace de la clase
+    const objetoPlano = { ...place, idPlace };   //se sobreescribe el idPlace de la clase
+
     return setDoc(docRef, objetoPlano);
   }
 
@@ -136,21 +136,28 @@ export class FirestoreService {
   }
 
   async getPlaces(): Promise<any[]> {
-    const places: any[] = [];
+    try {
+      if (this._authState.currentUser == null) {
+        throw new ServerNotOperativeException();
+      }
+        // Referencia a la subcolección listaLugares dentro del documento del usuario
+      const listaLugaresRef = collection(this._firestore, `Lugar/${this._authState.currentUser?.uid}/listaLugaresInterés`);
+      
+      // Obtener todos los documentos de la subcolección
+      const querySnapshot = await getDocs(listaLugaresRef);
 
-    // Referencia a la subcolección listaLugares dentro del documento del usuario
-    const listaLugaresRef = collection(this._firestore, `Lugar/${this._authState.currentUser?.uid}/listaLugaresInterés`);
+      return querySnapshot.docs.map(doc => { 
+        const data = doc.data();
+        return new Place(
+          data['idPlace'], 
+          data['toponimo'],
+          data['coordenadas'],
+        );
+      }); 
+    } catch (error) {
+      throw new ServerNotOperativeException();
+    }
+
     
-    // Obtener todos los documentos de la subcolección
-    const querySnapshot = await getDocs(listaLugaresRef);
-
-    return querySnapshot.docs.map(doc => { 
-      const data = doc.data();
-      return new Place(
-        data['IdPlace'], 
-        data['toponimo'],
-        data['coordenadas'],
-      );
-     }); 
   }
 }

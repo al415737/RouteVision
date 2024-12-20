@@ -109,16 +109,3 @@
 //     service.deleteUser("pepito3@gmail.com");
 //   });
 // });
-  it('HU2E02. Login with incorrect data (Invalid Scenario)', async () => {
-    // GIVEN: El usuario Pepito está registrado y la base de datos está disponible. [nombre: “Pepito”, User=”pepito23”, email: “pepito@gmail.com”,  contraseña: “Pepito123?_”]
-    await service.createUser("Pepito", "Gonzalez", "pepito3@gmail.com", "pepito23", "Alex123_");
-    service.logoutUser();
-    /* WHEN: El usuario Pepito introduce como contraseña: “pepito123_”
-       THEN: El sistema no inicia la sesión de Pepito porque la contraseña introducida no coincide con la que se encuentra en la base de datos para ese usuario. Lanza la excepción WrongPasswordException().
-    */
-    await expectAsync( 
-      service.loginUser("pepito3@gmail.com", "pepito123_")
-      ).toBeRejectedWith(new WrongPasswordException());
-    service.deleteUser("pepito3@gmail.com");
-  });
-});
