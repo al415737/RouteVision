@@ -35,16 +35,14 @@ let servicioUser: UserService;
     service = TestBed.inject(VehiculoService);
     servicioUser = TestBed.inject(UserService);
   });
-
-
-
-  fdescribe('VehiculoService', () => {
+  
     it('HU9E01. Vehículo registrado en el sistema (Escenario Válido)', async () => {
         //GIVEN: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] con listaVehículos-Ana2002 = [ ].
         servicioUser.loginUser("test@test.com", "test123");
 
         //WHEN: El usuario intenta dar de alta un vehículo → [Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1].
         const resul = await service.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1);
+        console.log(resul);
 
         //THEN: El sistema registra el vehículo en la parte de la base de datos dirigida a Ana2002 →  listaVehículos-Ana2002= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1}].      
         expect(resul).toBeInstanceOf(Vehiculo);
@@ -65,8 +63,7 @@ let servicioUser: UserService;
             expect(error).toBeInstanceOf(NullLicenseException);
         }
       } finally {
-          await service.eliminarVehiculo("1234 BBB");
+          service.eliminarVehiculo("1234 BBB");
       }
     });
-  });
 });
