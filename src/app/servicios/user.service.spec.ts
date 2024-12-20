@@ -103,9 +103,9 @@ describe('UserService', () => {
     /* WHEN: El usuario Pepito introduce como contraseña: “pepito123_”
        THEN: El sistema no inicia la sesión de Pepito porque la contraseña introducida no coincide con la que se encuentra en la base de datos para ese usuario. Lanza la excepción WrongPasswordException().
     */
-    await expectAsync(() => {
-      service.loginUser("pepito3@gmail.com", "pepito123_");
-              }).toBeRejectedWith(new WrongPasswordException());
+    await expectAsync( 
+      service.loginUser("pepito3@gmail.com", "pepito123_")
+      ).toBeRejectedWith(new WrongPasswordException());
     service.deleteUser("pepito3@gmail.com");
   });
 });
