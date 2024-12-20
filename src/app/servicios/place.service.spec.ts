@@ -106,8 +106,8 @@ describe('PlaceService', () => {
       // {NombreCiudad = “Bilbao”, Coordenadas = [Latitud: 43.26271, Longitud: -2.92528]}].      expect(createPlace).toBeInstanceOf(Place);
       expect(createPlaceT).toBeInstanceOf(Place);
       expect(createPlaceT.idPlace).toBeDefined(); 
-      await servicePlace.deletePlace(createPlaceT.idPlace);
-      await servicePlace.deletePlace(place.idPlace);
+      //await servicePlace.deletePlace(createPlaceT.idPlace);
+      //await servicePlace.deletePlace(place.idPlace);
 
     });
   }); 

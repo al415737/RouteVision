@@ -126,12 +126,12 @@ export class FirestoreService {
     const _collection = collection(this._firestore, path);
 
     const usuario = getAuth().currentUser;
-    const uid = usuario?.uid;
+    //const uid = usuario?.uid;
     
     const docRef = doc(_collection, place.idPlace); // Crea una referencia con un ID único
     const idPlace = docRef.id;
     
-    const objetoPlano = { ...place, idPlace, uid };   //se sobreescribe el idPlace de la clase
+    const objetoPlano = { ...place, idPlace};   //se sobreescribe el idPlace de la clase -- hemos quitado uid
     return setDoc(docRef, objetoPlano);
   }
 }

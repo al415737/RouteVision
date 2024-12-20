@@ -63,11 +63,9 @@ export class PlaceFirebaseService implements PlaceRepository{
             this.coordenadas = await new Promise((resolve, reject) => {
                 this.geocoding.getCoordenadas(toponimo).subscribe({
                     next: (response: any) => {
-                        console.log('Respuesta de geocoding:', response.features);
                         if (!response.features || response.features.length === 0) {
                             reject(new InvalidPlaceException());
                         } else {
-                            console.log('HOLA:', response);
                             resolve(response.features[0].geometry.coordinates);
                         }
                     },
