@@ -1,12 +1,13 @@
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
-
 import { routes } from './app.routes';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
+import { USER_REPOSITORY_TOKEN } from './repositorios/interfaces/user-repository';
+import { UserFirebaseService } from './repositorios/firebase/user-firebase.service';
 
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: "AIzaSyCRNYco212t9-485Csb1LyYvzHGpWhak08",
   authDomain: "routevisionadis.firebaseapp.com",
   projectId: "routevisionadis",
@@ -21,6 +22,7 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }), 
     provideRouter(routes), 
     provideFirebaseApp(() => initializeApp(firebaseConfig)),
-    provideAuth(() => getAuth()), provideFirestore(() => getFirestore())
+    provideAuth(() => getAuth()), provideFirestore(() => getFirestore()),
+    { provide: USER_REPOSITORY_TOKEN, useClass: UserFirebaseService }
   ]
 };
