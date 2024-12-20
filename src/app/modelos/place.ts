@@ -1,5 +1,5 @@
 export class Place {
-    private idPlace: string;
+    public idPlace: string;
     private toponimo: string;
     private coordenadas: number[];
 

@@ -22,4 +22,13 @@ export class UserService {
 
     this.userRepo.deleteUser(email);
   }
+
+  loginUser(email: string, password: string) {
+    return this.userRepo.loginUser(email, password);
+  }
+
+  logoutUser() {
+    this.userRepo.logoutUser();
+  }
+
 }

@@ -1,27 +1,38 @@
-import { Injectable } from '@angular/core'; 
+import { Inject, Injectable } from '@angular/core'; 
 import { InvalidCoordenatesException } from '../excepciones/invalid-coordenates-exception';
 import { Place } from '../modelos/place';
+import { PLACE_REPOSITORY_TOKEN, PlaceRepository } from '../repositorios/interfaces/place-repository';
+
+
+const pathPlace = 'place';
 
 @Injectable({
   providedIn: 'root'
 })
 
 export class PlaceService {
-  constructor() { }
-
-  createPlaceC(idPlace: string, coordenadas: number[]){
-    return null;
+  static createPlaceC(arg0: number[]) {
+    throw new Error('Method not implemented.');
   }
+  constructor(@Inject(PLACE_REPOSITORY_TOKEN) private placeRepositorio: PlaceRepository) { }
 
-  createPlaceT(idPlace: string, toponimo: string){
-    return null;
-  }  
-
-  getPlaces(user: string){
-    return null;
-  }
+  createPlaceC(coordenadas: number[]){
+    if (coordenadas.length != 2) {
+      throw new InvalidCoordenatesException();
+    }
+    
+    //latitud - coordenadas[0] --> [-90 y +90]
+    //longitud - coordenadas[1] --> [-180 y +180]
+    if(coordenadas[0] < -90 || coordenadas[0] > 90){
+        throw new InvalidCoordenatesException();
+    } else if(coordenadas[1] < -180 || coordenadas[1] > 180){
+        throw new InvalidCoordenatesException();
+    }
+    
+    return this.placeRepositorio.createPlaceC(coordenadas);
+  } 
 
   deletePlace(idPlace: string){
-    return null;
+    return this.placeRepositorio.deletePlace(idPlace);
   }
 }

@@ -1,14 +1,19 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { addDoc, collection, Firestore } from '@angular/fire/firestore';
-import { deleteDoc, doc, getDocs, query, where } from 'firebase/firestore';
+import { deleteDoc, doc, DocumentReference, getDocs, query, setDoc, where } from 'firebase/firestore';
 import { User } from '../../modelos/user';
 import { AuthService } from './auth.service';
 import { MailExistingException } from '../../excepciones/mail-existing-exception';
+import { Vehiculo } from '../../modelos/vehiculo';
+import { Auth, getAuth } from '@angular/fire/auth';
+import { Place } from '../../modelos/place';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FirestoreService {
+  private _authState = inject(AuthService);
+  private auth = inject(Auth);
 
   private constructor(private _firestore: Firestore, private _auth: AuthService) { }
 
@@ -54,4 +59,67 @@ export class FirestoreService {
     if (PATH == 'user')
       await this._auth.delete();
   }
+
+  async createVehiculo(vehiculo: Vehiculo, path: string) {
+      const _collection = collection(this._firestore, path); 
+      const usuario = getAuth().currentUser;
+      const uid = usuario?.uid;
+    
+      const objetoPlano = { ...vehiculo, uid };
+      return addDoc(_collection, objetoPlano);
+  }
+
+  async eliminarVehiculo(path: string, id: string){
+      const docRef = doc(this._firestore, path, id);
+      await deleteDoc(docRef);
+  }
+
+  async consultarVehiculo(path: string){
+    const _collection = collection(this._firestore, path);
+    const uid = getAuth().currentUser;
+
+    const consulta = query(_collection, where("uid", '==', uid?.uid));
+    const documentos = await getDocs(consulta);
+
+    //Se puede hacer de dos manera: devolviendo directamente objetos planos o transformando los documentos en instancias de la clase vehículo
+    return documentos.docs.map(doc => { 
+      const data = doc.data();
+      return new Vehiculo(
+        data['matricula'], 
+        data['marca'],
+        data['modelo'],
+        data['año_fabricacion'],
+        data['consumo']
+      );
+     }); 
+  }
+
+
+  //IRENE ------------------------------------------------------------------------------------------------------------------------
+
+  async getAutoIdReference(collectionPath: string): Promise<DocumentReference> {
+    // Crea una referencia con un ID único automáticamente
+    const _collection = collection(this._firestore, collectionPath); // Obtener la colección
+    const docRef = doc(_collection); // Crear una referencia sin ID especificado
+    return docRef; // Retorna la referencia con ID único
+  }
+
+  async createPlaceC(place: Place, path: string) {
+    const _collection = collection(this._firestore, path);
+
+    const usuario = getAuth().currentUser;
+    const uid = usuario?.uid;
+    
+    const docRef = doc(_collection, place.idPlace); // Crea una referencia con un ID único
+    const idPlace = docRef.id;
+    
+    const objetoPlano = { ...place, idPlace, uid };   //se sobreescribe el idPlace de la clase
+    return setDoc(docRef, objetoPlano);
+  }
+
+  async deletePlace(path: string, idPlace: string){
+    const docRef: DocumentReference = doc(this._firestore, path, idPlace);
+    await deleteDoc(docRef);
+  }
+
 }
