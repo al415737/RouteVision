@@ -91,11 +91,27 @@ describe('VehiculoIntegrationService', () => {
         spyOn(vehiRepo, 'consultarVehiculo').and.resolveTo(Promise.resolve(mockData));
 
         //When: El usuario pide mostrar sus vehículos.
-        const vehiculos = vehiculoService.consultarVehiculo();
+        const vehiculos = await vehiculoService.consultarVehiculo();
         expect(vehiRepo.consultarVehiculo).toHaveBeenCalled();
 
         //Then: El sistema devuelve la lista de listaVehículos =  [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}]
-        expect(vehiculos).toEqual(Promise.resolve(mockData));
+        expect(vehiculos).toEqual(mockData);
+    });
+
+    it('HU10E04. El usuario accede con una dirección de correo electrónico en la que no tiene datos guardados (Escenario Inválido)', async () => {
+        //Given:  El usuario Ana ha accedido con la dirección de correo: test1@test.com donde no tiene datos guardados. ListaVehículos = {}
+        const mockData: Vehiculo[] = [];
+
+        spyOn(vehiRepo, 'consultarVehiculo').and.resolveTo(mockData);
+
+        //When: Ana consulta los vehículos.
+        const vehiculos = await vehiculoService.consultarVehiculo();
+
+        expect(vehiRepo.consultarVehiculo).toHaveBeenCalled();
+
+        //Then: El sistema no muestra ningún dato.
+        expect(vehiculos).toEqual(mockData);
+        
     });
 
 });
