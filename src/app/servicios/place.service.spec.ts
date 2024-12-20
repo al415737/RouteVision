@@ -49,13 +49,11 @@ describe('PlaceService', () => {
 
       // GIVEN: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] quiere dar de alta un nuevo lugar de interés. La API está disponible → lugaresInteres-Ana2002 = [ ].
       await serviceUser.loginUser("test@test.com", "test123"); 
-      spyOn(geocodinRepositorio, "getToponimo").and.returnValue(of({toponimo: 'Castellón de la Plana'}));
-      
-      const result = await firstValueFrom(geocodinRepositorio.getToponimo([39.98, -0.049]));
-      expect(result).toEqual({toponimo: 'Castellón de la Plana'});
+
 
       // WHEN: Intenta dar de alta un lugar de interés → Coordenadas = [Latitud: 39.98, Longitud: -0.049]
       const createPlace = await servicePlace.createPlaceC([39.98, -0.049]);
+
 
       // THEN: El sistema registra el lugar de interés de Ana2002. → placeListAna2002 = [{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049]}, idLugar = “000”}.    
       expect(createPlace).toBeInstanceOf(Place);
@@ -80,7 +78,6 @@ describe('PlaceService', () => {
   });
 
 
-
   //HISTORIA 6 -------------------------------------
   fdescribe('PlaceService', () => {
     it('HU6E01. Registro de lugar de interés con un topónimo correcto (Escenario Válido):', async () => {
@@ -90,11 +87,6 @@ describe('PlaceService', () => {
       // 39.98, Longitud: -0.049]}].      
       await serviceUser.loginUser("test@test.com", "test123"); 
       const place = await servicePlace.createPlaceT('Castellón de la Plana');
-
-      //spyOn(geocodinRepositorio, "getCoordenadas").and.returnValue(of({coordenadas: [43.26, -2.93]}));
-      
-      // const result = await firstValueFrom(geocodinRepositorio.getCoordenadas('Bilbao'));
-      // expect(result).toEqual({coordenadas: [43.26, -2.93]});
 
 
       // WHEN: Intenta dar de alta un lugar de interés → Topónimo = 'Bilbao'
@@ -106,9 +98,7 @@ describe('PlaceService', () => {
       // {NombreCiudad = “Bilbao”, Coordenadas = [Latitud: 43.26271, Longitud: -2.92528]}].      expect(createPlace).toBeInstanceOf(Place);
       expect(createPlaceT).toBeInstanceOf(Place);
       expect(createPlaceT.idPlace).toBeDefined(); 
-      //await servicePlace.deletePlace(createPlaceT.idPlace);
-      //await servicePlace.deletePlace(place.idPlace);
-
+      await servicePlace.deletePlace(place.idPlace);
     });
   }); 
 
@@ -120,15 +110,12 @@ describe('PlaceService', () => {
       // Coordenadas = [Latitud: 39.98, Longitud: -0.049]}, {NombreCiudad = “Bilbao”, Coordenadas = [Latitud:
       // 43.26271, Longitud: -2.92528]}].     
       await serviceUser.loginUser("test@test.com", "test123");
-    
       const place = await servicePlace.createPlaceT('Castellón de la Plana');
       
-      // WHEN: Intenta dar de alta un lugar de interés → Topónimo = “Cassjdlftellfisonon”.   
-      
+      // WHEN: Intenta dar de alta un lugar de interés → Topónimo = “Cassjdlftellfisonon”.      
       // THEN: El sistem+a no registra el lugar de interés y se genera la excepción InvalidPlaceException().
       await expectAsync(servicePlace.createPlaceT('Cassjdlftellfisonon'))
       .toBeRejectedWith(new InvalidPlaceException());
-
       await servicePlace.deletePlace(place.idPlace);
     });
   });

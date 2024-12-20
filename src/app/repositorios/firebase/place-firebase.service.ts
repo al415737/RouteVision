@@ -8,6 +8,7 @@ import { InvalidCoordenatesException } from '../../excepciones/invalid-coordenat
 import { GeocodingService } from '../../APIs/Geocoding/geocoding.service';
 import { subscribe } from 'firebase/data-connect';
 import { getAuth } from 'firebase/auth';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -28,11 +29,14 @@ export class PlaceFirebaseService implements PlaceRepository{
         const uid = getAuth().currentUser?.uid;
         const PATHPLACE = `Lugar/${uid}/listaLugaresInterés`
 
-        this.geocoding.getToponimo(coordenadas).subscribe(
+        this.toponimo = await firstValueFrom(this.geocoding.getToponimo(coordenadas));
+        //esta línea convierte el valor a una promesa
+        
+        /*.subscribe(
             (respone: any) => {
                 this.toponimo = respone;    
             },
-        );
+        );*/
 
         const docRef = await this.firestore.getAutoIdReference(PATHPLACE); // Método que retorna un `DocumentReference`
         const idPlace = docRef.id;

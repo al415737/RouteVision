@@ -113,7 +113,9 @@ export class FirestoreService {
     const docRef = doc(_collection, place.idPlace); // Crea una referencia con un ID único
     const idPlace = docRef.id;
     
-    const objetoPlano = { ...place, idPlace, uid };   //se sobreescribe el idPlace de la clase
+    const objetoPlano = { ...place, idPlace, uid }; 
+      //se sobreescribe el idPlace de la clase
+    console.log(objetoPlano);
     return setDoc(docRef, objetoPlano);
   }
 
