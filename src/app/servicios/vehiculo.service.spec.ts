@@ -68,5 +68,36 @@ let servicioUser: UserService;
           await service.eliminarVehiculo("1234 BBB");
       }
     });
+
+    it('HU10E01. Consulta de vehículos dados de alta (Escenario Válido)', async () => {
+      
+      //Given: El usuario Ana con la sesión iniciada y la listaVehículos = [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1}].
+      await servicioUser.loginUser("test@test.com", "test123"); 
+      await service.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1);
+      
+      //When: El usuario pide mostrar sus vehículos.
+      const vehiculos = await service.consultarVehiculo(); 
+      
+      //Then: El sistema devuelve la lista de listaVehículos =  [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}]
+      expect(vehiculos.length).toBe(1);
+
+      vehiculos.forEach((vehiculo: any) => {
+          expect(vehiculo).toBeInstanceOf(Vehiculo);
+      });
+
+      service.eliminarVehiculo("1234 BBB");
+  
+    });
+
+    it('HU10E04. El usuario accede con una dirección de correo electrónico en la que no tiene datos guardados (Escenario Inválido)', async () => {
+        //Given:  El usuario Ana ha accedido con la dirección de correo: test1@test.com donde no tiene datos guardados. ListaVehículos = {}
+          await servicioUser.loginUser("test1@test.com", "test123");
+
+        //When: Ana consulta los vehículos.
+          const vehiculos = await service.consultarVehiculo();
+
+        //Then: El sistema no muestra ningún dato.
+        expect(vehiculos.length).toBe(0);
+    }); 
   });
 });
