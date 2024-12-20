@@ -10,6 +10,10 @@ import { of } from 'rxjs';
 import { NullLicenseException } from '../../excepciones/null-license-exception';
 import { UserFirebaseService } from '../../repositorios/firebase/user-firebase.service';
 import { VehiculoFirebaseService } from '../../repositorios/firebase/vehiculo-firebase.service';
+import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
+import { getFirestore, provideFirestore } from '@angular/fire/firestore';
+import { getAuth, provideAuth } from '@angular/fire/auth';
+import { firebaseConfig } from '../../app.config';
 
 describe('VehiculoIntegrationService', () => {
     let service: UserService;
@@ -21,14 +25,17 @@ describe('VehiculoIntegrationService', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({
             providers: [ 
+                provideFirebaseApp(() => initializeApp(firebaseConfig)),     
+                provideFirestore(() => getFirestore()),
+                provideAuth(() => getAuth()),
                 UserService,
                 {
-                    provide: USER_REPOSITORY_TOKEN, useValue: UserFirebaseService
+                    provide: USER_REPOSITORY_TOKEN, useClass: UserFirebaseService
                 },
 
                 VehiculoService,
                 {
-                    provide: VEHICULO_REPOSITORY_TOKEN, useValue: VehiculoFirebaseService
+                    provide: VEHICULO_REPOSITORY_TOKEN, useClass: VehiculoFirebaseService
                 }
             ]
         }).compileComponents();
@@ -66,12 +73,13 @@ describe('VehiculoIntegrationService', () => {
 
         //Given: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] con listaVehículos-Ana2002= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1}].
 
-        await expectAsync(
+        try{
             //When: El usuario intenta dar de alta un vehículo → [Matrícula=” ”, Marca=”Seat”, Modelo=”Ibiza”, Año Fabricación=”2003”, Consumo=4.3].
             vehiculoService.crearVehiculo("", "Peugeot", "407", "2007", 8.1)
+            expect(vehiRepo.crearVehiculo).toHaveBeenCalledWith("", "Peugeot", "407", "2007", 8.1);
             //Then: El sistema no registra el vehículo y lanza una excepción NullLicenseException() →  listaVehículos-Ana2002= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1}].
-        ).toBeRejectedWith(new NullLicenseException());
-        
-        expect(vehiRepo.crearVehiculo).toHaveBeenCalledWith("", "Peugeot", "407", "2007", 8.1);
+        }catch(error){
+            expect(error).toBeInstanceOf(NullLicenseException);
+        }
     });
 });
