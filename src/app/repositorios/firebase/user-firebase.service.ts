@@ -1,11 +1,11 @@
-import { inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { UserRepository } from '../interfaces/user-repository';
 import { User } from '../../modelos/user';
 import { FirestoreService } from './firestore.service';
 import { Place } from '../../modelos/place';
 import { Vehiculo } from '../../modelos/vehiculo';
 import { AuthService } from './auth.service';
-import { WrongPasswordException } from '../../excepciones/wrong-password-exception';
+import { UserCredential } from 'firebase/auth';
 
 
 const PATH = 'user';
@@ -24,14 +24,19 @@ export class UserFirebaseService implements UserRepository{
     return userRegister;
   }
 
-  async deleteUser(email: string) {
+  async deleteUser(email: string): Promise<void> {
     const id = await this._firestore.get('email', email, 'user');
-    await this._firestore.delete(id, 'user');
+    await this._firestore.deleteUser(id, 'user');
   }
 
   async loginUser(email: string, password: string): Promise<[Vehiculo[], Place[]]> {
-    await this._auth.signin(email, password);
-    return [[],[]];
+    const userCredential: UserCredential = await this._auth.signin(email, password);
+    const uid = userCredential.user.uid;
+
+    const places = await this._firestore.getPlaces();
+    const vehiculos = await this._firestore.consultarVehiculo(`vehiculo/${uid}/listaVehiculos`);
+
+    return [vehiculos, places];
   }
 
   async logoutUser(): Promise<void> {

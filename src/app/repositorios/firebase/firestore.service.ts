@@ -32,13 +32,6 @@ export class FirestoreService {
     }
   }
 
-  async create(object: any, PATH: string) {
-    const plainObject = { ...object };
-    const _collection = collection(this._firestore, PATH); 
-    
-    await addDoc(_collection, plainObject);
-  }
-
   async get(campo: string, valor: string, PATH: string) {
     const _collection = collection(this._firestore, PATH);
 
@@ -53,12 +46,10 @@ export class FirestoreService {
     return firstDocument.id;
   }
 
-  async delete(id: string, PATH: string) {
+  async deleteUser(id: string, PATH: string) {
     const docRef = doc(this._firestore, PATH, id);
     await deleteDoc(docRef);
-
-    if (PATH == 'user')
-      await this._auth.delete();
+    await this._auth.delete();      
   }
 
   async createVehiculo(vehiculo: Vehiculo, path: string) {
@@ -89,10 +80,7 @@ export class FirestoreService {
       );
      }); 
   }
-
-
-  //IRENE ------------------------------------------------------------------------------------------------------------------------
-
+  
   async getAutoIdReference(collectionPath: string): Promise<DocumentReference> {
     // Crea una referencia con un ID único automáticamente
     const _collection = collection(this._firestore, collectionPath); // Obtener la colección
@@ -130,7 +118,7 @@ export class FirestoreService {
     return setDoc(docRef, objetoPlano);
   }
 
-  async getPlaces(): Promise<any[]> {
+  async getPlaces(): Promise<Place[]> {
     try {
       if (this._authState.currentUser == null) {
         throw new ServerNotOperativeException();

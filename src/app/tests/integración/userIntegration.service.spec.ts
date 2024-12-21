@@ -8,6 +8,9 @@ import { firebaseConfig } from '../../app.config';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { UserFirebaseService } from '../../repositorios/firebase/user-firebase.service';
+import { Vehiculo } from '../../modelos/vehiculo';
+import { Place } from '../../modelos/place';
+import { WrongPasswordException } from '../../excepciones/wrong-password-exception';
 
 describe('UserIntegrationService', () => {
   let service: UserService;
@@ -57,4 +60,34 @@ describe('UserIntegrationService', () => {
       expect(error).toBeInstanceOf(MailExistingException);
     }
   });
+
+  it('HU2E01. Login with correct data (Valid Escenary)', async () => {
+      // GIVEN: El usuario Pepito está registrado y la base de datos está disponible.  Usuario Pepito: [nombre: “Pepito”, User=”pepito23”, email: “pepito@gmail.com”,  contraseña: “Pepito123?_”].
+      /* WHEN: El usuario Pepito quiere iniciar sesión con sus datos.  user: “pepito23”, contraseña:  “Pepito123?_ “.
+         THEN: El sistema carga los datos de Pepito. ListaVehículos=[{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}] y listaLugaresInterés=[{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049], idLugar = “000”}].*/
+     
+      const result: [Vehiculo[], Place[]] = [[new Vehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1)], [new Place("001", "Castellón de la Plana", [39.98, -0.049])]];
+      spyOn(userRepo, 'loginUser').and.resolveTo(result);
+
+      const resultService = await service.loginUser("test@test.com", "test123");
+      expect(userRepo.loginUser).toHaveBeenCalledWith("test@test.com", "test123");
+      expect(resultService).toEqual(result);
+    });
+  
+    it('HU2E02. Login with incorrect data (Invalid Scenario)', async () => {
+      // GIVEN: El usuario Pepito está registrado y la base de datos está disponible. [nombre: “Pepito”, User=”pepito23”, email: “pepito@gmail.com”,  contraseña: “Pepito123?_”]
+      /* WHEN: El usuario Pepito introduce como contraseña: “pepito123_”
+         THEN: El sistema no inicia la sesión de Pepito porque la contraseña introducida no coincide con la que se encuentra en la base de datos para ese usuario. Lanza la excepción WrongPasswordException().
+      */
+      const result: [Vehiculo[], Place[]] = [[new Vehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1)], [new Place("001", "Castellón de la Plana", [39.98, -0.049])]];
+      spyOn(userRepo, 'loginUser').and.resolveTo(result);
+
+      try {
+        const resultService = await service.loginUser("test@test.com", "pepito123_");
+        expect(userRepo.loginUser).toHaveBeenCalledWith("test@test.com", "pepito123_");
+        expect(resultService).toEqual(result);
+      } catch (error) {
+        throw new WrongPasswordException();
+      }
+    });
 });

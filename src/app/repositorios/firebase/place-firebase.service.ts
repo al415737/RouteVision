@@ -2,13 +2,9 @@ import { inject, Injectable } from '@angular/core';
 import { PlaceRepository } from '../interfaces/place-repository';
 import { Place } from '../../modelos/place';
 import { FirestoreService } from './firestore.service';
-import { NullLicenseException } from '../../excepciones/null-license-exception';
 import { InvalidPlaceException } from '../../excepciones/invalid-place-exception';
-import { InvalidCoordenatesException } from '../../excepciones/invalid-coordenates-exception';
 import { GeocodingService } from '../../APIs/Geocoding/geocoding.service';
-import { subscribe } from 'firebase/data-connect';
 import { getAuth } from 'firebase/auth';
-import { geoJSON, Map, marker, tileLayer} from 'leaflet';
 import { firstValueFrom } from 'rxjs';
 
 @Injectable({
