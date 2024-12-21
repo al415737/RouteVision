@@ -51,23 +51,24 @@ describe('VehiculoService', () => {
         expect(resul).toBeInstanceOf(Vehiculo);
         service.eliminarVehiculo("1234 BBB"); 
     });
-  
+    
     it('HU9E05. Registro de vehículo sin matricula (Escenario Inválido)', async () => {
-      try {
-        //Given: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] con listaVehículos-Ana2002= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1}].
-        servicioUser.loginUser("test@tets.com", "test123");
-        const resul = await service.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1); 
-
         try {
-          //When: El usuario intenta dar de alta un vehículo → [Matrícula=” ”, Marca=”Seat”, Modelo=”Ibiza”, Año Fabricación=”2003”, Consumo=4.3].
-          await service.crearVehiculo("", "Seat", "Ibiza", "2003", 4.3);
-        } catch(error){
-            //Then: El sistema no registra el vehículo y lanza una excepción NullLicenseException() →  listaVehículos-Ana2002= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1}].
-            expect(error).toBeInstanceOf(NullLicenseException);
+             //Given: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] con listaVehículos-Ana2002= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1}].
+              servicioUser.loginUser("test@test.com", "test123");
+              const resul = await service.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1); 
+
+              try {
+                //When: El usuario intenta dar de alta un vehículo → [Matrícula=” ”, Marca=”Seat”, Modelo=”Ibiza”, Año Fabricación=”2003”, Consumo=4.3].
+                await service.crearVehiculo("", "Seat", "Ibiza", "2003", 4.3);
+              } catch(error){
+                  //Then: El sistema no registra el vehículo y lanza una excepción NullLicenseException() →  listaVehículos-Ana2002= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1}].
+                  expect(error).toBeInstanceOf(NullLicenseException); 
+              }
+              
+        } finally {
+          service.eliminarVehiculo("1234 BBB");
         }
-      } finally {
-          await service.eliminarVehiculo("1234 BBB");
-      }
     });
     
       it('HU10E01. Consulta de vehículos dados de alta (Escenario Válido)', async () => {

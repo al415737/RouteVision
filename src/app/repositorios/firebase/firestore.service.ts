@@ -60,19 +60,19 @@ export class FirestoreService {
       await this._auth.delete();
   }
 
-  async createVehiculo(vehiculo: Vehiculo, path: string) {
+  async createVehiculo(vehiculo: Vehiculo, path: string): Promise<any> {
       const _collection = collection(this._firestore, path); 
     
       const objetoPlano = { ...vehiculo};
-      return addDoc(_collection, objetoPlano);
+      return await addDoc(_collection, objetoPlano);
   }
 
-  async eliminarVehiculo(path: string, id: string){
+  async eliminarVehiculo(path: string, id: string): Promise<void>{
       const docRef = doc(this._firestore, path, id);
       await deleteDoc(docRef);
   }
 
-  async consultarVehiculo(path: string){
+  async consultarVehiculo(path: string): Promise<Vehiculo[]>{
     const _collection = collection(this._firestore, path);
 
     const documentos = await getDocs(_collection);

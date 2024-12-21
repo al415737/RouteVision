@@ -88,7 +88,7 @@ describe('VehiculoIntegrationService', () => {
         const mockData: Vehiculo[] = [
             new Vehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1),
         ];
-        spyOn(vehiRepo, 'consultarVehiculo').and.resolveTo(Promise.resolve(mockData));
+        spyOn(vehiRepo, 'consultarVehiculo').and.resolveTo(mockData);
 
         //When: El usuario pide mostrar sus vehículos.
         const vehiculos = await vehiculoService.consultarVehiculo();

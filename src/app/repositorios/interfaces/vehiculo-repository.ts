@@ -5,6 +5,6 @@ export const VEHICULO_REPOSITORY_TOKEN = new InjectionToken<VehiculoRepository>(
 
 export interface VehiculoRepository {
     crearVehiculo(matricula: string, marca: string, modelo: string, año_fabricacion: string, consumo: number): Promise<Vehiculo>;
-    consultarVehiculo(): Promise<any>;
-    eliminarVehiculo(matricula: string): void;
+    consultarVehiculo(): Promise<Vehiculo[]>;
+    eliminarVehiculo(matricula: string): Promise<void>;
 }

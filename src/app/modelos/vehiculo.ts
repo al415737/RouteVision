@@ -1,5 +1,5 @@
 export class Vehiculo {
-    private matricula: string;
+    matricula: string;
     private marca: string;
     private modelo: string;
     private año_fabricacion: string;
