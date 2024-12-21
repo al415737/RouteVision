@@ -27,7 +27,6 @@ export class AuthService {
 
   async signin(email: string, password: string) {
     try {
-      console.log(email, password);
       return await signInWithEmailAndPassword(
         this._auth, 
         email, 

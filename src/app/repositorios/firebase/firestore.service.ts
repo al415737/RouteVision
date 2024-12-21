@@ -5,15 +5,16 @@ import { User } from '../../modelos/user';
 import { AuthService } from './auth.service';
 import { MailExistingException } from '../../excepciones/mail-existing-exception';
 import { Vehiculo } from '../../modelos/vehiculo';
-import { Auth, getAuth } from '@angular/fire/auth';
+import { getAuth } from '@angular/fire/auth';
 import { Place } from '../../modelos/place';
+import { AuthStateService } from '../../utils/auth-state.service';
+import { ServerNotOperativeException } from '../../excepciones/server-not-operative-exception';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FirestoreService {
-  private _authState = inject(AuthService);
-  private auth = inject(Auth);
+  private _authState: AuthStateService = inject(AuthStateService);
 
   private constructor(private _firestore: Firestore, private _auth: AuthService) { }
 
@@ -31,13 +32,6 @@ export class FirestoreService {
     }
   }
 
-  async create(object: any, PATH: string) {
-    const plainObject = { ...object };
-    const _collection = collection(this._firestore, PATH); 
-    
-    await addDoc(_collection, plainObject);
-  }
-
   async get(campo: string, valor: string, PATH: string) {
     const _collection = collection(this._firestore, PATH);
 
@@ -52,12 +46,10 @@ export class FirestoreService {
     return firstDocument.id;
   }
 
-  async delete(id: string, PATH: string) {
+  async deleteUser(id: string, PATH: string) {
     const docRef = doc(this._firestore, PATH, id);
     await deleteDoc(docRef);
-
-    if (PATH == 'user')
-      await this._auth.delete();
+    await this._auth.delete();      
   }
 
   async createVehiculo(vehiculo: Vehiculo, path: string) {
@@ -88,10 +80,7 @@ export class FirestoreService {
       );
      }); 
   }
-
-
-  //IRENE ------------------------------------------------------------------------------------------------------------------------
-
+  
   async getAutoIdReference(collectionPath: string): Promise<DocumentReference> {
     // Crea una referencia con un ID único automáticamente
     const _collection = collection(this._firestore, collectionPath); // Obtener la colección
@@ -102,13 +91,12 @@ export class FirestoreService {
   async createPlaceC(place: Place, path: string) {
     const _collection = collection(this._firestore, path);
 
-    const usuario = getAuth().currentUser;
-    const uid = usuario?.uid;
     
     const docRef = doc(_collection, place.idPlace); // Crea una referencia con un ID único
     const idPlace = docRef.id;
     
-    const objetoPlano = { ...place, idPlace, uid };   //se sobreescribe el idPlace de la clase
+    const objetoPlano = { ...place, idPlace };   //se sobreescribe el idPlace de la clase
+
     return setDoc(docRef, objetoPlano);
   }
 
@@ -128,5 +116,31 @@ export class FirestoreService {
     
     const objetoPlano = { ...place, idPlace};   //se sobreescribe el idPlace de la clase -- hemos quitado uid
     return setDoc(docRef, objetoPlano);
+  }
+
+  async getPlaces(): Promise<Place[]> {
+    try {
+      if (this._authState.currentUser == null) {
+        throw new ServerNotOperativeException();
+      }
+        // Referencia a la subcolección listaLugares dentro del documento del usuario
+      const listaLugaresRef = collection(this._firestore, `Lugar/${this._authState.currentUser?.uid}/listaLugaresInterés`);
+      
+      // Obtener todos los documentos de la subcolección
+      const querySnapshot = await getDocs(listaLugaresRef);
+
+      return querySnapshot.docs.map(doc => { 
+        const data = doc.data();
+        return new Place(
+          data['idPlace'], 
+          data['toponimo'],
+          data['coordenadas'],
+        );
+      }); 
+    } catch (error) {
+      throw new ServerNotOperativeException();
+    }
+
+    
   }
 }

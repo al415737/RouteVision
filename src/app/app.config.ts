@@ -1,5 +1,5 @@
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { routes } from './app.routes';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
@@ -8,6 +8,9 @@ import { USER_REPOSITORY_TOKEN } from './repositorios/interfaces/user-repository
 import { UserFirebaseService } from './repositorios/firebase/user-firebase.service';
 import { VEHICULO_REPOSITORY_TOKEN } from './repositorios/interfaces/vehiculo-repository';
 import { VehiculoFirebaseService } from './repositorios/firebase/vehiculo-firebase.service';
+import { PlaceFirebaseService } from './repositorios/firebase/place-firebase.service';
+import { PLACE_REPOSITORY_TOKEN } from './repositorios/interfaces/place-repository';
+import { provideHttpClient } from '@angular/common/http';
 
 export const firebaseConfig = {
   apiKey: "AIzaSyCRNYco212t9-485Csb1LyYvzHGpWhak08",
@@ -22,13 +25,15 @@ export const firebaseConfig = {
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }), 
-    provideRouter(routes), 
+    provideHttpClient(),
+    provideRouter(routes, withComponentInputBinding()), 
     provideFirebaseApp(() => initializeApp(firebaseConfig)),
     provideAuth(() => getAuth()), provideFirestore(() => getFirestore()),
     { provide: USER_REPOSITORY_TOKEN, useClass: UserFirebaseService
      },
      {
       provide: VEHICULO_REPOSITORY_TOKEN, useClass: VehiculoFirebaseService
-     }
+     }, 
+    { provide: PLACE_REPOSITORY_TOKEN, useClass: PlaceFirebaseService }
   ]
 };
