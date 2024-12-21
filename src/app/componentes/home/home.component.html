@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home</title>
+  <link rel="stylesheet" href="home.component.css">
+</head>
+<body>
+  <header class="navbar">
+    <div class="navbar-left">
+      <span class="app-name">RouteVision</span>
+    </div>
+    <div class="navbar-right">
+      <button class="logout-button">Salir</button>
+      <div class="dropdown">
+        <button class="profile-button">⚙️</button>
+        <div class="dropdown-menu">
+          <div class="profile-info">
+            <img src="" alt="User Icon" class="profile-img">
+            <span>Usuario</span>
+          </div>
+          <hr>
+          <a routerLink="/rutas">Rutas</a>
+          <a routerLink="/vehiculos">Vehículos</a>
+          <a routerLink="/lugares">Lugares</a>
+          <hr>
+          <a routerLink="/ajustes">Ajustes</a>
+          <a routerLink="/logout">Cerrar sesión</a>
+        </div>
+      </div>
+    </div>
+  </header>
+  <div class="card-container">
+    <div class="card" routerLink="/rutas">
+      <img src="../../../assets/icons/steering-wheel.svg" alt="Rutas Icon">
+      <h3>Rutas</h3>
+    </div>
+
+    <div class="card" routerLink="/vehiculos">
+      <img src="" alt="Vehículos Icon">
+      <h3>Vehículos</h3>
+    </div>
+
+    <div class="card" routerLink="/lugares">
+      <img src="" alt="Lugares Icon">
+      <h3>Lugares</h3>
+    </div>
+  </div>
+</body>
+</html>
