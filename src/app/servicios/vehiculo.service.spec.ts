@@ -52,7 +52,7 @@ let servicioUser: UserService;
     it('HU9E05. Registro de vehículo sin matricula (Escenario Inválido)', async () => {
       try {
         //Given: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] con listaVehículos-Ana2002= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1}].
-        servicioUser.loginUser("test@tets.com", "test123");
+        servicioUser.loginUser("test@test.com", "test123");
         const resul = await service.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1); 
 
         try {
