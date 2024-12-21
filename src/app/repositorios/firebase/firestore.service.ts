@@ -63,10 +63,8 @@ export class FirestoreService {
 
   async createVehiculo(vehiculo: Vehiculo, path: string) {
       const _collection = collection(this._firestore, path); 
-      const usuario = getAuth().currentUser;
-      const uid = usuario?.uid;
     
-      const objetoPlano = { ...vehiculo, uid };
+      const objetoPlano = { ...vehiculo};
       return addDoc(_collection, objetoPlano);
   }
 
@@ -77,12 +75,9 @@ export class FirestoreService {
 
   async consultarVehiculo(path: string){
     const _collection = collection(this._firestore, path);
-    const uid = getAuth().currentUser;
 
-    const consulta = query(_collection, where("uid", '==', uid?.uid));
-    const documentos = await getDocs(consulta);
+    const documentos = await getDocs(_collection);
 
-    //Se puede hacer de dos manera: devolviendo directamente objetos planos o transformando los documentos en instancias de la clase vehículo
     return documentos.docs.map(doc => { 
       const data = doc.data();
       return new Vehiculo(
