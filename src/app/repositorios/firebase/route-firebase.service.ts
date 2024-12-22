@@ -20,4 +20,10 @@ export class RouteFirebaseService implements RouteRepository{
   firestore: FirestoreService = inject(FirestoreService);
 
   constructor() {}
+
+  calcularRuta(origen: string, destino: string, metodoMov: string): Promise<Route>{
+      
+  }
+
+  
 }
