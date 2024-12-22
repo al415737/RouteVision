@@ -1,6 +1,6 @@
 import { or } from "firebase/firestore";
 
-export class Place {
+export class Route {
     private origen: string;
     private destino: string;
     private trayectoria: string[];
@@ -11,5 +11,9 @@ export class Place {
         this.destino = destino;
         this.trayectoria = trayectoria;
         this.kilometros = kilometros;
+    }
+
+    getKm(): number{
+        return this.kilometros;
     }
 }

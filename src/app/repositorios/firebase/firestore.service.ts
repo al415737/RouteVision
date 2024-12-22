@@ -139,8 +139,6 @@ export class FirestoreService {
       }); 
     } catch (error) {
       throw new ServerNotOperativeException();
-    }
-
-    
+    }    
   }
 }
