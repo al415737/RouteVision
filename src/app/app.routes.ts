@@ -3,7 +3,12 @@ import { privateGuard, publicGuard } from './utils/auth.guard';
 
 export const routes: Routes = [
     {
-      //canActivateChild: [publicGuard()],
+      canActivateChild: [publicGuard()],
+      path: 'default',
+      loadChildren: () => import('./componentes/default-routes'),
+    },
+    {
+      canActivateChild: [publicGuard()],
       path: 'auth',
       loadChildren: () => import('./componentes/auth.routes'),
     },
