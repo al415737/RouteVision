@@ -3,36 +3,42 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Places</title>
+  <title>Tus lugares de interés</title>
   <link rel="stylesheet" href="place.component.css">
 </head>
 <body>
-  <header class="navbar">
-    <div class="navbar-left">
-      <span class="app-name">RouteVision</span>
-    </div>
-    <div class="navbar-right">
-      <button class="logout-button" routerLink="/home">Home</button>
-      <div class="dropdown">
-        <button class="profile-button">⚙️</button>
-        <div class="dropdown-menu">
-          <div class="profile-info">
-            <img src="" alt="User Icon" class="profile-img">
-            <span>Usuario</span>
-          </div>
-          <hr>
-          <a routerLink="/rutas">Rutas</a>
-          <a routerLink="/vehiculos">Vehículos</a>
-          <a routerLink="/lugares">Lugares</a>
-          <hr>
-          <a routerLink="/ajustes">Ajustes</a>
-          <a routerLink="/logout">Cerrar sesión</a>
-        </div>
-      </div>
-    </div>
-  </header>
+  <app-header></app-header>
+  <h1>Tus lugares de interés</h1>
+  <div class="mat-elevation-z8">
+    <table mat-table [dataSource]="dataSource" matSort>
+  
+      <!-- Position Column -->
+      <ng-container matColumnDef="toponimo">
+        <th mat-header-cell *matHeaderCellDef>Toponimo</th>
+        <td mat-cell *matCellDef="let place"> {{place.toponimo}} </td>
+      </ng-container>
+  
+      <!-- Name Column -->
+      <ng-container matColumnDef="coordenadas">
+        <th mat-header-cell *matHeaderCellDef> Coordenadas </th>
+        <td mat-cell *matCellDef="let place"> {{place.coordenadas}} </td>
+      </ng-container>
 
-  <main class="table-container">
+      <ng-container matColumnDef="delete">
+        <th mat-header-cell *matHeaderCellDef> Delete </th>
+        <td mat-cell *matCellDef="let place">
+            <button mat-raised-button color="warn" (click)="onDelete(place)">Delete</button>
+        </td>
+    </ng-container>
+  
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  <mat-paginator [pageSize]="20" [showFirstLastButtons]="true" [pageSizeOptions]="[5, 10, 20]" [pageIndex]="currentPage">
+  </mat-paginator>
+  </div>
+  <button class="add-button" routerLink="/lugares/new">Añadir Lugar</button>
+  <!--<main class="table-container">
     <h1>Lugares</h1>
     <table>
       <thead>
@@ -50,6 +56,6 @@
     }
       </tbody>
     </table>
-  </main>
+  </main>-->
 </body>
 </html>

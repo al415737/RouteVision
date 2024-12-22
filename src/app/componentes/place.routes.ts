@@ -5,16 +5,8 @@ export default [
     path: '',
     loadComponent: () => import('./place/place.component')
   },
-  //Creo que esto no hace falta
- /*
-    path: 'vehiculos
-    loadComponent: () => import(''),
+  {
+    path: 'new',
+    loadComponent: () => import('./place/add/add.component'),
   },
-    path: 'lugares'
-    loadComponent: () => import(''),
-  },
-    path: 'rutas
-    loadComponent: () => import(''),
-  },
-*/
 ] as Routes;

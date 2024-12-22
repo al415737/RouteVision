@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Places</title>
+  <link rel="stylesheet" href="add.component.css">
+</head>
+<body>
+  <header class="navbar">
+    <div class="navbar-left">
+      <span class="app-name">RouteVision</span>
+    </div>
+    <div class="navbar-right">
+      <button class="logout-button" routerLink="/lugares">Home</button>
+      <div class="dropdown">
+        <button class="profile-button">⚙️</button>
+        <div class="dropdown-menu">
+          <div class="profile-info">
+            <img src="" alt="User Icon" class="profile-img">
+            <span>Usuario</span>
+          </div>
+          <hr>
+          <a routerLink="/rutas">Rutas</a>
+          <a routerLink="/vehiculos">Vehículos</a>
+          <a routerLink="/lugares">Lugares</a>
+          <hr>
+          <a routerLink="/ajustes">Ajustes</a>
+          <a routerLink="/logout">Cerrar sesión</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <app-map #mapComponent [selectedOption]="selectedOption" (coordenadasSeleccionadas)="actualizarLatLong($event)" (nombreCiudad)="actualizarCiudad($event)"> </app-map>
+    <div class="input-container" style="margin-left: 20px;">
+        <label for="select-method">Seleccionar método:</label>
+        <select id="select-method" [(ngModel)]="selectedOption">
+        <option value="">--Seleccionar--</option>
+        <option value="coordinates">Elegir lugar por coordenadas</option>
+        <option value="toponym">Elegir lugar por topónimo</option>
+        </select>
+
+        <!-- Mostrar inputs de coordenadas -->
+        @if (selectedOption === 'coordinates') {
+        <div style="margin-top: 10px;">
+            <label for="latitude">Latitud:</label>
+            <input id="latitude" type="text" [value]="latitude" readonly />
+            <br>
+            <label for="longitude">Longitud:</label>
+            <input id="longitude" type="text" [value]="longitude" readonly />
+            <p>Haz clic en el mapa para obtener las coordenadas.</p>
+            <!--<button (click)="buscarCoordenadas()">Enviar lugar</button>-->
+            <br>
+            @if (nombreCiudad !== '') {
+                <input id="nombreCiudad" type="text" [value]="nombreCiudad" />
+            }
+        </div>
+        }
+
+        <!-- Mostrar input de topónimo -->
+        @if (selectedOption === 'toponym') {
+        <div style="margin-top: 10px;">
+            <label for="toponym">Topónimo:</label>
+            <input id="toponym" type="text" [(ngModel)]="toponym" placeholder="Escribe el nombre del lugar" />
+            <!--<button (click)="buscarToponimo()">Enviar lugar</button>-->
+        </div>
+    }
+    <button (click)="anadirLugar()">Añadir Lugar</button>
+    </div>
+  </div>
+</body>
+</html>

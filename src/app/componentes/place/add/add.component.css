@@ -1,0 +1,104 @@
+#map { 
+    height: 600px; 
+    width: 800px;
+    margin-top: 20px;
+}
+
+.container {
+  display: flex; /* Usamos flexbox para alinear los elementos horizontalmente */
+  gap: 20px; /* Espacio entre el mapa y el contenedor de inputs */
+}
+
+.input-container {
+  display: flex;
+  flex-direction: column; /* Alinear elementos dentro del contenedor verticalmente */
+  justify-content: flex-start;
+  width: 600px;
+  padding: 10px;
+  border: 1px solid #ddd; /* Borde opcional */
+  border-radius: 5px;
+  background-color: #f9f9f9; /* Fondo opcional */
+}
+
+/* Espaciado entre los elementos del input-container */
+.input-container label,
+.input-container select,
+.input-container input,
+.input-container button,
+.input-container p {
+  margin-bottom: 10px;
+}
+
+/* Estilos de la barra de navegación */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #2c3e50;
+    padding: 10px 20px;
+    color: white;
+  }
+  
+  .navbar-left .app-name {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  .navbar-right {
+    display: flex;
+    align-items: center;
+  }
+  
+  .logout-button {
+    background-color: green;
+    border: none;
+    color: white;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+  .dropdown {
+    position: relative;
+    margin-left: 20px;
+  }
+  
+  .profile-button {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+  }
+  
+  .dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: #34495e;
+    padding: 10px;
+    border-radius: 4px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .dropdown:hover .dropdown-menu {
+    display: block;
+  }
+  
+  .profile-info {
+    display: flex;
+    align-items: center;
+  }
+  
+  .profile-img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+  
+  .dropdown-menu a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    margin: 5px 0;
+  }

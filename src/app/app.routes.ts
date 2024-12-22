@@ -5,7 +5,7 @@ export const routes: Routes = [
     {
       canActivateChild: [publicGuard()],
       path: 'default',
-      loadChildren: () => import('./componentes/default-routes'),
+      loadComponent: () => import('./componentes/default/default.component'),
     },
     {
       canActivateChild: [publicGuard()],
@@ -13,9 +13,9 @@ export const routes: Routes = [
       loadChildren: () => import('./componentes/auth.routes'),
     },
     {
-      //canActivateChild: [privateGuard()],
+      canActivateChild: [privateGuard()],
       path: 'home',
-      loadChildren: () => import('./componentes/home.routes'),
+      loadComponent: () => import('./componentes/home/home.component')
     },
     /*
     {
@@ -25,7 +25,7 @@ export const routes: Routes = [
     },
     */
     {
-      //canActivateChild: [privateGuard()],
+      canActivateChild: [privateGuard()],
       path: 'lugares',
       loadChildren: () => import('./componentes/place.routes'),
     },
