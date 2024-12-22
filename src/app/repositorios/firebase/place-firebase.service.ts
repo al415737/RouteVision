@@ -3,7 +3,7 @@ import { PlaceRepository } from '../interfaces/place-repository';
 import { Place } from '../../modelos/place';
 import { FirestoreService } from './firestore.service';
 import { InvalidPlaceException } from '../../excepciones/invalid-place-exception';
-import { GeocodingService } from '../../APIs/Geocoding/geocoding.service';
+import { OpenRouteService } from '../../APIs/Geocoding/openRoute.service';
 import { getAuth } from 'firebase/auth';
 import { firstValueFrom } from 'rxjs';
 
@@ -13,31 +13,31 @@ import { firstValueFrom } from 'rxjs';
 
 export class PlaceFirebaseService implements PlaceRepository{
 
-  private toponimo: any;
-  private coordenadas: any;
+    private toponimo: any;
+    private coordenadas: any;
 
-  firestore: FirestoreService = inject(FirestoreService);
-  geocoding: GeocodingService = inject(GeocodingService);
-
-
-  constructor() {}
-
-  async createPlaceC(coordenadas: number[]): Promise<Place> { 
-    const uid = getAuth().currentUser?.uid;
-    const PATHPLACE = `Lugar/${uid}/listaLugaresInterés`
-
-    this.toponimo = await firstValueFrom(this.geocoding.getToponimo(coordenadas));
-    let prueba = this.toponimo.features[0].properties.name;
-
-    const docRef = await this.firestore.getAutoIdReference(PATHPLACE);
-    const idPlace = docRef.id;
+    firestore: FirestoreService = inject(FirestoreService);
+    geocoding: OpenRouteService = inject(OpenRouteService);
 
 
-    const placeRegisterC: Place = new Place(idPlace, prueba, coordenadas);
+    constructor() {}
 
-    await this.firestore.createPlaceC(placeRegisterC, PATHPLACE);
-    return placeRegisterC;
-}
+    async createPlaceC(coordenadas: number[]): Promise<Place> { 
+        const uid = getAuth().currentUser?.uid;
+        const PATHPLACE = `Lugar/${uid}/listaLugaresInterés`
+
+        this.toponimo = await firstValueFrom(this.geocoding.getToponimo(coordenadas));
+        let prueba = this.toponimo.features[0].properties.name;
+
+        const docRef = await this.firestore.getAutoIdReference(PATHPLACE);
+        const idPlace = docRef.id;
+
+
+        const placeRegisterC: Place = new Place(idPlace, prueba, coordenadas);
+
+        await this.firestore.createPlaceC(placeRegisterC, PATHPLACE);
+        return placeRegisterC;
+    }
 
     async deletePlace(idPlace: string) {
         //para sacar el usuario y meter los lugares en su colección
@@ -70,7 +70,7 @@ export class PlaceFirebaseService implements PlaceRepository{
 
         const docRef = await this.firestore.getAutoIdReference(PATHPLACE); // Método que retorna un `DocumentReference`
         const idPlace = docRef.id;
-    
+
 
         const placeRegisterT: Place = new Place(idPlace, toponimo, this.coordenadas);
 

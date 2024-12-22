@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { PlaceService } from '../../servicios/place.service';
 import { Route, Router, Routes } from '@angular/router';
 import { ROUTE_REPOSITORY_TOKEN, RouteRepository } from '../../repositorios/interfaces/route-repository';
-import { GeocodingService } from '../../APIs/Geocoding/geocoding.service';
+import { OpenRouteService } from '../../APIs/Geocoding/openRoute.service';
 import { provideHttpClient } from '@angular/common/http';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { provideFirebaseApp } from '@angular/fire/app';

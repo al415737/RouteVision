@@ -16,4 +16,8 @@ export class Route {
     getKm(): number{
         return this.kilometros;
     }
+
+    getOrigen(): string{
+        return this.origen;
+    }
 }

@@ -22,10 +22,9 @@ export class RouteService {
 
   constructor(@Inject(ROUTE_REPOSITORY_TOKEN) private routeRepository: RouteRepository) { }
 
-  async obtenerRuta(vehiculo: Vehiculo, ruta: Route){
-    let encontrada = false;
 
-    if(vehiculo == null || ruta == null){
+  async obtenerCosteRuta(vehiculo: Vehiculo, ruta: Route){
+    if(!vehiculo || !ruta){
       throw new ObligatoryFieldsException;
     }
 
@@ -33,22 +32,11 @@ export class RouteService {
 
     for(const vehiculoU of await vehiculosUsuario) {
       if (vehiculoU.getMatricula() == vehiculo.getMatricula())
-        encontrada = true;
-        //calcular ruta
-        let costeRuta = ruta.getKm();
-        break;
+        //calcular coste ruta llamando a api
+        return this.routeRepository.obtenerCosteRuta(vehiculo, ruta);
     }
-
-    if (encontrada == false){
-      throw new NotExistingObjectException();
-    }
-
-
-
-
     
-
-
+    throw new NotExistingObjectException();
   }
 }
 
