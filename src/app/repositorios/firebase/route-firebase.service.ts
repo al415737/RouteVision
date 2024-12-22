@@ -24,7 +24,25 @@ export class RouteFirebaseService implements RouteRepository{
   constructor() {}
 
   async calcularRuta(origen: string, destino: string, metodoMov: string) {
-      return await firstValueFrom(this.servicioAPI.getRuta(origen, destino, metodoMov));
+      const origenCoord = await new Promise<string> ((resolve) => {
+        this.servicioAPI.getCoordenadas(origen).subscribe({
+          next: (response: any) => {
+              const coordenadas = response.features[0].geometry.coordinates;
+              resolve(`${coordenadas[1]}, ${coordenadas[0]}`);
+          }
+        });
+      });
+
+      const destinoCoord = await new Promise<string> ((resolve) => {
+        this.servicioAPI.getCoordenadas(destino).subscribe({
+          next: (response: any) => {
+              const coordenadas = response.features[0].geometry.coordinates;
+              resolve(`${coordenadas[1]}, ${coordenadas[0]}`);
+          }
+        });
+      });
+
+      return firstValueFrom(this.servicioAPI.getRuta(origenCoord, destinoCoord, metodoMov));
   }
 
   

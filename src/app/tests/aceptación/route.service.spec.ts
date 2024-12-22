@@ -69,7 +69,7 @@ import { provideHttpClient } from '@angular/common/http';
         */
 
         //When: El usuario solicita el calculo con “Valencia-Castellón” y vehículo “Coche1”.
-        const ruta = servicioRutas.calcularRuta("Valencia", "Castellón", "Coche");
+        const ruta = await servicioRutas.calcularRuta("Valencia", "Castellon", "driving-car");
         expect(ruta).toBeTruthy();
         console.log(ruta);
 

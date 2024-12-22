@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 })
 export class openRouteService {
 
-  private apiKey: string = '5b3ce3597851110001cf624838a5b428b37d48899c94060b843a8b87';
+  private apiKey: string = '5b3ce3597851110001cf6248bb26ad116ed844abb317f5e06971984f';
   constructor(private http: HttpClient) { }
 
   getToponimo(coordenadas: number[]) {
@@ -20,7 +20,7 @@ export class openRouteService {
   }
 
   getRuta(origen: string, destino: string, metodoMov: string){
-      const url = `https://api.openrouteservice.org/v2/directions/${metodoMov}?api_key=${this.apiKey}}&start=${origen}&end=${destino}`;
+      const url = `https://api.openrouteservice.org/v2/directions/${metodoMov}?api_key=${this.apiKey}&start=${origen}&end=${destino}`;
       return this.http.get(url);
 
   }
