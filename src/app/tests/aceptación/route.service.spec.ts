@@ -54,17 +54,26 @@ import { PlaceFirebaseService } from '../../repositorios/firebase/place-firebase
                 // vehículos = [“Coche1”, “Moto1”] .
         servicioUsuario.loginUser("test@test.com", "test123");
 
-        servicioPlace.createPlaceT("Valencia");
-        servicioPlace.createPlaceT("Castellón");
-        servicioPlace.createPlaceT("Alicante");
+        const lugar1 = await servicioPlace.createPlaceT("Valencia");
+        const lugar2 = await servicioPlace.createPlaceT("Castellón");
+        const lugar3 = await servicioPlace.createPlaceT("Alicante");
 
         serviceVehiculo.crearVehiculo("0987 CPK", "Peugeot", "407", "2004", 8.1);
         serviceVehiculo.crearVehiculo("8179 KLL", "BWM", "R 1250 RT", "2023", 4.8);
 
         //When: El usuario solicita el calculo con “Valencia-Castellón” y vehículo “Coche1”.
-        servicioRutas.calcularRuta("Valencia", "Castellón", "Coche");
+        const ruta = servicioRutas.calcularRuta("Valencia", "Castellón", "Coche");
+        console.log(ruta);
+
+        //Then: El sistema muestra Trayecto=[Valencia, Paterna, Puzol, Sagunto, Moncófar, Villareal, Castellon], distancia=84km, duración=1h.
 
 
+        servicioPlace.deletePlace(lugar1.idPlace);
+        servicioPlace.deletePlace(lugar2.idPlace);
+        servicioPlace.deletePlace(lugar3.idPlace);
+
+        serviceVehiculo.eliminarVehiculo("0987 CPK");
+        serviceVehiculo.eliminarVehiculo("8179 KLL");
 
   });
 
