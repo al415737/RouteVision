@@ -28,7 +28,7 @@ export class RouteFirebaseService implements RouteRepository{
         this.servicioAPI.getCoordenadas(origen).subscribe({
           next: (response: any) => {
               const coordenadas = response.features[0].geometry.coordinates;
-              resolve(`${coordenadas[1]}, ${coordenadas[0]}`);
+              resolve(`${coordenadas[0]},${coordenadas[1]}`);
           }
         });
       });
@@ -37,7 +37,7 @@ export class RouteFirebaseService implements RouteRepository{
         this.servicioAPI.getCoordenadas(destino).subscribe({
           next: (response: any) => {
               const coordenadas = response.features[0].geometry.coordinates;
-              resolve(`${coordenadas[1]}, ${coordenadas[0]}`);
+              resolve(`${coordenadas[0]},${coordenadas[1]}`);
           }
         });
       });

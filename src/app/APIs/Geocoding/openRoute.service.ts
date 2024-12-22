@@ -15,7 +15,7 @@ export class openRouteService {
   }
 
   getCoordenadas(toponimo: string) {
-    const url = `https://api.openrouteservice.org/geocode/search?api_key=${this.apiKey}&text=${toponimo}`;
+    const url = `https://api.openrouteservice.org/geocode/search?api_key=${this.apiKey}&text=${toponimo}&boundary.country=ES`;
     return this.http.get(url);
   }
 
