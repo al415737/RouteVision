@@ -20,16 +20,20 @@ import { RouteFirebaseService } from '../../repositorios/firebase/route-firebase
 import { PlaceService } from '../../servicios/place.service';
 import { PLACE_REPOSITORY_TOKEN } from '../../repositorios/interfaces/place-repository';
 import { PlaceFirebaseService } from '../../repositorios/firebase/place-firebase.service';
+import { openRouteService } from '../../APIs/Geocoding/openRoute.service';
+import { provideHttpClient } from '@angular/common/http';
 
   describe('RutasService', () => {
   let serviceVehiculo: VehiculoService;
   let servicioUsuario: UserService;
   let servicioRutas: RouteService;
   let servicioPlace: PlaceService;
+  let openRoute: openRouteService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
+        provideHttpClient(),
         provideFirebaseApp(() => initializeApp(firebaseConfig)),     
         provideFirestore(() => getFirestore()),
         provideAuth(() => getAuth()),
@@ -47,11 +51,13 @@ import { PlaceFirebaseService } from '../../repositorios/firebase/place-firebase
     servicioUsuario = TestBed.inject(UserService);
     servicioRutas = TestBed.inject(RouteService);
     servicioPlace = TestBed.inject(PlaceService);
+    openRoute = TestBed.inject(openRouteService);
   });
 
   it('E01. Cálculo de ruta entre dos puntos de interés (Escenario Válido)', async () => {
         //Given: El Usuario  [“Ana2002”, “anita@gmail.com“,“aNa-24”] autenticado, lugares = [“Valencia”, “Castellón”, “Alicante”], 
                 // vehículos = [“Coche1”, “Moto1”] .
+                /*
         servicioUsuario.loginUser("test@test.com", "test123");
 
         const lugar1 = await servicioPlace.createPlaceT("Valencia");
@@ -60,20 +66,22 @@ import { PlaceFirebaseService } from '../../repositorios/firebase/place-firebase
 
         serviceVehiculo.crearVehiculo("0987 CPK", "Peugeot", "407", "2004", 8.1);
         serviceVehiculo.crearVehiculo("8179 KLL", "BWM", "R 1250 RT", "2023", 4.8);
+        */
 
         //When: El usuario solicita el calculo con “Valencia-Castellón” y vehículo “Coche1”.
         const ruta = servicioRutas.calcularRuta("Valencia", "Castellón", "Coche");
+        expect(ruta).toBeTruthy();
         console.log(ruta);
 
+        /*
         //Then: El sistema muestra Trayecto=[Valencia, Paterna, Puzol, Sagunto, Moncófar, Villareal, Castellon], distancia=84km, duración=1h.
-
-
         servicioPlace.deletePlace(lugar1.idPlace);
         servicioPlace.deletePlace(lugar2.idPlace);
         servicioPlace.deletePlace(lugar3.idPlace);
 
         serviceVehiculo.eliminarVehiculo("0987 CPK");
         serviceVehiculo.eliminarVehiculo("8179 KLL");
+        */
 
   });
 

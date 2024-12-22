@@ -21,7 +21,7 @@ export class RouteService {
           throw new InvalidCalculateRoute();
       }
 
-      this.routeRepository.calcularRuta(origen, destino, metodoMov);
+      return this.routeRepository.calcularRuta(origen, destino, metodoMov);
   }
 
 }
