@@ -13,7 +13,7 @@ export class RouteFirebaseService implements RouteRepository{
 
     constructor(private _firestore: FirestoreService, private _geocoding: GeocodingService) {}
 
-    async getRouteFSE(start: Place, end: Place, movilidad: string, preferencia: string): Promise<number[]> {
+    async getRouteFSE(start: Place, end: Place, movilidad: string, preferencia: string): Promise<any> {
         const existPlace: boolean = await this._firestore.ifExistPlace(start);
         const existPlace2: boolean = await this._firestore.ifExistPlace(end);
 
@@ -21,7 +21,7 @@ export class RouteFirebaseService implements RouteRepository{
             return [];
 
         const response: any = await this._geocoding.getRouteFSE(start.getCoordenadas(), end.getCoordenadas(), movilidad, preferencia);
-        return [response.features[0].properties.summary.distance / 1000, response.features[0].properties.summary.duration / 60];
+        return response;
     }
 
 }

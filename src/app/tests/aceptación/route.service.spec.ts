@@ -27,6 +27,7 @@ describe('RouteService', () => {
         provideFirebaseApp(() => initializeApp(firebaseConfig)), 
         provideFirestore(() => getFirestore()), 
         provideAuth(() => getAuth()),
+        RouteService,
         UserService,
         PlaceService,
         { provide: USER_REPOSITORY_TOKEN, useClass: UserFirebaseService },
@@ -45,7 +46,8 @@ describe('RouteService', () => {
     const place2 = await placeService.createPlaceT("Castellón de la Plana");
 
     const result = await service.getRouteFSE(place, place2, "driving-car", "fastest");
-    expect(result).toEqual([52.863, 46.388333333333335]);
+    const resultArray = [result.features[0].properties.summary.distance / 1000, result.features[0].properties.summary.duration / 60];
+    expect(resultArray).toEqual([52.863, 46.388333333333335]);
     
     await placeService.deletePlace(place.idPlace);
     await placeService.deletePlace(place2.idPlace);

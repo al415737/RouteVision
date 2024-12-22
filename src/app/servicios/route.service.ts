@@ -13,7 +13,7 @@ export class RouteService {
   constructor(@Inject(ROUTE_REPOSITORY_TOKEN) private routeRepository: RouteRepository) { }
 
   // Conseguir una ruta rápida, corta o económica
-  getRouteFSE(start: Place, end: Place, movilidad: string, preferencia: string): Promise<number[]> {
+  getRouteFSE(start: Place, end: Place, movilidad: string, preferencia: string): Promise<any> {
     if (!preferencia.trim())
       throw new TypeNotChosenException();
 
