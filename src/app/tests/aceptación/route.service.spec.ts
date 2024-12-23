@@ -70,7 +70,19 @@ import { provideHttpClient } from '@angular/common/http';
 
         //When: El usuario solicita el calculo con “Valencia-Castellón” y vehículo “Coche1”.
         const ruta = await servicioRutas.calcularRuta("Valencia", "Castellon de la Plana", "driving-car");
+        
+        const trayectoria = ruta.features[0].properties.geometry.coordinates;
+        const distancia = ruta.features[0].properties.summary.distance; //metros
+        const duracion = ruta.features[0].properties.summary.duration; //segundos
+
         expect(ruta).toBeTruthy();
+        //expect(trayectoria.length).toBeGreatherThan(0);
+
+        const distanciaEsperada = 76000;
+        //expect(Math.abs(distancia - distanciaEsperada)).toBeLessThan(1000);
+
+        
+
         console.log(ruta);
 
         /*
