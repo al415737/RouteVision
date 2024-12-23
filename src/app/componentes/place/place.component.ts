@@ -5,6 +5,8 @@ import { HeaderComponent } from "../home/header/header.component";
 import { MatPaginatorModule, MatPaginator} from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { RouterLink } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { DeleteComponent } from './delete/delete.component';
 
 
 @Component({
@@ -16,6 +18,7 @@ import { RouterLink } from '@angular/router';
 })
 export default class PlaceComponent {
   private _placeService: PlaceService = inject(PlaceService);
+  readonly dialog = inject(MatDialog);
   places: Place[] = [];
   currentPage = 0;
   dataSource = new MatTableDataSource<Place>();
@@ -40,6 +43,11 @@ export default class PlaceComponent {
   }
 
   onDelete(place: Place) {
+    this.dialog.open(DeleteComponent, {
+      data: {id: place.getIdPlace(), nombre:place.getToponimo()},
+    }).afterClosed().subscribe(() => {
       this.updateDataSource();
+    });
+      
   }
 }

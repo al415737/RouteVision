@@ -1,8 +1,12 @@
 import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
-import { tileLayer, Map, marker, geoJSON } from 'leaflet';
+import { tileLayer, Map, marker, geoJSON, Marker, LatLngBounds } from 'leaflet';
 import { FirestoreService } from '../../repositorios/firebase/firestore.service';
 import { AuthStateService } from '../../utils/auth-state.service';
+import { GeocodingService } from '../../APIs/Geocoding/geocoding.service';
+import { InvalidPlaceException } from '../../excepciones/invalid-place-exception';
+import { catchError, map, of, throwError } from 'rxjs';
+import { InvalidCoordenatesException } from '../../excepciones/invalid-coordenates-exception';
 
 
 @Component({
@@ -16,13 +20,14 @@ import { AuthStateService } from '../../utils/auth-state.service';
 export class MapComponent {
   map:any;
   private currentMarker: any | null = null;
-  //private _rutasService = inject(OrsapiService);
-  private _firebaseService = inject(FirestoreService);
-  private _authStateService = inject(AuthStateService);
-  private _router = inject(Router);
+  private currentMarker2: any | null = null;
+  private listaMarkers: Marker[] = [];
+  private bounds: any[] = [];
+  private _rutasService = inject(GeocodingService);
   @Input() selectedOption: string = '';
-  @Output() nombreCiudad = new EventEmitter<string>();
+  @Output() nombreCiudades = new EventEmitter<any[]>();
   @Output() coordenadasSeleccionadas = new EventEmitter<{ lat: number; lng: number }>();
+  @Output() lugaresSeleccionados = new EventEmitter<any[]>();
 
 
   ngAfterViewInit():void{
@@ -39,42 +44,97 @@ export class MapComponent {
 
     anadirMarca(e:any) {
       if (this.selectedOption === 'coordinates') {
-        console.log("hola")
-        if (this.currentMarker) {
-          this.map.removeLayer(this.currentMarker)
+        if (this.currentMarker2) {
+          this.map.removeLayer(this.currentMarker2)
         }
         const coordenadas = {lat: e.latlng.lat, lng: e.latlng.lng};
         this.coordenadasSeleccionadas.emit(coordenadas);
-        this.currentMarker = marker(e.latlng);
-        this.currentMarker.addTo(this.map)
+        this.currentMarker2 = marker(e.latlng);
+        this.currentMarker2.addTo(this.map)
       }
     }
 
-    /*buscarToponimo(toponym: string){
-      this._rutasService.searchToponimo(toponym).subscribe(
-        response => {
-          const geojson: GeoJSON.GeoJSON = response;
-          if (this.currentMarker) {
-            this.map.removeLayer(this.currentMarker)
+    buscarToponimo(toponimo: string){
+      return this._rutasService.searchToponimo(toponimo).pipe(
+        map(response => {
+          if (response.features.length === 0) {
+            throw new InvalidPlaceException();
           }
-          this.currentMarker = geoJSON(geojson).addTo(this.map)
-          this.map.fitBounds(this.currentMarker.getBounds());
-        }
+    
+          if (this.listaMarkers) {
+            this.listaMarkers.forEach(marker => this.map.removeLayer(marker));
+            this.bounds = [];
+          }
+          
+          let lugares: any[] = [];
+          for (let i = 0; i < response.features.length; i++) {
+            let latlng = {
+              lat: response.features[i].geometry.coordinates[1],
+              lng: response.features[i].geometry.coordinates[0]
+            };
+            const feature = response.features[i].properties.label;
+            this.currentMarker = marker(latlng).bindTooltip(feature, {
+              permanent: true,
+              className: "my-label",
+              offset: [0, 0]
+            });
+            this.currentMarker.addTo(this.map);
+            this.listaMarkers.push(this.currentMarker);
+            this.bounds.push(this.currentMarker.getLatLng());
+            lugares.push({ nombre: feature, coordenadas: latlng });
+          }
+          this.lugaresSeleccionados.emit(lugares);
+          let zoom = new LatLngBounds(this.bounds);
+          this.map.fitBounds(zoom);
+        }),
+        catchError(err => {
+          return throwError(() => new InvalidPlaceException());
+        })
       );
     }
   
-    buscarCoordenadas(latitud: string, longitud: string){
-      this._rutasService.searchCoordenadas(latitud, longitud).subscribe(
-        response => {
-          const geojson: GeoJSON.GeoJSON = response;
-          let nombre = '';
-          geoJSON(geojson, {
-            onEachFeature(feature, properties) {
-              nombre = feature.properties.name
+    buscarCoordenadas(latitud: number, longitud: number){
+      return this._rutasService.searchCoordenadas(latitud, longitud).pipe(
+        map(response => {
+          if (response.features.length === 0) {
+            throw new InvalidCoordenatesException();
           }
-        });
-        this.nombreCiudad.emit(nombre);
-        }
+    
+          // Limpiar los marcadores anteriores
+          this.map.removeLayer(this.currentMarker2);
+          if (this.listaMarkers) {
+            this.listaMarkers.forEach(marker => this.map.removeLayer(marker));
+            this.bounds = [];
+          }
+    
+          let lugares: any[] = [];
+          for (let i = 0; i < response.features.length; i++) {
+            const feature = response.features[i].properties.name;
+            let latlng = {
+              lat: response.features[i].geometry.coordinates[1],
+              lng: response.features[i].geometry.coordinates[0]
+            };
+    
+            this.currentMarker = marker(latlng).bindTooltip(feature, {
+              permanent: true,
+              className: "my-label",
+              offset: [0, 0]
+            });
+            this.currentMarker.addTo(this.map);
+    
+            this.listaMarkers.push(this.currentMarker);
+            this.bounds.push(this.currentMarker.getLatLng());
+    
+            lugares.push({ nombre: feature, coordenadas: latlng });
+          }
+    
+          this.nombreCiudades.emit(lugares);
+          let zoom = new LatLngBounds(this.bounds);
+          this.map.fitBounds(zoom);
+        }),
+        catchError(err => {
+          return throwError(() => new InvalidCoordenatesException());
+        })
       );
-    }*/
+    }
 }

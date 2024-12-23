@@ -1,10 +1,8 @@
 import { inject, Inject, Injectable } from '@angular/core'; 
 import { InvalidCoordenatesException } from '../excepciones/invalid-coordenates-exception';
-import { Place } from '../modelos/place';
 import { PlaceRepository, PLACE_REPOSITORY_TOKEN } from '../repositorios/interfaces/place-repository';
 import { AuthStateService } from '../utils/auth-state.service';
-import { throwError } from 'rxjs';
-import { ServerNotOperativeException } from '../excepciones/server-not-operative-exception';
+import { InvalidPlaceException } from '../excepciones/invalid-place-exception';
 
 const pathPlace = 'place';
 
@@ -13,10 +11,9 @@ const pathPlace = 'place';
 })
 
 export class PlaceService {
-  private _authState: AuthStateService = inject(AuthStateService);
   constructor(@Inject(PLACE_REPOSITORY_TOKEN) private placeRepositorio: PlaceRepository) { }
 
-  createPlaceC(coordenadas: number[]){
+  createPlaceC(coordenadas: number[], toponimo: string){
     if (coordenadas.length != 2) {
       throw new InvalidCoordenatesException();
     }
@@ -29,15 +26,14 @@ export class PlaceService {
         throw new InvalidCoordenatesException();
     }
     
-    return this.placeRepositorio.createPlaceC(coordenadas);
+    return this.placeRepositorio.createPlaceC(coordenadas, toponimo);
   } 
 
-  createPlaceT(toponimo: string){
+  createPlaceT(toponimo: string, coordenadas: number[]){
     if (toponimo == null || toponimo == '') {
-      throw new InvalidCoordenatesException();
+      throw new InvalidPlaceException();
     }
-    
-    return this.placeRepositorio.createPlaceT(toponimo);
+    return this.placeRepositorio.createPlaceT(toponimo, coordenadas);
   }
 
   getPlaces(){

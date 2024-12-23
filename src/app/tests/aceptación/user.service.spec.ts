@@ -76,7 +76,7 @@ describe('UserService', () => {
    
     await service.loginUser("test@test.com", "test123");
     await vehicleService.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1);
-    const lugar = await placeService.createPlaceC([39.98, -0.049]);
+    const lugar = await placeService.createPlaceC([39.98, -0.049], "Castellón de la Plana");
     await service.logoutUser();
 
     const resultLogin = await service.loginUser("test@test.com", "test123");

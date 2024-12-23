@@ -2,7 +2,6 @@ import { TestBed } from '@angular/core/testing';
 import { PlaceService } from '../../servicios/place.service';
 import { Place } from '../../modelos/place';
 import { PLACE_REPOSITORY_TOKEN, PlaceRepository } from '../../repositorios/interfaces/place-repository';
-import { GeocodingService } from '../../APIs/Geocoding/geocoding.service';
 import { provideHttpClient } from '@angular/common/http';
 import { PlaceFirebaseService } from '../../repositorios/firebase/place-firebase.service';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
@@ -18,7 +17,6 @@ import { ServerNotOperativeException } from '../../excepciones/server-not-operat
 describe('PlaceIntegrationService', () => {
 
   let servicePlace: PlaceService;
-  let geocodingRepositorio: GeocodingService;
   let placeRepositorio: PlaceRepository;
 
   beforeEach(() => {
@@ -36,7 +34,6 @@ describe('PlaceIntegrationService', () => {
     placeRepositorio = TestBed.inject(PLACE_REPOSITORY_TOKEN);
 
     servicePlace = TestBed.inject(PlaceService);
-    geocodingRepositorio = TestBed.inject(GeocodingService); 
   });
 
   //HISTORIA 5
@@ -45,8 +42,8 @@ describe('PlaceIntegrationService', () => {
 
     spyOn(placeRepositorio, 'createPlaceC').and.resolveTo(mockPlace);
     
-    const result = await servicePlace.createPlaceC([39.98, -0.049]);
-    expect(placeRepositorio.createPlaceC).toHaveBeenCalledWith([39.98, -0.049]);
+    const result = await servicePlace.createPlaceC([39.98, -0.049], "Castellón de la Plana");
+    expect(placeRepositorio.createPlaceC).toHaveBeenCalledWith([39.98, -0.049], "Castellón de la Plana");
     expect(result).toEqual(mockPlace);
   });
 
@@ -56,8 +53,8 @@ describe('PlaceIntegrationService', () => {
     spyOn(placeRepositorio, 'createPlaceC').and.resolveTo(mockPlace);
   
     try{
-      servicePlace.createPlaceC([899.99, ]);
-      expect(placeRepositorio.createPlaceC).toHaveBeenCalledWith([899.99, ]);
+      servicePlace.createPlaceC([899.99, ], "LugarErroneo");
+      expect(placeRepositorio.createPlaceC).toHaveBeenCalledWith([899.99, ], "LugarErroneo");
     } catch(error) {
       expect(error).toBeInstanceOf(InvalidCoordenatesException);
     }
@@ -70,8 +67,8 @@ describe('PlaceIntegrationService', () => {
 
     spyOn(placeRepositorio, 'createPlaceT').and.resolveTo(mockPlace);
     
-    const result = await servicePlace.createPlaceT('Bilbao');
-    expect(placeRepositorio.createPlaceT).toHaveBeenCalledWith('Bilbao');
+    const result = await servicePlace.createPlaceT('Bilbao', [43.258534, -2.937123]);
+    expect(placeRepositorio.createPlaceT).toHaveBeenCalledWith('Bilbao', [43.258534, -2.937123]);
     expect(result).toEqual(mockPlace);
   });
 
@@ -81,8 +78,8 @@ describe('PlaceIntegrationService', () => {
     spyOn(placeRepositorio, 'createPlaceT').and.resolveTo(mockPlace);
   
     try{
-      servicePlace.createPlaceT('Cassjdlftellfisonon');
-      expect(placeRepositorio.createPlaceT).toHaveBeenCalledWith('Cassjdlftellfisonon');
+      servicePlace.createPlaceT('', [39.98, -0.049]);
+      expect(placeRepositorio.createPlaceT).toHaveBeenCalledWith('', [39.98, -0.049]);
     } catch(error) {
       expect(error).toBeInstanceOf(InvalidPlaceException);
     }

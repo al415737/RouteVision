@@ -19,7 +19,7 @@
   }
   
   .title {
-    font-size: 1.25rem;
+    font-size: 2.25rem;
     font-weight: bold;
     color: linear-gradient(180deg, #011640, #030F26);
   }
@@ -52,8 +52,8 @@
   }
   
   .logo {
-    width: 2.5rem;
-    height: 2.5rem;
+    width: 3.5rem;
+    height: 3.5rem;
   }
   .logo img {
     width: 100%;

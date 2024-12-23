@@ -1,44 +1,74 @@
 import { Component, inject, ViewChild } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { Place } from '../../../modelos/place';
-import { FirestoreService } from '../../../repositorios/firebase/firestore.service';
+import { toast } from 'ngx-sonner';
 import { MapComponent } from '../../map/map.component';
 import { FormsModule } from '@angular/forms';
+import { HeaderComponent } from '../../home/header/header.component';
+import { PlaceService } from '../../../servicios/place.service';
+import { InvalidPlaceException } from '../../../excepciones/invalid-place-exception';
+import { InvalidCoordenatesException } from '../../../excepciones/invalid-coordenates-exception';
 
 @Component({
   selector: 'app-add',
   standalone: true,
-  imports: [FormsModule, RouterLink, MapComponent],
+  imports: [FormsModule, RouterLink, MapComponent, HeaderComponent],
   templateUrl: './add.component.html',
   styleUrl: './add.component.css'
 })
 export default class AddComponent {
   map:any;
   @ViewChild('mapComponent') mapComponent!: MapComponent; 
-  private _firebaseService = inject(FirestoreService);
   private _router = inject(Router);
+  private _placeService = inject(PlaceService);
   selectedOption: string = '';
+  previousSelectedOption: string = '';
   latitude: string = ''; 
   longitude: string = '';
-  toponym: string = '';
-  nombreCiudad:string = '';
+  toponimo: string = '';
+  nombreCiudades:any[] = [];
+  toponimosEncontrados: any[] = [];
+  resultado: any = null;
 
-  /*buscarToponimo(){
+  buscarToponimo(){
     if (this.mapComponent) {
-      this.mapComponent.buscarToponimo(this.toponym);
+      if(this.toponimo){
+        this.mapComponent.buscarToponimo(this.toponimo).subscribe({
+          error: (err) => {
+            if (err instanceof InvalidPlaceException) {
+              toast.error('El topónimo no es valido.');
+            }
+          }
+        });
+      }
+      
     }
   }
 
   buscarCoordenadas(){
     if (this.mapComponent) {
-      this.mapComponent.buscarCoordenadas(this.latitude, this.longitude);
+      if (this.latitude && this.longitude) {
+        this.mapComponent.buscarCoordenadas(parseFloat(this.latitude), parseFloat(this.longitude)).subscribe({
+          error: (err:any) => {
+            if (err instanceof InvalidCoordenatesException) {
+              toast.error('Las coordenadas no son válidas.');
+            }
+          }
+        });
+      }
     }
-  }*/
+  }
 
   anadirLugar(){
-    let prueba = new Place('000', this.nombreCiudad, [parseFloat(this.latitude),parseFloat(this.longitude)]);
-    //this._firebaseService.anadirLugar(prueba);
-    this._router.navigateByUrl('/lugares');
+    if (this.resultado) {
+      if (this.selectedOption === 'coordinates') {
+        this._placeService.createPlaceC([this.resultado.coordenadas.lat, this.resultado.coordenadas.lng], this.resultado.nombre);
+        
+      }else if (this.selectedOption === 'toponym') {
+        this._placeService.createPlaceT(this.resultado.nombre, [this.resultado.coordenadas.lat, this.resultado.coordenadas.lng]);
+      }
+      this._router.navigateByUrl('/lugares');
+    }
+    
   }
 
   
@@ -47,7 +77,24 @@ export default class AddComponent {
     this.longitude = coordenadas.lng.toFixed(6);
   }
 
-  actualizarCiudad(nombre:string){
-    this.nombreCiudad = nombre;
+  actualizarCiudad(nombre:any[]){
+    this.nombreCiudades = nombre;
   }
+
+  actualizarToponimos(toponimos:any[]){
+    this.toponimosEncontrados = toponimos;
+  }
+
+  onSelectChange(newOption: string) {
+    if (newOption !== this.previousSelectedOption) {
+      this.resultado = null;  // Limpia los resultados
+      this.toponimosEncontrados = [];  // Limpia los topónimos
+      this.nombreCiudades = [];  // Limpia las ciudades
+      this.latitude = '';  // Limpia la latitud
+      this.longitude = '';  // Limpia la longitud
+      this.toponimo = '';  // Limpia el topónimo
+      this.previousSelectedOption = newOption;  // Actualiza la opción anterior
+    }
+  }
+  
 }
