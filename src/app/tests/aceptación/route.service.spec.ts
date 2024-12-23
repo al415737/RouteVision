@@ -22,6 +22,7 @@ import { PLACE_REPOSITORY_TOKEN } from '../../repositorios/interfaces/place-repo
 import { PlaceFirebaseService } from '../../repositorios/firebase/place-firebase.service';
 import { openRouteService } from '../../APIs/Geocoding/openRoute.service';
 import { provideHttpClient } from '@angular/common/http';
+import { VehicleNotFoundException } from '../../excepciones/vehicle-not-Found-Exception';
 
   describe('RutasService', () => {
   let serviceVehiculo: VehiculoService;
@@ -54,7 +55,7 @@ import { provideHttpClient } from '@angular/common/http';
     openRoute = TestBed.inject(openRouteService);
   });
 
-  it('E01. Cálculo de ruta entre dos puntos de interés (Escenario Válido)', async () => {
+  it('HU13E01. Cálculo de ruta entre dos puntos de interés (Escenario Válido)', async () => {
         //Given: El Usuario  [“Ana2002”, “anita@gmail.com“,“aNa-24”] autenticado, lugares = [“Valencia”, “Castellón”, “Alicante”], 
                 // vehículos = [“Coche1”, “Moto1”] .
         servicioUsuario.loginUser("test@test.com", "test123");
@@ -89,6 +90,38 @@ import { provideHttpClient } from '@angular/common/http';
 
         serviceVehiculo.eliminarVehiculo("0987 CPK");
         serviceVehiculo.eliminarVehiculo("8179 KLL");
+
+  });
+
+  it('HU13E03. Método de movilidad no válido (Escenario Inválido)', async () => {
+      // Given: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] autenticado, lugares = [“Valencia”, “Castellón”, “Alicante”], vehículos = [“Coche1”, “Moto1”, “Bicicleta1”].
+      servicioUsuario.loginUser("test@test.com", "test123");
+
+      const lugar1 = await servicioPlace.createPlaceT("Valencia");
+      const lugar2 = await servicioPlace.createPlaceT("Castellón");
+      const lugar3 = await servicioPlace.createPlaceT("Alicante");
+
+      serviceVehiculo.crearVehiculo("0987 CPK", "Peugeot", "407", "2004", 8.1);
+      serviceVehiculo.crearVehiculo("8179 KLL", "BWM", "R 1250 RT", "2023", 4.8);
+
+      try{
+          // When: El usuario solicita el calculo con “Valencia-Castellón” y vehículo “Coche2”.
+          try {
+            await servicioRutas.calcularRuta("Valencia", "Castellón de la Plana", "Coche2");
+          } catch(error){
+             //Then: El sistema lanza la excepción VehicleNotFoundException().
+            expect(error).toBeInstanceOf(VehicleNotFoundException);
+          }
+      } finally{
+        servicioPlace.deletePlace(lugar1.idPlace);
+        servicioPlace.deletePlace(lugar2.idPlace);
+        servicioPlace.deletePlace(lugar3.idPlace);
+
+        serviceVehiculo.eliminarVehiculo("0987 CPK");
+        serviceVehiculo.eliminarVehiculo("8179 KLL");
+      }
+      
+      
 
   });
 
