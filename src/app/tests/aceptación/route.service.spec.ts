@@ -57,7 +57,6 @@ import { provideHttpClient } from '@angular/common/http';
   it('E01. Cálculo de ruta entre dos puntos de interés (Escenario Válido)', async () => {
         //Given: El Usuario  [“Ana2002”, “anita@gmail.com“,“aNa-24”] autenticado, lugares = [“Valencia”, “Castellón”, “Alicante”], 
                 // vehículos = [“Coche1”, “Moto1”] .
-                /*
         servicioUsuario.loginUser("test@test.com", "test123");
 
         const lugar1 = await servicioPlace.createPlaceT("Valencia");
@@ -66,26 +65,23 @@ import { provideHttpClient } from '@angular/common/http';
 
         serviceVehiculo.crearVehiculo("0987 CPK", "Peugeot", "407", "2004", 8.1);
         serviceVehiculo.crearVehiculo("8179 KLL", "BWM", "R 1250 RT", "2023", 4.8);
-        */
 
         //When: El usuario solicita el calculo con “Valencia-Castellón” y vehículo “Coche1”.
         const ruta = await servicioRutas.calcularRuta("Valencia", "Castellon de la Plana", "driving-car");
         
-        const trayectoria = ruta.features[0].properties.geometry.coordinates;
+        const trayectoria = ruta.features[0].geometry.coordinates;      //coordenadas de toda la trayectoria
         const distancia = ruta.features[0].properties.summary.distance; //metros
         const duracion = ruta.features[0].properties.summary.duration; //segundos
 
         expect(ruta).toBeTruthy();
-        //expect(trayectoria.length).toBeGreatherThan(0);
+        expect(trayectoria.length).toBeGreaterThan(0);
 
-        const distanciaEsperada = 76000;
-        //expect(Math.abs(distancia - distanciaEsperada)).toBeLessThan(1000);
+        const distanciaEsperada = 76000; // 76 km en metros
+        expect(Math.abs(distancia - distanciaEsperada)).toBeLessThan(1000); //Margen de 1 km
 
-        
+        const duracionEsperada = 3600; //1 hora en segundos
+        expect(Math.abs(duracion - duracionEsperada)).toBeLessThan(300); //Margen de 5 minutos
 
-        console.log(ruta);
-
-        /*
         //Then: El sistema muestra Trayecto=[Valencia, Paterna, Puzol, Sagunto, Moncófar, Villareal, Castellon], distancia=84km, duración=1h.
         servicioPlace.deletePlace(lugar1.idPlace);
         servicioPlace.deletePlace(lugar2.idPlace);
@@ -93,7 +89,6 @@ import { provideHttpClient } from '@angular/common/http';
 
         serviceVehiculo.eliminarVehiculo("0987 CPK");
         serviceVehiculo.eliminarVehiculo("8179 KLL");
-        */
 
   });
 
