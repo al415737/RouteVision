@@ -23,32 +23,24 @@ export class RouteFirebaseService implements RouteRepository{
   constructor() {}
 
   async obtenerCosteRuta(vehiculo: Vehiculo, ruta: Route): Promise<number> {
-    const precios = await firstValueFrom(this.precioCarburante.getFuelPrices());
+    const listaMunicipios = await firstValueFrom(this.precioCarburante.getMunicipios());
+    //console.log(listaMunicipios);
 
-    let precioC = -1;
-    console.log(precios); //va OK
-    console.log(precios.ListaEESSPrecio); //va OK también
-    console.log(precios.ListaEESSPrecio[4].provincia);   //devuelve UNDEFINED
-    console.log(precios.ListaEESSPrecio[4].precioGasolina95);  //devuelve UNDEFINED
+    const municipio = listaMunicipios.find((Municipio: any) => Municipio.Municipio === ruta.getOrigen());
+    const idMunicipio = municipio.IDMunicipio;
+    //console.log(idMunicipio);
 
-    for(let bloque of precios.ListaEESSPrecio){
-      //console.log('A');
-      // console.log()
-      // console.log(bloque.localidad);
-      // console.log(bloque.precioGasolina95);
-      if(bloque.provincia == ruta.getOrigen){ 
-        //console.log(bloque.localidad);
-        precioC = bloque.precioGasolina95;
-        //console.log(bloque.precioGasolina95);
-      }
-    } 
-    if (precioC == -1){
-      console.log(precioC);
-    } else {
-      console.log(precioC);
-    }
+    const estacionesEnMunicipio = await firstValueFrom(this.precioCarburante.getEstacionesEnMunicipio(idMunicipio));
+    //console.log(estacionesEnMunicipio);
 
-    let costeRuta = ruta.getKm() / 100 * vehiculo.getConsumo() * precioC;        
+    const precioStr = estacionesEnMunicipio.ListaEESSPrecio[0]["Precio Gasolina 95 E5"];
+    //console.log(precioStr);
+    
+    let precioNum = parseFloat(precioStr.replace(',', '.'));  
+    //console.log(precioNum); 
+  
+    let costeRuta = parseFloat((ruta.getKm() / 100 * vehiculo.getConsumo() * precioNum).toFixed(2)); 
+    console.log('El coste de la ruta es: ' + costeRuta + '€');
     return costeRuta;
   }
 }

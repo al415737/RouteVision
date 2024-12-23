@@ -88,18 +88,18 @@ describe('RutasService', () => {
 //         */
 
   it('E01. Cálculo del coste asociado a la realización de una ruta en coche (Escenario Válido): ', async () => {
-    // Given: La API está disponible. El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] con listaVehículos-Ana2002= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”*407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}]; listaRutas = [{Origen:Valencia, Destino:Castellón, Trayectoria: [Cabanyal, Sagunt, Almenara, Nules, Vilareal], kilómetros = 90}]. 
+    // Given: 
     await servicioUsuario.loginUser("test@test.com", "test123"); 
     const vehiculo = await serviceVehiculo.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1);
 
-    //crear ruta 
-    const ruta = new Route('"VALENCIA / VALÈNCIA"', "CASTELLÓN / CASTELLÓ", ['Valencia', 'Cabanyal', 'Sagunt', 'Almenara', 'Nules', 'Vilareal', 'Castellón de la Plana'], 90);
+    const ruta = new Route('Valencia', 'Castellón de la Plana/Castelló de la Plana', ['Valencia', 'Cabanyal', 'Sagunt', 'Almenara', 'Nules', 'Vilareal', 'Castellón de la Plana'], 90);
 
-    // When: El usuario quiere saber el coste de una ruta con unos de sus vehículos de tipo coche para saber cuánto dinero le va a costar y se selecciona el vehículo [Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}], Año Fabricación=”2007”, Consumo=8,1L/100 km]  y la ruta [Origen:Valencia, Destino:Castellón, Trayectoria: [Cabanyal, Sagunt, Almenara, Nules, Vilareal], kilómetros = 90].
-    const hola = await servicioRutas.obtenerCosteRuta(vehiculo, ruta);
-    //console.log('precios' + hola);
+    // When:
+
+    // THEN:
+    const costeRuta = await servicioRutas.obtenerCosteRuta(vehiculo, ruta);
     serviceVehiculo.eliminarVehiculo(vehiculo.getMatricula());
-    expect(hola).toBeTruthy();
+    expect(costeRuta).toBeTruthy();
   });
 });
 
