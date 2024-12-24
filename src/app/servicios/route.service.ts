@@ -1,4 +1,7 @@
+import { Place } from '../modelos/place';
 import { ROUTE_REPOSITORY_TOKEN, RouteRepository } from '../repositorios/interfaces/route-repository';
+import { ObligatoryFieldsException } from '../excepciones/obligatory-fields-exception';
+import { TypeNotChosenException } from '../excepciones/type-not-chosen-exception';
 import { InvalidCalculateRoute } from '../excepciones/invalid-calculate-route';
 import { VehicleNotFoundException } from '../excepciones/vehicle-not-Found-Exception';
 import { inject, Inject, Injectable } from '@angular/core';
@@ -12,9 +15,7 @@ import { NotExistingObjectException } from '../excepciones/notExistingObjectExce
 @Injectable({
   providedIn: 'root'
 })
-
 export class RouteService {
-  private _authState: AuthStateService = inject(AuthStateService);
 
   constructor(@Inject(ROUTE_REPOSITORY_TOKEN) private routeRepository: RouteRepository, @Inject(VEHICULO_REPOSITORY_TOKEN) private servicioVehículo: VehiculoRepository) { }
 
@@ -40,6 +41,17 @@ export class RouteService {
     }
 
     throw new NotExistingObjectException();
+  }
+
+  // Conseguir una ruta rápida, corta o económica
+  getRouteFSE(start: Place, end: Place, movilidad: string, preferencia: string): Promise<any> {
+    if (!preferencia.trim())
+      throw new TypeNotChosenException();
+
+    if (!movilidad.trim() || !preferencia.trim())
+      throw new ObligatoryFieldsException();
+
+    return this.routeRepository.getRouteFSE(start, end, movilidad, preferencia);
   }
 
 }

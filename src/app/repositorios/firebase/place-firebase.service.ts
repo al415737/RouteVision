@@ -28,14 +28,14 @@ export class PlaceFirebaseService implements PlaceRepository{
     this.toponimo = await firstValueFrom(this.geocoding.searchCoordenadas(coordenadas[0],coordenadas[1]));
     let lugar = this.toponimo.features[0].properties.name;
 
-        const docRef = await this.firestore.getAutoIdReference(PATHPLACE);
-        const idPlace = docRef.id;
+    const docRef = await this.firestore.getAutoIdReference(PATHPLACE);
+    const idPlace = docRef.id;
 
 
-        const placeRegisterC: Place = new Place(idPlace, lugar, coordenadas);
+    const placeRegisterC: Place = new Place(idPlace, lugar, coordenadas);
 
-        await this.firestore.createPlaceC(placeRegisterC, PATHPLACE);
-        return placeRegisterC;
+    await this.firestore.createPlaceC(placeRegisterC, PATHPLACE);
+    return placeRegisterC;
     }
 
     async deletePlace(idPlace: string) {
