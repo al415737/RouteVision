@@ -1,12 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { UserService } from '../../servicios/user.service';
-import { User } from '../../modelos/user';
-import { MailExistingException } from '../../excepciones/mail-existing-exception';
 import { USER_REPOSITORY_TOKEN, UserRepository } from '../../repositorios/interfaces/user-repository';
 import { Vehiculo } from '../../modelos/vehiculo';
 import { VEHICULO_REPOSITORY_TOKEN, VehiculoRepository } from '../../repositorios/interfaces/vehiculo-repository';
 import { VehiculoService } from '../../servicios/vehiculo.service';
-import { of } from 'rxjs';
 import { NullLicenseException } from '../../excepciones/null-license-exception';
 import { UserFirebaseService } from '../../repositorios/firebase/user-firebase.service';
 import { VehiculoFirebaseService } from '../../repositorios/firebase/vehiculo-firebase.service';

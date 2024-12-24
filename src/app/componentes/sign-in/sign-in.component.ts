@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router} from '@angular/router';
+import { Router, RouterLink} from '@angular/router';
 import { hasEmailError, isRequired } from '../../utils/validators';
 import { toast } from 'ngx-sonner';
 import { UserService } from '../../servicios/user.service';
@@ -13,7 +13,7 @@ export interface FormSignIn{  //de momento se logeará con email y contraseña
 @Component({
   selector: 'app-sign-in',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './sign-in.component.html',
 })
 
@@ -50,8 +50,7 @@ export default class SignInComponent {
       await this._service.loginUser(email, contraseña);  
       
       toast.success('¡Bienvenido de nuevo!'); 
-      console.log("hola");
-      // this._router.navigateByUrl('/home');
+      this._router.navigateByUrl('/home');
       
     } catch (error) {
       toast.error('Ha ocurrido un error. Inténtalo de nuevo.')

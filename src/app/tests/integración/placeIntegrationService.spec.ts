@@ -81,8 +81,8 @@ describe('PlaceIntegrationService', () => {
     spyOn(placeRepositorio, 'createPlaceT').and.resolveTo(mockPlace);
   
     try{
-      servicePlace.createPlaceT('Cassjdlftellfisonon');
-      expect(placeRepositorio.createPlaceT).toHaveBeenCalledWith('Cassjdlftellfisonon');
+      servicePlace.createPlaceT('');
+      expect(placeRepositorio.createPlaceT).toHaveBeenCalledWith('');
     } catch(error) {
       expect(error).toBeInstanceOf(InvalidPlaceException);
     }
