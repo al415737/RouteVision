@@ -1,0 +1,40 @@
+.body{
+    background: linear-gradient(180deg, #011640, #030F26);
+}
+
+.delete-button {
+    background-color: transparent;
+    color: #ff4081;
+    border: none;
+    padding: 5px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .delete-button:hover {
+    background-color: rgba(255, 64, 129, 0.1);
+  }
+
+  .add-button {
+    background-color: #577EF2;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+  }
+  
+  .add-button:hover {
+    background-color: #4a6cd9;
+  }
+  
+  .add-icon {
+    font-size: 20px;
+    margin-right: 8px;
+  }
+  

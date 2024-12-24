@@ -66,10 +66,10 @@ export default class AddComponent {
   anadirLugar(){
     if (this.resultado) {
       if (this.selectedOption === 'coordinates') {
-        this._placeService.createPlaceC([this.resultado.coordenadas.lat, this.resultado.coordenadas.lng], this.resultado.nombre);
+        this._placeService.createPlaceC([this.resultado.coordenadas.lat, this.resultado.coordenadas.lng]);
         
       }else if (this.selectedOption === 'toponym') {
-        this._placeService.createPlaceT(this.resultado.nombre, [this.resultado.coordenadas.lat, this.resultado.coordenadas.lng]);
+        this._placeService.createPlaceT(this.resultado.nombre, );
       }
       this._router.navigateByUrl('/lugares');
     }else{

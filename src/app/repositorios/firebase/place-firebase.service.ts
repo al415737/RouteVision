@@ -3,36 +3,41 @@ import { PlaceRepository } from '../interfaces/place-repository';
 import { Place } from '../../modelos/place';
 import { FirestoreService } from './firestore.service';
 import { AuthStateService } from '../../utils/auth-state.service';
+import { firstValueFrom } from 'rxjs';
+import { GeocodingService } from '../../APIs/Geocoding/geocoding.service';
+import { InvalidPlaceException } from '../../excepciones/invalid-place-exception';
 
 @Injectable({
   providedIn: 'root'
 })
 
 export class PlaceFirebaseService implements PlaceRepository{
-
-
   private firestore: FirestoreService = inject(FirestoreService);
   private _authState: AuthStateService = inject(AuthStateService);
-
+  private geocoding: GeocodingService = inject(GeocodingService);
+  private toponimo: any;
+  private coordenadas: any;
 
   constructor() {}
 
-  async createPlaceC(coordenadas: number[], toponimo:string): Promise<Place> { 
+  async createPlaceC(coordenadas: number[]): Promise<Place> { 
     const uid = this._authState.currentUser?.uid;
-    const PATHPLACE = `Lugar/${uid}/listaLugaresInterés`
+    const PATHPLACE = `Lugar/${uid}/listaLugaresInterés`;
+
+    this.toponimo = await firstValueFrom(this.geocoding.searchCoordenadas(coordenadas[0],coordenadas[1]));
+    let lugar = this.toponimo.features[0].properties.name;
 
     const docRef = await this.firestore.getAutoIdReference(PATHPLACE);
     const idPlace = docRef.id;
 
 
-    const placeRegisterC: Place = new Place(idPlace, toponimo, coordenadas);
+    const placeRegisterC: Place = new Place(idPlace, lugar, coordenadas);
 
     await this.firestore.createPlaceC(placeRegisterC, PATHPLACE);
     return placeRegisterC;
 }
 
     async deletePlace(idPlace: string) {
-        //para sacar el usuario y meter los lugares en su colección
         const uid = this._authState.currentUser?.uid;
         const PATHPLACE = `Lugar/${uid}/listaLugaresInterés`
 
@@ -41,15 +46,27 @@ export class PlaceFirebaseService implements PlaceRepository{
 
 
 
-    async createPlaceT(toponimo: string, coordenadas:number[]): Promise<Place> { 
+    async createPlaceT(toponimo: string): Promise<Place> { 
         const uid = this._authState.currentUser?.uid;
         const PATHPLACE = `Lugar/${uid}/listaLugaresInterés`;
 
-        const docRef = await this.firestore.getAutoIdReference(PATHPLACE); // Método que retorna un `DocumentReference`
+        this.coordenadas = await new Promise((resolve, reject) => {
+            this.geocoding.searchToponimo(toponimo).subscribe({
+                next: (response: any) => {
+                    if (!response.features || response.features.length === 0) {
+                        reject(new InvalidPlaceException());
+                    } else {
+                        resolve(response.features[0].geometry.coordinates);
+                    }
+                },
+            });
+        });
+
+        const docRef = await this.firestore.getAutoIdReference(PATHPLACE);
         const idPlace = docRef.id;
     
 
-        const placeRegisterT: Place = new Place(idPlace, toponimo, coordenadas);
+        const placeRegisterT: Place = new Place(idPlace, toponimo, this.coordenadas);
 
         await this.firestore.createPlaceT(placeRegisterT, PATHPLACE);
         return placeRegisterT;

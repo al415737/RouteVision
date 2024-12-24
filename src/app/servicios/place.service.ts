@@ -13,7 +13,7 @@ const pathPlace = 'place';
 export class PlaceService {
   constructor(@Inject(PLACE_REPOSITORY_TOKEN) private placeRepositorio: PlaceRepository) { }
 
-  createPlaceC(coordenadas: number[], toponimo: string){
+  createPlaceC(coordenadas: number[]){
     if (coordenadas.length != 2) {
       throw new InvalidCoordenatesException();
     }
@@ -26,14 +26,14 @@ export class PlaceService {
         throw new InvalidCoordenatesException();
     }
     
-    return this.placeRepositorio.createPlaceC(coordenadas, toponimo);
+    return this.placeRepositorio.createPlaceC(coordenadas);
   } 
 
-  createPlaceT(toponimo: string, coordenadas: number[]){
+  createPlaceT(toponimo: string){
     if (toponimo == null || toponimo == '') {
       throw new InvalidPlaceException();
     }
-    return this.placeRepositorio.createPlaceT(toponimo, coordenadas);
+    return this.placeRepositorio.createPlaceT(toponimo);
   }
 
   getPlaces(){
