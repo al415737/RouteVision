@@ -16,6 +16,8 @@ import { RouteService } from '../../servicios/route.service';
 import { Route } from '../../modelos/route';
 import { Vehiculo } from '../../modelos/vehiculo';
 import { NotExistingObjectException } from '../../excepciones/notExistingObjectException';
+import { VEHICULO_REPOSITORY_TOKEN } from '../../repositorios/interfaces/vehiculo-repository';
+import { VehiculoFirebaseService } from '../../repositorios/firebase/vehiculo-firebase.service';
 
 describe('PlaceIntegrationService', () => {
 
@@ -30,7 +32,8 @@ describe('PlaceIntegrationService', () => {
         provideFirestore(() => getFirestore()),
         provideAuth(() => getAuth()),
         PlaceService,
-        { provide: ROUTE_REPOSITORY_TOKEN, useClass: RouteFirebaseService }
+        { provide: ROUTE_REPOSITORY_TOKEN, useClass: RouteFirebaseService },
+        { provide: VEHICULO_REPOSITORY_TOKEN, useClass: VehiculoFirebaseService },  
       ]
     }).compileComponents();
 
@@ -53,17 +56,16 @@ describe('PlaceIntegrationService', () => {
 
   it('PRUEBA INTEGRACIÓN --> H14-E04. Cálculo del coste asociado a la realización de una ruta en coche utilizando una matrícula no registrada en la lista de vehículos (Escenario Inválido): ', async () => {
     const mockFuelCostRoute: number = 11.51;
-    
+
     spyOn(RouteRepository, 'obtenerCosteRuta').and.resolveTo(mockFuelCostRoute);
-    
+
     const vehiculoNoExiste = new Vehiculo("3423 WCX", "Fiat", "Punto", "2016", 8.1);
     const rutaValida = new Route('Valencia', 'Castellón de la Plana/Castelló de la Plana', ['Valencia', 'Cabanyal', 'Sagunt', 'Almenara', 'Nules', 'Vilareal', 'Castellón de la Plana'], 90);
 
-    try{
-      serviceRoute.obtenerCosteRuta(vehiculoNoExiste, rutaValida);
-      expect(serviceRoute.obtenerCosteRuta).toHaveBeenCalledWith(vehiculoNoExiste, rutaValida);
-    } catch(error) {
-      expect(error).toBeInstanceOf(NotExistingObjectException);
+    try {
+        await serviceRoute.obtenerCosteRuta(vehiculoNoExiste, rutaValida);
+    } catch (error) {
+        expect(error).toBeInstanceOf(NotExistingObjectException);
     }
   });
-})
+});
