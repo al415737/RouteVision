@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class GeocodingService {
+export class OpenRouteService {
   private apiKey: string = '5b3ce3597851110001cf624838a5b428b37d48899c94060b843a8b87';
   private baseUrl: string = 'https://api.openrouteservice.org';
   private http = inject(HttpClient)
@@ -30,3 +30,4 @@ export class GeocodingService {
     return this.http.get(url, { headers });
   }
 }
+

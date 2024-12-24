@@ -12,4 +12,12 @@ export class Vehiculo {
         this.año_fabricacion = año_fabricacion;
         this.consumo = consumo;
     }
+
+    getMatricula(): string {
+        return this.matricula;
+    }
+
+    getConsumo(): number {
+        return this.consumo;
+    }
 }
