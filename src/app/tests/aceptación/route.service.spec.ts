@@ -178,6 +178,18 @@ describe('RutasService', () => {
     await servicioPlace.deletePlace(place2.idPlace);
     await servicioUsuario.logoutUser();
   });
+
+  it('HU15E01. Cálculo de coste calórico de la ruta Valencia-Castellón (Escenario Válido)', async () => {
+    //Given: El usuario [“Pepito2002”, “pepito@gmail.com“,“ppt-24”] tiene su sesión iniciada y la base de datos está disponible. Lista rutas: [ {Origen:Valencia, Destino:Castellón, Trayectoria: [Cabanyal, Sagunt, Almenara, Nules, Vilareal], kilómetros = 90}]
+    servicioUsuario.loginUser("test@test.com", "test123");
+    const ruta = new Route("Valencia", "Castellón de la Plana", ["Cabanyal", "Sagunt", "Almenara", "Nules", "Vilareal"], 90);
+
+    //When: Se calcula el coste de la ruta Valencia-Castellón con la opción bicicleta. 
+    const coste = servicioRutas.
+    
+    //Then: El sistema calcula el tiempo que se tarda en realizar la ruta prevista que son 4 horas. El coste es de 500 calorías (1 hora) * 4 horas = 2000 calorías
+  });
+
 });
 
 //   it('E01. Cálculo de ruta entre dos pu90ntos de interés (Escenario Válido)', async () => {

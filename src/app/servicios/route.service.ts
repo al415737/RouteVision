@@ -10,6 +10,7 @@ import { VEHICULO_REPOSITORY_TOKEN, VehiculoRepository } from '../repositorios/i
 import { Vehiculo } from '../modelos/vehiculo';
 import { Route } from '../modelos/route';
 import { NotExistingObjectException } from '../excepciones/notExistingObjectException';
+import { NoRouteFoundException } from '../excepciones/no-route-found-exception';
 
 
 @Injectable({
@@ -52,6 +53,14 @@ export class RouteService {
       throw new ObligatoryFieldsException();
 
     return this.routeRepository.getRouteFSE(start, end, movilidad, preferencia);
+  }
+
+  costeRutaPieBicicleta(metodo: string){
+    if(metodo != 'Bicicleta' && metodo != 'pie'){
+        throw new NoRouteFoundException();
+    }
+
+    return this.routeRepository.costeRutaPieBicicleta(metodo);
   }
 
 }

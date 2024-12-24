@@ -62,6 +62,11 @@ export class RouteFirebaseService implements RouteRepository{
     return costeRuta;
   }
 
+  async costeRutaPieBicicleta(metodo: string){
+    const tiempo = ;
+    const coste = ;
+  }
+
   async getRouteFSE(start: Place, end: Place, movilidad: string, preferencia: string): Promise<any> {
     const existPlace: boolean = await this._firestore.ifExistPlace(start);
     const existPlace2: boolean = await this._firestore.ifExistPlace(end);
