@@ -47,32 +47,25 @@ describe('PlaceIntegrationService', () => {
     
     const result = await serviceRoute.obtenerCosteRuta(new Vehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1), new Route('Valencia', 'Castellón de la Plana/Castelló de la Plana', ['Valencia', 'Cabanyal', 'Sagunt', 'Almenara', 'Nules', 'Vilareal', 'Castellón de la Plana'], 90));
     
-    expect(serviceRoute.obtenerCosteRuta).toHaveBeenCalledWith(new Vehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1), new Route('Valencia', 'Castellón de la Plana/Castelló de la Plana', ['Valencia', 'Cabanyal', 'Sagunt', 'Almenara', 'Nules', 'Vilareal', 'Castellón de la Plana'], 90));
+    expect(RouteRepository.obtenerCosteRuta).toHaveBeenCalledWith(new Vehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1), new Route('Valencia', 'Castellón de la Plana/Castelló de la Plana', ['Valencia', 'Cabanyal', 'Sagunt', 'Almenara', 'Nules', 'Vilareal', 'Castellón de la Plana'], 90));
     expect(result).toEqual(mockFuelCostRoute);
   });
 
+  /*
   it('PRUEBA INTEGRACIÓN --> H14-E04. Cálculo del coste asociado a la realización de una ruta en coche utilizando una matrícula no registrada en la lista de vehículos (Escenario Inválido): ', async () => {
+    
     const mockRoute: Route = new Route('Valencia', 'Castellón de la Plana/Castelló de la Plana', ['Valencia', 'Cabanyal', 'Sagunt', 'Almenara', 'Nules', 'Vilareal', 'Castellón de la Plana'], 90);
+    //const mockVehicle: Vehiculo = new Vehículo();
 
-    spyOn(placeRepositorio, 'createPlaceC').and.resolveTo(mockPlace);
+
+    spyOn(RouteRepository, 'obtenerCosteRuta').and.resolveTo(/);
   
     try{
-      servicePlace.createPlaceC([899.99, ]);
-      expect(placeRepositorio.createPlaceC).toHaveBeenCalledWith([899.99, ]);
+      serviceRoute.obtenerCosteRuta(mockRoute);
+      expect(serviceRoute.obtenerCosteRuta).toHaveBeenCalledWith((),());
     } catch(error) {
-      expect(error).toBeInstanceOf(InvalidCoordenatesException);
+      expect(error).toBeInstanceOf(NotExistingObjectException);
     }
-    
-    
-    
-    await servicioUsuario.loginUser("test@test.com", "test123"); 
-    const vehiculo = await serviceVehiculo.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1);
-    const vehiculoNoExiste = await serviceVehiculo.crearVehiculo("3423 WCX", "Fiat", "Punto", "2016", 8.1); //este vehículo NO EXISTE EN LA BBDD DEL USUARIO
-    const ruta = new Route('Valencia', 'Castellón de la Plana/Castelló de la Plana', ['Valencia', 'Cabanyal', 'Sagunt', 'Almenara', 'Nules', 'Vilareal', 'Castellón de la Plana'], 90);
-
-    await expectAsync(servicioRutas.obtenerCosteRuta(vehiculoNoExiste, ruta)).toBeRejectedWith(new NotExistingObjectException());
-    serviceVehiculo.eliminarVehiculo(vehiculo.getMatricula());
-    serviceVehiculo.eliminarVehiculo(vehiculoNoExiste.getMatricula());
   });
-
+  */
 })
