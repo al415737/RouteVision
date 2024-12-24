@@ -70,13 +70,13 @@ describe('UserService', () => {
   });
 
   it('HU2E01. Login with correct data (Valid Escenary)', async () => {
-    // GIVEN: El usuario Pepito está registrado y la base de datos está disponible.  Usuario Pepito: [nombre: “Pepito”, User=”pepito23”, email: “pepito@gmail.com”,  contraseña: “Pepito123?_”].
+    // GIVEN: El usuario Test está registrado y la base de datos está disponible.  Usuario Test: [nombre: Test, User=”test23”, email: “test@test.com”,  contraseña: “test123”].
     /* WHEN: El usuario Pepito quiere iniciar sesión con sus datos.  user: “pepito23”, contraseña:  “Pepito123?_ “.
        THEN: El sistema carga los datos de Pepito. ListaVehículos=[{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}] y listaLugaresInterés=[{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049], idLugar = “000”}].*/
    
     await service.loginUser("test@test.com", "test123");
     await vehicleService.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1);
-    const lugar = await placeService.createPlaceC([39.98, -0.049], "Castellón de la Plana");
+    const lugar = await placeService.createPlaceC([39.98, -0.049]);
     await service.logoutUser();
 
     const resultLogin = await service.loginUser("test@test.com", "test123");

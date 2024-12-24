@@ -45,8 +45,8 @@ describe('PlaceIntegrationService', () => {
 
     spyOn(placeRepositorio, 'createPlaceC').and.resolveTo(mockPlace);
     
-    const result = await servicePlace.createPlaceC([39.98, -0.049], "Castellón de la Plana");
-    expect(placeRepositorio.createPlaceC).toHaveBeenCalledWith([39.98, -0.049], "Castellón de la Plana");
+    const result = await servicePlace.createPlaceC([39.98, -0.049]);
+    expect(placeRepositorio.createPlaceC).toHaveBeenCalledWith([39.98, -0.049]);
     expect(result).toEqual(mockPlace);
   });
 
@@ -56,8 +56,8 @@ describe('PlaceIntegrationService', () => {
     spyOn(placeRepositorio, 'createPlaceC').and.resolveTo(mockPlace);
   
     try{
-      servicePlace.createPlaceC([899.99, ], "LugarErroneo");
-      expect(placeRepositorio.createPlaceC).toHaveBeenCalledWith([899.99, ], "LugarErroneo");
+      servicePlace.createPlaceC([899.99, ]);
+      expect(placeRepositorio.createPlaceC).toHaveBeenCalledWith([899.99, ]);
     } catch(error) {
       expect(error).toBeInstanceOf(InvalidCoordenatesException);
     }
@@ -70,8 +70,8 @@ describe('PlaceIntegrationService', () => {
 
     spyOn(placeRepositorio, 'createPlaceT').and.resolveTo(mockPlace);
     
-    const result = await servicePlace.createPlaceT('Bilbao', [43.258534, -2.937123]);
-    expect(placeRepositorio.createPlaceT).toHaveBeenCalledWith('Bilbao', [43.258534, -2.937123]);
+    const result = await servicePlace.createPlaceT('Bilbao');
+    expect(placeRepositorio.createPlaceT).toHaveBeenCalledWith('Bilbao');
     expect(result).toEqual(mockPlace);
   });
 
@@ -81,8 +81,8 @@ describe('PlaceIntegrationService', () => {
     spyOn(placeRepositorio, 'createPlaceT').and.resolveTo(mockPlace);
   
     try{
-      servicePlace.createPlaceT('', [39.98, -0.049]);
-      expect(placeRepositorio.createPlaceT).toHaveBeenCalledWith('', [39.98, -0.049]);
+      servicePlace.createPlaceT('');
+      expect(placeRepositorio.createPlaceT).toHaveBeenCalledWith('');
     } catch(error) {
       expect(error).toBeInstanceOf(InvalidPlaceException);
     }

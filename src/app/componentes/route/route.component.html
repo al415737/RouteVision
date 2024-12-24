@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tus lugares de interés</title>
-  <link rel="stylesheet" href="place.component.css">
+  <title>Tus Rutas</title>
+  <link rel="stylesheet" href="route.component.css">
 </head>
 <body class="body">
   <app-header></app-header>
-  <h1 [style.color]="'white'">Tus lugares de interés</h1>
+  <h1 [style.color]="'white'">Tus rutas</h1>
   <button class="add-button" routerLink="/lugares/new">
     <span class="add-icon">+</span>
-    Añadir Lugar
+    Añadir Ruta
   </button>
   <div class="mat-elevation-z8" id="table-container">
     <table mat-table [dataSource]="dataSource" [style.background]="'linear-gradient(180deg, #011640, #030F26)'">

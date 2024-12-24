@@ -6,13 +6,14 @@ import { MatPaginatorModule, MatPaginator} from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { RouterLink } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
 import { DeleteComponent } from './delete/delete.component';
 
 
 @Component({
   selector: 'app-place',
   standalone: true,
-  imports: [HeaderComponent, MatPaginatorModule, MatTableModule, RouterLink],
+  imports: [HeaderComponent, MatPaginatorModule, MatTableModule, RouterLink, MatIconModule ],
   templateUrl: './place.component.html',
   styleUrl: './place.component.css'
 })
