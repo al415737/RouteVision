@@ -13,6 +13,8 @@ import { VehicleNotFoundException } from '../../excepciones/vehicle-not-Found-Ex
 import { NotExistingObjectException } from '../../excepciones/notExistingObjectException';
 import { Route } from '../../modelos/route';
 import { Vehiculo } from '../../modelos/vehiculo';
+import { VEHICULO_REPOSITORY_TOKEN } from '../../repositorios/interfaces/vehiculo-repository';
+import { VehiculoFirebaseService } from '../../repositorios/firebase/vehiculo-firebase.service';
 
 describe('RouteIntegrationService', () => {
   let service: RouteService;
@@ -26,7 +28,8 @@ describe('RouteIntegrationService', () => {
         provideFirestore(() => getFirestore()), 
         provideAuth(() => getAuth()),
         RouteService,  
-        { provide: ROUTE_REPOSITORY_TOKEN, useClass: RouteFirebaseService },            
+        { provide: ROUTE_REPOSITORY_TOKEN, useClass: RouteFirebaseService },  
+        { provide: VEHICULO_REPOSITORY_TOKEN, useClass: VehiculoFirebaseService },       
       ]
     });
     service = TestBed.inject(RouteService);
@@ -40,7 +43,7 @@ describe('RouteIntegrationService', () => {
           spyOn(routeRepo, 'calcularRuta').and.resolveTo(mockData);
   
           //When: El usuario solicita el calculo con “Valencia-Castellón” y vehículo “Coche1”.
-          const ruta = routeRepo.calcularRuta("Valencia", "Castellón de la Plana", "driving-car");
+          const ruta = await routeRepo.calcularRuta("Valencia", "Castellón de la Plana", "driving-car");
       
           //Then: El sistema muestra Trayecto=[Valencia, Paterna, Puzol, Sagunto, Moncófar, Villareal, Castellon], distancia=84km, duración=1h.
           expect(routeRepo.calcularRuta).toHaveBeenCalledWith("Valencia", "Castellón de la Plana", "driving-car");
