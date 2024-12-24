@@ -9,7 +9,7 @@ import { PLACE_REPOSITORY_TOKEN } from '../../repositorios/interfaces/place-repo
 import { UserFirebaseService } from '../../repositorios/firebase/user-firebase.service';
 import { USER_REPOSITORY_TOKEN } from '../../repositorios/interfaces/user-repository';
 import { PlaceFirebaseService } from '../../repositorios/firebase/place-firebase.service';
-import { GeocodingService } from '../../APIs/Geocoding/geocoding.service';
+import { OpenRouteService } from '../../APIs/Geocoding/openRoute.service';
 import { FirestoreService } from '../../repositorios/firebase/firestore.service';
 import { provideHttpClient } from '@angular/common/http';
 import { InvalidPlaceException } from '../../excepciones/invalid-place-exception';
@@ -21,7 +21,7 @@ import { ServerNotOperativeException } from '../../excepciones/server-not-operat
 describe('PlaceService', () => {
   let servicePlace: PlaceService;
   let serviceUser: UserService;
-  let geocodinRepositorio: GeocodingService;
+  let geocodinRepositorio: OpenRouteService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -39,7 +39,7 @@ describe('PlaceService', () => {
 
     servicePlace = TestBed.inject(PlaceService);
     serviceUser = TestBed.inject(UserService);
-    geocodinRepositorio = TestBed.inject(GeocodingService); 
+    geocodinRepositorio = TestBed.inject(OpenRouteService); 
   });
   
 

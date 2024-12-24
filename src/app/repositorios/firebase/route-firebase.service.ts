@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { RouteRepository } from '../interfaces/route-repository';
 import { Place } from '../../modelos/place';
 import { FirestoreService } from './firestore.service';
-import { GeocodingService } from '../../APIs/Geocoding/geocoding.service';
+import { OpenRouteService } from '../../APIs/Geocoding/openRoute.service';
 
 
 @Injectable({
@@ -11,7 +11,7 @@ import { GeocodingService } from '../../APIs/Geocoding/geocoding.service';
 
 export class RouteFirebaseService implements RouteRepository{
 
-    constructor(private _firestore: FirestoreService, private _geocoding: GeocodingService) {}
+    constructor(private _firestore: FirestoreService, private _geocoding: OpenRouteService) {}
 
     async getRouteFSE(start: Place, end: Place, movilidad: string, preferencia: string): Promise<any> {
         const existPlace: boolean = await this._firestore.ifExistPlace(start);

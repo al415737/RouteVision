@@ -3,7 +3,7 @@ import { PlaceRepository } from '../interfaces/place-repository';
 import { Place } from '../../modelos/place';
 import { FirestoreService } from './firestore.service';
 import { InvalidPlaceException } from '../../excepciones/invalid-place-exception';
-import { GeocodingService } from '../../APIs/Geocoding/geocoding.service';
+import { OpenRouteService } from '../../APIs/Geocoding/openRoute.service';
 import { getAuth } from 'firebase/auth';
 import { firstValueFrom } from 'rxjs';
 
@@ -17,7 +17,7 @@ export class PlaceFirebaseService implements PlaceRepository{
   private coordenadas: any;
 
   firestore: FirestoreService = inject(FirestoreService);
-  geocoding: GeocodingService = inject(GeocodingService);
+  geocoding: OpenRouteService = inject(OpenRouteService);
 
 
   constructor() {}

@@ -2,7 +2,6 @@ import { TestBed } from '@angular/core/testing';
 import { PlaceService } from '../../servicios/place.service';
 import { Place } from '../../modelos/place';
 import { PLACE_REPOSITORY_TOKEN, PlaceRepository } from '../../repositorios/interfaces/place-repository';
-import { GeocodingService } from '../../APIs/Geocoding/geocoding.service';
 import { provideHttpClient } from '@angular/common/http';
 import { PlaceFirebaseService } from '../../repositorios/firebase/place-firebase.service';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
@@ -14,11 +13,12 @@ import { getAuth } from 'firebase/auth';
 import { InvalidCoordenatesException } from '../../excepciones/invalid-coordenates-exception';
 import { InvalidPlaceException } from '../../excepciones/invalid-place-exception';
 import { ServerNotOperativeException } from '../../excepciones/server-not-operative-exception';
+import { OpenRouteService } from '../../APIs/Geocoding/openRoute.service';
 
 describe('PlaceIntegrationService', () => {
 
   let servicePlace: PlaceService;
-  let geocodingRepositorio: GeocodingService;
+  let geocodingRepositorio: OpenRouteService;
   let placeRepositorio: PlaceRepository;
 
   beforeEach(() => {
@@ -36,7 +36,7 @@ describe('PlaceIntegrationService', () => {
     placeRepositorio = TestBed.inject(PLACE_REPOSITORY_TOKEN);
 
     servicePlace = TestBed.inject(PlaceService);
-    geocodingRepositorio = TestBed.inject(GeocodingService); 
+    geocodingRepositorio = TestBed.inject(OpenRouteService); 
   });
 
   //HISTORIA 5
