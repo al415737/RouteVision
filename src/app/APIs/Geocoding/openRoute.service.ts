@@ -29,5 +29,10 @@ export class OpenRouteService {
 
     return this.http.get(url, { headers });
   }
-}
 
+  getRuta(origen: string, destino: string, metodoMov: string){
+      const url = `https://api.openrouteservice.org/v2/directions/${metodoMov}?api_key=${this.apiKey}&start=${origen}&end=${destino}`;
+      return this.http.get(url);
+
+  }
+}

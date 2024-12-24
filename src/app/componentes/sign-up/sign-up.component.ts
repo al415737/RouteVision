@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormRecord, ReactiveFormsModule, Validators } from '@angular/forms'
 import { hasEmailError, isRequired } from '../../utils/validators';
+//import { toast } from 'ngx-sonner';
 import { toast } from 'ngx-sonner';
 import { Router, RouterLink } from '@angular/router';
 import { UserService } from '../../servicios/user.service';
@@ -56,11 +57,13 @@ export default class SignUpComponent {
       
       await this._service.createUser(nombre, apellido, email, user, contraseña);  
       
+      //toast.success('Usuario creado correctamente.'); 
+      // this._router.navigateByUrl('/home'); Cuando tenga el home  
       toast.success('Usuario creado correctamente.'); 
       this._router.navigateByUrl('/home');
       
     } catch (error) {
-      toast.error('Usuario NO creado. Ha ocurrido un error.')
+      //toast.error('Usuario NO creado. Ha ocurrido un error.')
       
     }
   }

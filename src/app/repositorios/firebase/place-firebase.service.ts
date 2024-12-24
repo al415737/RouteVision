@@ -15,9 +15,9 @@ import { AuthStateService } from '../../utils/auth-state.service';
 export class PlaceFirebaseService implements PlaceRepository{
   private firestore: FirestoreService = inject(FirestoreService);
   private _authState: AuthStateService = inject(AuthStateService);
-  private geocoding: OpenRouteService = inject(OpenRouteService);
-  private toponimo: any;
-  private coordenadas: any;
+  geocoding: OpenRouteService = inject(OpenRouteService);
+  private coordenadas: number[] = [];
+  private toponimo: any ;
 
   constructor() {}
 
