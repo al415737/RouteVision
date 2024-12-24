@@ -23,6 +23,7 @@ import { OpenRouteService } from '../../APIs/Geocoding/openRoute.service';
 import { provideHttpClient } from '@angular/common/http';
 import { PrecioCarburantes } from '../../APIs/PrecioCarburantes/precioCarburantes.service';
 import { Route } from '../../modelos/route';
+import { NotExistingObjectException } from '../../excepciones/notExistingObjectException';
 
 
 describe('RutasService', () => {
@@ -87,7 +88,7 @@ describe('RutasService', () => {
 //         serviceVehiculo.eliminarVehiculo("8179 KLL");
 //         */
 
-  it('E01. Cálculo del coste asociado a la realización de una ruta en coche (Escenario Válido): ', async () => {
+  it('H14-E01. Cálculo del coste asociado a la realización de una ruta en coche (Escenario Válido): ', async () => {
     // Given: 
     await servicioUsuario.loginUser("test@test.com", "test123"); 
     const vehiculo = await serviceVehiculo.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1);
@@ -100,6 +101,17 @@ describe('RutasService', () => {
     const costeRuta = await servicioRutas.obtenerCosteRuta(vehiculo, ruta);
     serviceVehiculo.eliminarVehiculo(vehiculo.getMatricula());
     expect(costeRuta).toBeTruthy();
+  });
+
+  it('H14-E04. Cálculo del coste asociado a la realización de una ruta en coche utilizando una matrícula no registrada en la lista de vehículos (Escenario Inválido): ', async () => {
+    await servicioUsuario.loginUser("test@test.com", "test123"); 
+    const vehiculo = await serviceVehiculo.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1);
+    const vehiculoNoExiste = await serviceVehiculo.crearVehiculo("3423 WCX", "Fiat", "Punto", "2016", 8.1); //este vehículo NO EXISTE EN LA BBDD DEL USUARIO
+    const ruta = new Route('Valencia', 'Castellón de la Plana/Castelló de la Plana', ['Valencia', 'Cabanyal', 'Sagunt', 'Almenara', 'Nules', 'Vilareal', 'Castellón de la Plana'], 90);
+
+    await expectAsync(servicioRutas.obtenerCosteRuta(vehiculoNoExiste, ruta)).toBeRejectedWith(new NotExistingObjectException());
+    serviceVehiculo.eliminarVehiculo(vehiculo.getMatricula());
+    serviceVehiculo.eliminarVehiculo(vehiculoNoExiste.getMatricula());
   });
 });
 
