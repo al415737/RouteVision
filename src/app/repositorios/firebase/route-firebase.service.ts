@@ -22,7 +22,7 @@ export class RouteFirebaseService implements RouteRepository{
 
   constructor() {}
 
-  async obtenerCosteRuta(vehiculo: Vehiculo, ruta: Route): Promise<number> {
+  async obtenerCosteRuta(vehiculo: Vehiculo, ruta: Route): Promise<number> {  
     const listaMunicipios = await firstValueFrom(this.precioCarburante.getMunicipios());
     //console.log(listaMunicipios);
 

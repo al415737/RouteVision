@@ -51,21 +51,19 @@ describe('PlaceIntegrationService', () => {
     expect(result).toEqual(mockFuelCostRoute);
   });
 
-  /*
   it('PRUEBA INTEGRACIÓN --> H14-E04. Cálculo del coste asociado a la realización de una ruta en coche utilizando una matrícula no registrada en la lista de vehículos (Escenario Inválido): ', async () => {
+    const mockFuelCostRoute: number = 11.51;
     
-    const mockRoute: Route = new Route('Valencia', 'Castellón de la Plana/Castelló de la Plana', ['Valencia', 'Cabanyal', 'Sagunt', 'Almenara', 'Nules', 'Vilareal', 'Castellón de la Plana'], 90);
-    //const mockVehicle: Vehiculo = new Vehículo();
+    spyOn(RouteRepository, 'obtenerCosteRuta').and.resolveTo(mockFuelCostRoute);
+    
+    const vehiculoNoExiste = new Vehiculo("3423 WCX", "Fiat", "Punto", "2016", 8.1);
+    const rutaValida = new Route('Valencia', 'Castellón de la Plana/Castelló de la Plana', ['Valencia', 'Cabanyal', 'Sagunt', 'Almenara', 'Nules', 'Vilareal', 'Castellón de la Plana'], 90);
 
-
-    spyOn(RouteRepository, 'obtenerCosteRuta').and.resolveTo(/);
-  
     try{
-      serviceRoute.obtenerCosteRuta(mockRoute);
-      expect(serviceRoute.obtenerCosteRuta).toHaveBeenCalledWith((),());
+      serviceRoute.obtenerCosteRuta(vehiculoNoExiste, rutaValida);
+      expect(serviceRoute.obtenerCosteRuta).toHaveBeenCalledWith(vehiculoNoExiste, rutaValida);
     } catch(error) {
       expect(error).toBeInstanceOf(NotExistingObjectException);
     }
   });
-  */
 })

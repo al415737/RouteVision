@@ -100,19 +100,16 @@ describe('RutasService', () => {
     expect(costeRuta).toBeTruthy();
   });
 
-  /*
   it('H14-E04. Cálculo del coste asociado a la realización de una ruta en coche utilizando una matrícula no registrada en la lista de vehículos (Escenario Inválido): ', async () => {
-    
     await servicioUsuario.loginUser("test@test.com", "test123"); 
     const vehiculo = await serviceVehiculo.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1);
-    const vehiculoNoExiste = await serviceVehiculo.crearVehiculo("3423 WCX", "Fiat", "Punto", "2016", 8.1); //este vehículo NO EXISTE EN LA BBDD DEL USUARIO
+    // const vehiculoNoExiste = await serviceVehiculo.crearVehiculo("3423 WCX", "Fiat", "Punto", "2016", 8.1); //este vehículo NO EXISTE EN LA BBDD DEL USUARIO
     const ruta = new Route('Valencia', 'Castellón de la Plana/Castelló de la Plana', ['Valencia', 'Cabanyal', 'Sagunt', 'Almenara', 'Nules', 'Vilareal', 'Castellón de la Plana'], 90);
+    const vehiculoNoExiste = new Vehiculo("3423 WCX", "Fiat", "Punto", "2016", 8.1);
 
     await expectAsync(servicioRutas.obtenerCosteRuta(vehiculoNoExiste, ruta)).toBeRejectedWith(new NotExistingObjectException());
     serviceVehiculo.eliminarVehiculo(vehiculo.getMatricula());
-    serviceVehiculo.eliminarVehiculo(vehiculoNoExiste.getMatricula());
-    
+    // serviceVehiculo.eliminarVehiculo(vehiculoNoExiste.getMatricula());
   });
-  */
 });
 
