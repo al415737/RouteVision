@@ -8,11 +8,11 @@
 </head>
 <body>
     <div class="signup-container">
-        <h2>Crea una cuenta. SIGN-UP</h2>
+        <h2>Registrate en RouteVision</h2>
         <form [formGroup]="form" (ngSubmit)="submit()">
             <div class="form-group">
                 <label for="nombre">Nombre</label>
-                <input type="text" id="username" name="username" placeholder="Choose a name" formControlName="nombre" />
+                <input type="text" id="nombre" name="nombre" placeholder="Escribe tu nombre" formControlName="nombre" />
                 <!--PARA EL VALIDADOR:-->
                 @if (isRequired('nombre')) {
                     <small class="text-red"> Este campo es requerido.</small>
@@ -20,7 +20,7 @@
             </div>
             <div class="form-group">
                 <label for="apellido">Apellido</label>
-                <input type="text" id="apellido" name="apellido" placeholder="Choose a lastname" formControlName="apellido" />
+                <input type="text" id="apellido" name="apellido" placeholder="Escribe tus apellidos" formControlName="apellido" />
                 <!--PARA EL VALIDADOR:-->
                 @if (isRequired('apellido')) {
                     <small class="text-red"> Este campo es requerido.</small>
@@ -28,7 +28,7 @@
             </div>
             <div class="form-group">
                 <label for="user">User</label>
-                <input type="text" id="user" name="user" placeholder="Choose a username" formControlName="user" />
+                <input type="text" id="user" name="user" placeholder="Elige nombre de usuario" formControlName="user" />
                 <!--PARA EL VALIDADOR:-->
                 @if (isRequired('user')) {
                     <small class="text-red"> Este campo es requerido.</small>
@@ -36,7 +36,7 @@
             </div>
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" id="email" name="email" placeholder="Enter your email" formControlName="email" />
+                <input type="email" id="email" name="email" placeholder="Escribe tu correo" formControlName="email" />
                 <!--PARA EL VALIDADOR: (vacío y mal puesto el mail)-->
                 @if (isRequired('email')) {
                     <small class="text-red"> Este campo es requerido.</small>
@@ -47,16 +47,17 @@
             </div>
             <div class="form-group">
                 <label for="contraseña">Contraseña</label>
-                <input type="contraseña" id="contraseña" name="contraseña" placeholder="Create a password" formControlName="contraseña" />
+                <input type="contraseña" id="contraseña" name="contraseña" placeholder="Elige una contraseña" formControlName="contraseña" />
                 <!--PARA EL VALIDADOR:-->
                 @if (isRequired('contraseña')) {
                     <small class="text-red"> Este campo es requerido.</small>
                 }
             </div>
-            <button type="submit" class="btn">SUBMIT</button>
+            <button type="submit" class="btn">Registrate</button>
         </form>
         <div class="signup-footer">
-            <p>¿Ya tienes una cuenta? <a href="../sign-in/sign-in.component.html">Log in</a></p>
+            <p>¿Ya tienes una cuenta? <a routerLink="/auth/sign-in">Log in</a></p>
+            <button class="btn-secondary" routerLink="/default">Volver a la página principal</button>
         </div>
     </div>
 </body>

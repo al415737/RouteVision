@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Places</title>
+  <link rel="stylesheet" href="add.component.css">
+</head>
+<body>
+  <app-header></app-header>
+
+  <div class="container">
+    <app-map #mapComponent [selectedOption]="selectedOption" (coordenadasSeleccionadas)="actualizarLatLong($event)"
+    (nombreCiudades)="actualizarCiudad($event)" (lugaresSeleccionados)="actualizarToponimos($event)"> </app-map>
+    <div class="input-container" style="margin-left: 20px;">
+      <h2>Añadir Lugar</h2>
+        <label for="select-method">Seleccionar método:</label>
+        <select id="select-method" [(ngModel)]="selectedOption" (ngModelChange)="onSelectChange($event)">
+          <option value="">--Seleccionar--</option>
+          <option value="coordinates">Elegir lugar por coordenadas</option>
+          <option value="toponym">Elegir lugar por topónimo</option>
+        </select>
+
+        <!-- Mostrar inputs de coordenadas -->
+        @if (selectedOption === 'coordinates') {
+        <div style="margin-top: 10px;">
+            <label for="latitude">Latitud:</label>
+            <input id="latitude" type="text" [value]="latitude" readonly />
+            <br>
+            <label for="longitude">Longitud:</label>
+            <input id="longitude" type="text" [value]="longitude" readonly />
+            <button (click)="buscarCoordenadas()">Buscar por coordenadas</button>
+            <div class="tooltip-container" matTooltip="Haz click en el mapa para seleccionar las coordenadas">
+              <span class="info-icon">?</span>
+            </div>
+            <br>
+            @if (nombreCiudades.length > 0) {
+              <div style="margin-top: 20px;">
+                <label for="resultados">Resultados de la búsqueda:</label>
+                <select id="resultados" [(ngModel)]="resultado">
+                  @for (resultado of nombreCiudades; track $index) {
+                  <option [ngValue]="resultado">
+                    {{ resultado.nombre }}
+                  </option>
+                }
+                </select>
+              </div>
+            }
+        </div>
+        }
+
+        <!-- Mostrar input de topónimo -->
+        @if (selectedOption === 'toponym') {
+        <div style="margin-top: 10px;">
+            <label for="toponym">Topónimo:</label>
+            <input id="toponym" type="text" [(ngModel)]="toponimo" placeholder="Escribe el nombre del lugar" />
+            <button (click)="buscarToponimo()">Buscar por topónimo</button>
+        </div>
+    }
+    @if (toponimosEncontrados.length > 0) {
+      <div style="margin-top: 20px;">
+        <label for="resultados">Resultados de la búsqueda:</label>
+        <select id="resultados" [(ngModel)]="resultado">
+          @for (resultado of toponimosEncontrados; track $index) {
+          <option [ngValue]="resultado">
+            {{ resultado.nombre }}
+          </option>
+        }
+        </select>
+      </div>
+    }
+      <button (click)="anadirLugar()" class="btn-success">Añadir Lugar</button>
+      <button class="btn-secondary back-button" routerLink="/lugares"> Volver</button>
+    </div>
+
+  </div>
+</body>
+</html>

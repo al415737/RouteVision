@@ -1,8 +1,9 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormRecord, ReactiveFormsModule, Validators } from '@angular/forms'
 import { hasEmailError, isRequired } from '../../utils/validators';
+//import { toast } from 'ngx-sonner';
 import { toast } from 'ngx-sonner';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { UserService } from '../../servicios/user.service';
 
 interface FormSignUp{
@@ -16,7 +17,7 @@ interface FormSignUp{
 @Component({
   selector: 'app-sign-up',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './sign-up.component.html',
 })
 export default class SignUpComponent {
@@ -29,7 +30,7 @@ export default class SignUpComponent {
     return isRequired(field, this.form);
   }
 
-  // Para validar que el correo está bien (tiene @, gmail, .com)
+  // Para validar que el correo está bien
   isEmailIncorrect(){
     return hasEmailError(this.form);
   }
@@ -37,7 +38,7 @@ export default class SignUpComponent {
   form = this._formBuilder.group<FormSignUp>({
     nombre: this._formBuilder.control('', Validators.required),
     apellido: this._formBuilder.control('', Validators.required),
-    email: this._formBuilder.control('', [Validators.required, Validators.email]),     // Para saber que está metiendo un email correcto (@, .com, gmail, etc)
+    email: this._formBuilder.control('', [Validators.required, Validators.email]),
     user: this._formBuilder.control('', Validators.required),
     contraseña: this._formBuilder.control('', Validators.required),
   });
@@ -56,11 +57,13 @@ export default class SignUpComponent {
       
       await this._service.createUser(nombre, apellido, email, user, contraseña);  
       
-      toast.success('Usuario creado correctamente.'); 
+      //toast.success('Usuario creado correctamente.'); 
       // this._router.navigateByUrl('/home'); Cuando tenga el home  
+      toast.success('Usuario creado correctamente.'); 
+      this._router.navigateByUrl('/home');
       
     } catch (error) {
-      toast.error('Usuario NO creado. Ha ocurrido un error.')
+      //toast.error('Usuario NO creado. Ha ocurrido un error.')
       
     }
   }

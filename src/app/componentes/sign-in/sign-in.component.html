@@ -8,11 +8,11 @@
 </head>
 <body>
     <div class="signup-container">
-        <h2>Inicio de sesión. SIGN-IN</h2>
+        <h2>Inicio de sesión.</h2>
         <form [formGroup]="form" (ngSubmit)="submit()">
             <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" placeholder="Enter your email" formControlName="email" />
+                <label for="email">Correo</label>
+                <input type="email" id="email" name="email" placeholder="Escribe tu correo" formControlName="email" />
                 <!--PARA EL VALIDADOR: (vacío y mal puesto el mail)-->
                 @if (isRequired('email')) {
                     <small class="text-red"> Este campo es requerido.</small>
@@ -23,7 +23,7 @@
             </div>
             <div class="form-group"> 
                 <label for="contraseña">Contraseña</label>
-                <input type="contraseña" id="contraseña" name="contraseña" placeholder="Create a password" formControlName="contraseña" />
+                <input type="contraseña" id="contraseña" name="contraseña" placeholder="Escribe tu contraseña" formControlName="contraseña" />
                 <!--PARA EL VALIDADOR:-->
                 @if (isRequired('contraseña')) {
                     <small class="text-red"> Este campo es requerido.</small>
@@ -32,7 +32,8 @@
             <button type="submit" class="btn">Acceder</button>
         </form>
         <div class="signup-footer">
-            <p>¿Aún no tienes una cuenta? <a href="/">Sign up</a></p>
+            <p>¿Aún no tienes una cuenta? <a routerLink="/auth/sign-up">Sign up</a></p>
+            <button class="btn-secondary" routerLink="/default">Volver a la página principal</button>
         </div>
     </div>
 </body>
