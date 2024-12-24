@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { tileLayer, Map, marker, geoJSON, Marker, LatLngBounds } from 'leaflet';
 import { FirestoreService } from '../../repositorios/firebase/firestore.service';
 import { AuthStateService } from '../../utils/auth-state.service';
-import { GeocodingService } from '../../APIs/Geocoding/geocoding.service';
+import { openRouteService } from '../../APIs/Geocoding/openRoute.service';
 import { InvalidPlaceException } from '../../excepciones/invalid-place-exception';
 import { catchError, map, of, throwError } from 'rxjs';
 import { InvalidCoordenatesException } from '../../excepciones/invalid-coordenates-exception';
@@ -23,7 +23,7 @@ export class MapComponent {
   private currentMarker2: any | null = null;
   private listaMarkers: Marker[] = [];
   private bounds: any[] = [];
-  private _rutasService = inject(GeocodingService);
+  private _rutasService = inject(openRouteService);
   @Input() selectedOption: string = '';
   @Output() nombreCiudades = new EventEmitter<any[]>();
   @Output() coordenadasSeleccionadas = new EventEmitter<{ lat: number; lng: number }>();
