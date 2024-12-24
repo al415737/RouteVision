@@ -11,7 +11,7 @@ export class openRouteService {
   constructor(private http: HttpClient) { }
 
   searchToponimo(name:string): Observable<any>{
-    const url = `${this.baseUrl}/geocode/search?api_key=${this.apiKey}&text=${name}&boundary.country=ES`;
+    const url = `https://api.openrouteservice.org/geocode/search?api_key=${this.apiKey}&text=${name}&boundary.country=ES`;
     const headers = new HttpHeaders({
       'Accept': 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8'
     });
@@ -22,6 +22,15 @@ export class openRouteService {
   getCoordenadas(toponimo: string) {
     const url = `https://api.openrouteservice.org/geocode/search?api_key=${this.apiKey}&text=${toponimo}&boundary.country=ES`;
     return this.http.get(url);
+  }
+
+  searchCoordenadas(latitud: any, longitud: any): Observable<any>{
+    const url = `https://api.openrouteservice.org/geocode/reverse?api_key=${this.apiKey}&point.lon=${longitud}&point.lat=${latitud}&boundary.country=ES`;
+    const headers = new HttpHeaders({
+      'Accept': 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8'
+    });
+
+    return this.http.get(url, { headers });
   }
 
   getRuta(origen: string, destino: string, metodoMov: string){

@@ -17,9 +17,7 @@ export class PlaceFirebaseService implements PlaceRepository{
 
   private firestore: FirestoreService = inject(FirestoreService);
   private _authState: AuthStateService = inject(AuthStateService);
-  firestore: FirestoreService = inject(FirestoreService);
   geocoding: openRouteService = inject(openRouteService);
-
 
   constructor() {}
 
