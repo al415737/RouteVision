@@ -140,7 +140,29 @@ export class FirestoreService {
     } catch (error) {
       throw new ServerNotOperativeException();
     }
-
-    
   }
+
+  async ifExistPlace(place: Place) {
+    const _collection = collection(this._firestore, `Lugar/${this._authState.currentUser?.uid}/listaLugaresInterés`);
+
+    const q = query(_collection, where('idPlace', '==', place.idPlace));
+
+    const querySnapshot = await getDocs(q);
+    if (querySnapshot.empty) 
+      return false;
+    
+    return true;
+  }
+
+  async ifExistVehicle(vehicle: Vehiculo) {
+    const _collection = collection(this._firestore, `vehiculo/${this._authState.currentUser?.uid}/listaVehiculos`);
+
+    const q = query(_collection, where('matricula', '==', vehicle.getMatricula()));
+
+    const querySnapshot = await getDocs(q);
+    if (querySnapshot.empty) 
+      return false;
+    
+    return true;
+  } 
 }

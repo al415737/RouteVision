@@ -9,19 +9,20 @@ import { PLACE_REPOSITORY_TOKEN } from '../../repositorios/interfaces/place-repo
 import { UserFirebaseService } from '../../repositorios/firebase/user-firebase.service';
 import { USER_REPOSITORY_TOKEN } from '../../repositorios/interfaces/user-repository';
 import { PlaceFirebaseService } from '../../repositorios/firebase/place-firebase.service';
-import { GeocodingService } from '../../APIs/Geocoding/geocoding.service';
+import { OpenRouteService } from '../../APIs/Geocoding/openRoute.service';
 import { FirestoreService } from '../../repositorios/firebase/firestore.service';
 import { provideHttpClient } from '@angular/common/http';
 import { InvalidPlaceException } from '../../excepciones/invalid-place-exception';
 import { InvalidCoordenatesException } from '../../excepciones/invalid-coordenates-exception';
 import { Place } from '../../modelos/place';
 import { ServerNotOperativeException } from '../../excepciones/server-not-operative-exception';
+import { MapComponent } from '../../componentes/map/map.component';
 
 
 describe('PlaceService', () => {
   let servicePlace: PlaceService;
   let serviceUser: UserService;
-  let geocodinRepositorio: GeocodingService;
+  let geocodinRepositorio: OpenRouteService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -34,12 +35,13 @@ describe('PlaceService', () => {
         { provide: PLACE_REPOSITORY_TOKEN, useClass: PlaceFirebaseService },
         { provide: USER_REPOSITORY_TOKEN, useClass: UserFirebaseService },
         FirestoreService,
+        MapComponent
       ] 
     })
 
     servicePlace = TestBed.inject(PlaceService);
     serviceUser = TestBed.inject(UserService);
-    geocodinRepositorio = TestBed.inject(GeocodingService); 
+    geocodinRepositorio = TestBed.inject(OpenRouteService); 
   });
   
 
@@ -47,11 +49,7 @@ describe('PlaceService', () => {
 
     // GIVEN: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] quiere dar de alta un nuevo lugar de interés. La API está disponible → lugaresInteres-Ana2002 = [ ].
     await serviceUser.loginUser("test@test.com", "test123"); 
-    /*spyOn(geocodinRepositorio, "getToponimo").and.returnValue(of({toponimo: 'Castellón de la Plana'}));
     
-    const result = await firstValueFrom(geocodinRepositorio.getToponimo([39.98, -0.049]));
-    expect(result).toEqual({toponimo: 'Castellón de la Plana'});*/
-
     // WHEN: Intenta dar de alta un lugar de interés → Coordenadas = [Latitud: 39.98, Longitud: -0.049]
     const createPlace = await servicePlace.createPlaceC([39.98, -0.049]);
 
@@ -59,19 +57,21 @@ describe('PlaceService', () => {
     expect(createPlace).toBeInstanceOf(Place);
     expect(createPlace.idPlace).toBeDefined(); 
     await servicePlace.deletePlace(createPlace.idPlace);
+    await serviceUser.logoutUser();
   });
 
   it('HU5E02. Registro de un lugar de interés incorrecto (Caso Inválido):', async () => {
     // GIVEN: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] quiere dar de alta un nuevo lugar de interés. La API está disponible → lugaresInteres-Ana2002 = [ ].
     await serviceUser.loginUser("test@test.com", "test123");
 
-    try{
-      // WHEN: Intenta dar de alta un lugar de interés → Coordenadas = [Latitud: 899,98, Longitud:].
-      await servicePlace.createPlaceC([899.98, ]);
-    } catch (error){  
-      // THEN: El sistema no registra el lugar de interés y lanza la excepción InvalidCoordinatesException().
-      expect(error).toBeInstanceOf(InvalidCoordenatesException);
-    }
+      try{
+        // WHEN: Intenta dar de alta un lugar de interés → Coordenadas = [Latitud: 899,98, Longitud:].
+        await servicePlace.createPlaceC([899.98, ]);
+      } catch (error){  
+        // THEN: El sistema no registra el lugar de interés y lanza la excepción InvalidCoordinatesException().
+        expect(error).toBeInstanceOf(InvalidCoordenatesException);
+      }
+    await serviceUser.logoutUser();
   });
 
   //HISTORIA 6 -------------------------------------
@@ -94,7 +94,7 @@ describe('PlaceService', () => {
     expect(createPlaceT.idPlace).toBeDefined(); 
     await servicePlace.deletePlace(createPlaceT.idPlace);
     await servicePlace.deletePlace(place.idPlace);
-
+    await serviceUser.logoutUser();
   });
 
   
@@ -104,15 +104,14 @@ describe('PlaceService', () => {
     // Coordenadas = [Latitud: 39.98, Longitud: -0.049]}, {NombreCiudad = “Bilbao”, Coordenadas = [Latitud:
     // 43.26271, Longitud: -2.92528]}].     
     await serviceUser.loginUser("test@test.com", "test123");
-  
-    const place = await servicePlace.createPlaceT('Castellón de la Plana');
-    
-    // WHEN: Intenta dar de alta un lugar de interés → Topónimo = “Cassjdlftellfisonon”.   
-    // THEN: El sistem+a no registra el lugar de interés y se genera la excepción InvalidPlaceException().
-    await expectAsync(servicePlace.createPlaceT('Cassjdlftellfisonon'))
-    .toBeRejectedWith(new InvalidPlaceException());
-
-    await servicePlace.deletePlace(place.idPlace);
+      const place = await servicePlace.createPlaceT('Castellón de la Plana');
+      
+      // WHEN: Intenta dar de alta un lugar de interés → Topónimo = “Cassjdlftellfisonon”.      
+      // THEN: El sistem+a no registra el lugar de interés y se genera la excepción InvalidPlaceException().
+      await expectAsync(servicePlace.createPlaceT('Cassjdlftellfisonon'))
+      .toBeRejectedWith(new InvalidPlaceException());
+      await servicePlace.deletePlace(place.idPlace);
+      await serviceUser.logoutUser();
   });
 
   it('HU7E01. Consulta de lista de lugares dados de alta (Escenario válido):', async() => {
@@ -133,9 +132,10 @@ describe('PlaceService', () => {
 
       await servicePlace.deletePlace(lugar1.idPlace);
       await servicePlace.deletePlace(lugar2.idPlace);
+      await serviceUser.logoutUser();
    });
 
-   it('HU7E02. Consulta de lista de lugares dados de alta sin conexión a la BBDD (Escenario inválido):', async() => {
+   it('HU7E03. Consulta de lista de lugares dados de alta sin estar registrado:', async() => {
       //GIVEN:  El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] con  listaLugaresInteres-Ana2002 = [{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049], idLugar=”000”}, {NombreCiudad = “Bilbao”, Coordenadas = [Latitud: 43.26271, Longitud: -2.92528], idLugar=”001”}] no se encuentra registrado.
       await serviceUser.loginUser("test@test.com","test123");
       const lugar1 = await servicePlace.createPlaceC([39.98, -0.049]);
@@ -147,5 +147,6 @@ describe('PlaceService', () => {
       await serviceUser.loginUser("test@test.com","test123");
       servicePlace.deletePlace(lugar1.idPlace);
       servicePlace.deletePlace(lugar2.idPlace);
+      await serviceUser.logoutUser();
   });
 });

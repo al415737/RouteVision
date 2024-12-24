@@ -1,3 +1,4 @@
+/* Estilos generales */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -6,26 +7,31 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background-color: #f0f0f0;
+    background: linear-gradient(180deg, #011640, #030F26); /* Fondo de la paleta */
+    color: #ffffff; /* Texto blanco para contraste */
 }
 
+/* Contenedor principal */
 .signup-container {
-    background-color: #fff;
+    background-color: #021B42; /* Azul oscuro de la paleta */
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     width: 100%;
     max-width: 400px;
     box-sizing: border-box;
+    border: 1px solid #577EF2; /* Borde sutil azul claro */
 }
 
+/* Título */
 .signup-container h2 {
     margin-bottom: 20px;
-    color: #333;
+    color: #577EF2; /* Azul claro de la paleta */
     text-align: center;
     font-size: 1.5rem;
 }
 
+/* Campos del formulario */
 .form-group {
     margin-bottom: 15px;
 }
@@ -35,28 +41,33 @@ body {
     margin-bottom: 5px;
     font-weight: bold;
     font-size: 0.9rem;
+    color: #ffffff;
 }
 
 .form-group input {
     width: 100%;
     padding: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid #577EF2; /* Azul claro */
     border-radius: 4px;
     font-size: 0.95rem;
     box-sizing: border-box;
+    background-color: #030F26; /* Azul oscuro */
+    color: #ffffff; /* Texto blanco */
 }
 
 .form-group input:focus {
-    border-color: #28a745;
+    border-color: #038C8C; /* Verde azulado */
     outline: none;
+    background-color: #021B42; /* Azul intermedio */
 }
 
+/* Botón */
 .btn {
     width: 100%;
     padding: 10px;
-    background-color: #28a745;
+    background-color: #577EF2; /* Azul claro */
     border: none;
-    color: #fff;
+    color: #ffffff;
     font-size: 16px;
     border-radius: 4px;
     cursor: pointer;
@@ -64,9 +75,10 @@ body {
 }
 
 .btn:hover {
-    background-color: #218838;
+    background-color: #038C8C; /* Verde azulado */
 }
 
+/* Pie de página */
 .signup-footer {
     margin-top: 15px;
     text-align: center;
@@ -74,7 +86,7 @@ body {
 }
 
 .signup-footer a {
-    color: #28a745;
+    color: #577EF2; /* Azul claro */
     text-decoration: none;
 }
 
@@ -82,37 +94,26 @@ body {
     text-decoration: underline;
 }
 
+/* Texto de validación */
 .text-red {
-    color: red;
+    color: #FF6B6B; /* Rojo vibrante */
     font-size: 0.875rem;
 }
 
-/* Responsive design for wider screens */
-@media (min-width: 1024px) {
-    .signup-container {
-        max-width: 500px;
-        padding: 30px;
-    }
+.btn-secondary {
+    width: 100%;
+    padding: 10px;
+    background-color: #a8dadc;
+    border: 1px solid #457b9d;
+    color: #457b9d;
+    font-size: 0.95rem;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
 
-    .signup-container h2 {
-        font-size: 2rem;
-    }
-
-    .form-group label {
-        font-size: 1rem;
-    }
-
-    .form-group input {
-        font-size: 1rem;
-        padding: 12px;
-    }
-
-    .btn {
-        font-size: 18px;
-        padding: 12px;
-    }
-
-    .signup-footer {
-        font-size: 15px;
-    }
+.btn-secondary:hover {
+    background-color: #457b9d;
+    color: #ffffff;
 }

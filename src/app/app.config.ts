@@ -11,6 +11,9 @@ import { VehiculoFirebaseService } from './repositorios/firebase/vehiculo-fireba
 import { PlaceFirebaseService } from './repositorios/firebase/place-firebase.service';
 import { PLACE_REPOSITORY_TOKEN } from './repositorios/interfaces/place-repository';
 import { provideHttpClient } from '@angular/common/http';
+import { ROUTE_REPOSITORY_TOKEN } from './repositorios/interfaces/route-repository';
+import { RouteFirebaseService } from './repositorios/firebase/route-firebase.service';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 export const firebaseConfig = {
   apiKey: "AIzaSyCRNYco212t9-485Csb1LyYvzHGpWhak08",
@@ -34,6 +37,8 @@ export const appConfig: ApplicationConfig = {
      {
       provide: VEHICULO_REPOSITORY_TOKEN, useClass: VehiculoFirebaseService
      }, 
-    { provide: PLACE_REPOSITORY_TOKEN, useClass: PlaceFirebaseService }
+    { provide: PLACE_REPOSITORY_TOKEN, useClass: PlaceFirebaseService },
+    { provide: ROUTE_REPOSITORY_TOKEN, useClass: RouteFirebaseService },
+    { provide: PLACE_REPOSITORY_TOKEN, useClass: PlaceFirebaseService }, provideAnimationsAsync(), provideAnimationsAsync()
   ]
 };
