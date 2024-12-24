@@ -1,50 +1,35 @@
 import { TestBed } from '@angular/core/testing';
-import { UserService } from '../../servicios/user.userService';
-import { User } from '../../modelos/user';
-import { MailExistingException } from '../../excepciones/mail-existing-exception';
-import { USER_REPOSITORY_TOKEN, UserRepository } from '../../repositorios/interfaces/user-repository';
+import { UserService } from '../../servicios/user.service';
+import { USER_REPOSITORY_TOKEN } from '../../repositorios/interfaces/user-repository';
 import { Vehiculo } from '../../modelos/vehiculo';
-import { VEHICULO_REPOSITORY_TOKEN, VehiculoRepository } from '../../repositorios/interfaces/vehiculo-repository';
-import { VehiculoService } from '../../servicios/vehiculo.userService';
-import { of } from 'rxjs';
-import { NullLicenseException } from '../../excepciones/null-license-exception';
-import { UserFirebaseService } from '../../repositorios/firebase/user-firebase.userService';
-import { VehiculoFirebaseService } from '../../repositorios/firebase/vehiculo-firebase.userService';
+import { VEHICULO_REPOSITORY_TOKEN } from '../../repositorios/interfaces/vehiculo-repository';
+import { VehiculoService } from '../../servicios/vehiculo.service';
+import { UserFirebaseService } from '../../repositorios/firebase/user-firebase.service';
+import { VehiculoFirebaseService } from '../../repositorios/firebase/vehiculo-firebase.service';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { firebaseConfig } from '../../app.config';
-import { RouteService } from '../../servicios/route.userService';
+import { RouteService } from '../../servicios/route.service';
 import { ROUTE_REPOSITORY_TOKEN, RouteRepository } from '../../repositorios/interfaces/route-repository';
-import { RouteFirebaseService } from '../../repositorios/firebase/route-firebase.userService';
-import { Route } from '@angular/router';
+import { RouteFirebaseService } from '../../repositorios/firebase/route-firebase.service';
 import { VehicleNotFoundException } from '../../excepciones/vehicle-not-Found-Exception';
+import { provideHttpClient } from '@angular/common/http';
+import { PlaceService } from '../../servicios/place.service';
+import { NotExistingObjectException } from '../../excepciones/notExistingObjectException';
+import { Route } from '../../modelos/route';
 
 describe('VehiculoIntegrationService', () => {
-    let userService: UserService;
-    let userRepo: UserRepository;
-
-    let vehiculoService: VehiculoService;
-    let vehiRepo: VehiculoRepository;
-
-    let service: RouteService;
+    let routeService: RouteService;
     let routeRepo: RouteRepository;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
             providers: [ 
+                provideHttpClient(), // Configuración moderna para HttpClient
                 provideFirebaseApp(() => initializeApp(firebaseConfig)),     
                 provideFirestore(() => getFirestore()),
                 provideAuth(() => getAuth()),
-                UserService,
-                {
-                    provide: USER_REPOSITORY_TOKEN, useClass: UserFirebaseService
-                },
-
-                VehiculoService,
-                {
-                    provide: VEHICULO_REPOSITORY_TOKEN, useClass: VehiculoFirebaseService
-                },
                 RouteService,
                 {
                     provide: ROUTE_REPOSITORY_TOKEN, useClass: RouteFirebaseService
@@ -52,13 +37,7 @@ describe('VehiculoIntegrationService', () => {
             ]
         }).compileComponents();
 
-        userService = TestBed.inject(UserService);
-        userRepo = TestBed.inject(USER_REPOSITORY_TOKEN);
-
-        vehiculoService = TestBed.inject(VehiculoService);
-        vehiRepo = TestBed.inject(VEHICULO_REPOSITORY_TOKEN);
-
-        service = TestBed.inject(RouteService);
+        routeService = TestBed.inject(RouteService);
         routeRepo = TestBed.inject(ROUTE_REPOSITORY_TOKEN);
     });
 
@@ -70,7 +49,7 @@ describe('VehiculoIntegrationService', () => {
         spyOn(routeRepo, 'calcularRuta').and.resolveTo(mockData);
 
         //When: El usuario solicita el calculo con “Valencia-Castellón” y vehículo “Coche1”.
-        const ruta = service.calcularRuta("Valencia", "Castellón de la Plana", "driving-car");
+        const ruta = routeService.calcularRuta("Valencia", "Castellón de la Plana", "driving-car");
     
         //Then: El sistema muestra Trayecto=[Valencia, Paterna, Puzol, Sagunto, Moncófar, Villareal, Castellon], distancia=84km, duración=1h.
         expect(routeRepo.calcularRuta).toHaveBeenCalledWith("Valencia", "Castellón de la Plana", "driving-car");
@@ -84,7 +63,7 @@ describe('VehiculoIntegrationService', () => {
 
         try{
             // When: El usuario solicita el calculo con “Valencia-Castellón” y vehículo “Coche2”.
-            service.calcularRuta("Valencia", "Castellón de la Plana", "Coche2");
+            routeService.calcularRuta("Valencia", "Castellón de la Plana", "Coche2");
             expect(routeRepo.calcularRuta).toHaveBeenCalledWith("Valencia", "Castellón de la Plana", "Coche2");
         } catch(error){
                 //Then: El sistema lanza la excepción VehicleNotFoundException().
@@ -92,4 +71,30 @@ describe('VehiculoIntegrationService', () => {
         }
     });
 
+    //HISTORIA 14
+  it('PRUEBA INTEGRACIÓN --> H14-E01. Cálculo del coste asociado a la realización de una ruta en coche (Escenario Válido): ', async () => {
+    const mockFuelCostRoute: number = 11.51;
+    
+    spyOn(routeRepo, 'obtenerCosteRuta').and.resolveTo(mockFuelCostRoute);
+    
+    const result = await routeService.obtenerCosteRuta(new Vehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1), new Route('Valencia', 'Castellón de la Plana/Castelló de la Plana', ['Valencia', 'Cabanyal', 'Sagunt', 'Almenara', 'Nules', 'Vilareal', 'Castellón de la Plana'], 90));
+    
+    expect(routeRepo.obtenerCosteRuta).toHaveBeenCalledWith(new Vehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1), new Route('Valencia', 'Castellón de la Plana/Castelló de la Plana', ['Valencia', 'Cabanyal', 'Sagunt', 'Almenara', 'Nules', 'Vilareal', 'Castellón de la Plana'], 90));
+    expect(result).toEqual(mockFuelCostRoute);
+  });
+
+  it('PRUEBA INTEGRACIÓN --> H14-E04. Cálculo del coste asociado a la realización de una ruta en coche utilizando una matrícula no registrada en la lista de vehículos (Escenario Inválido): ', async () => {
+    const mockFuelCostRoute: number = 11.51;
+
+    spyOn(routeRepo, 'obtenerCosteRuta').and.resolveTo(mockFuelCostRoute);
+
+    const vehiculoNoExiste = new Vehiculo("3423 WCX", "Fiat", "Punto", "2016", 8.1);
+    const rutaValida = new Route('Valencia', 'Castellón de la Plana/Castelló de la Plana', ['Valencia', 'Cabanyal', 'Sagunt', 'Almenara', 'Nules', 'Vilareal', 'Castellón de la Plana'], 90);
+
+    try {
+        await routeService.obtenerCosteRuta(vehiculoNoExiste, rutaValida);
+    } catch (error) {
+        expect(error).toBeInstanceOf(NotExistingObjectException);
+    }
+  });
 });

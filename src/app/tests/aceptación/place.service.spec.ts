@@ -9,7 +9,7 @@ import { PLACE_REPOSITORY_TOKEN } from '../../repositorios/interfaces/place-repo
 import { UserFirebaseService } from '../../repositorios/firebase/user-firebase.service';
 import { USER_REPOSITORY_TOKEN } from '../../repositorios/interfaces/user-repository';
 import { PlaceFirebaseService } from '../../repositorios/firebase/place-firebase.service';
-import { openRouteService } from '../../APIs/Geocoding/openRoute.service';
+import { OpenRouteService } from '../../APIs/Geocoding/openRoute.service';
 import { FirestoreService } from '../../repositorios/firebase/firestore.service';
 import { provideHttpClient } from '@angular/common/http';
 import { InvalidPlaceException } from '../../excepciones/invalid-place-exception';
@@ -22,8 +22,7 @@ import { MapComponent } from '../../componentes/map/map.component';
 describe('PlaceService', () => {
   let servicePlace: PlaceService;
   let serviceUser: UserService;
-  let geocodinRepositorio: openRouteService;
-  let mapComponent: MapComponent;
+  let geocodinRepositorio: OpenRouteService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -42,8 +41,7 @@ describe('PlaceService', () => {
 
     servicePlace = TestBed.inject(PlaceService);
     serviceUser = TestBed.inject(UserService);
-    geocodinRepositorio = TestBed.inject(openRouteService); 
-    mapComponent = TestBed.inject(MapComponent);
+    geocodinRepositorio = TestBed.inject(OpenRouteService); 
   });
   
 
@@ -51,11 +49,7 @@ describe('PlaceService', () => {
 
     // GIVEN: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] quiere dar de alta un nuevo lugar de interés. La API está disponible → lugaresInteres-Ana2002 = [ ].
     await serviceUser.loginUser("test@test.com", "test123"); 
-    /*spyOn(geocodinRepositorio, "getToponimo").and.returnValue(of({toponimo: 'Castellón de la Plana'}));
     
-    const result = await firstValueFrom(geocodinRepositorio.getToponimo([39.98, -0.049]));
-    expect(result).toEqual({toponimo: 'Castellón de la Plana'});*/
-
     // WHEN: Intenta dar de alta un lugar de interés → Coordenadas = [Latitud: 39.98, Longitud: -0.049]
     const createPlace = await servicePlace.createPlaceC([39.98, -0.049]);
 

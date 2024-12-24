@@ -1,31 +1,25 @@
-import { Inject, inject, Injectable } from '@angular/core';
-import { Route } from '@angular/router';
+import { inject, Injectable } from '@angular/core';
+import { Route } from '../../modelos/route';
 import { RouteRepository } from '../interfaces/route-repository';
 import { FirestoreService } from './firestore.service';
-import { InvalidLicenseException } from '../../excepciones/invalid-license-exception';
-import { getAuth } from 'firebase/auth';
+import { Vehiculo } from '../../modelos/vehiculo';
+import { ProxyCarburanteService } from '../../utils/proxy-carburante.service';
+import { OpenRouteService } from '../../APIs/Geocoding/openRoute.service';
 import { firstValueFrom } from 'rxjs';
-import { openRouteService } from '../../APIs/Geocoding/openRoute.service';
 
 @Injectable({
   providedIn: 'root'
 })
 
 export class RouteFirebaseService implements RouteRepository{
+  servicioAPI: OpenRouteService = inject(OpenRouteService);
+  constructor(private _firestore: FirestoreService, private proxy: ProxyCarburanteService) {}
+  
 
-    private origen: any;
-    private destino: any;
-    private trayectoria: any;
-    private kilometros: any;
-
-  firestore: FirestoreService = inject(FirestoreService);
-  servicioAPI: openRouteService = inject(openRouteService);
-
-  constructor() {}
 
   async calcularRuta(origen: string, destino: string, metodoMov: string) {
       const origenCoord = await new Promise<string> ((resolve) => {
-        this.servicioAPI.getCoordenadas(origen).subscribe({
+        this.servicioAPI.searchToponimo(origen).subscribe({
           next: (response: any) => {
               const coordenadas = response.features[0].geometry.coordinates;
               resolve(`${coordenadas[0]},${coordenadas[1]}`);
@@ -34,7 +28,7 @@ export class RouteFirebaseService implements RouteRepository{
       });
 
       const destinoCoord = await new Promise<string> ((resolve) => {
-        this.servicioAPI.getCoordenadas(destino).subscribe({
+        this.servicioAPI.searchToponimo(destino).subscribe({
           next: (response: any) => {
               const coordenadas = response.features[0].geometry.coordinates;
               resolve(`${coordenadas[0]},${coordenadas[1]}`);
@@ -46,4 +40,25 @@ export class RouteFirebaseService implements RouteRepository{
   }
 
   
+  async obtenerCosteRuta(vehiculo: Vehiculo, ruta: Route,): Promise<number> {
+    const existVehiculo = this._firestore.ifExistVehicle(vehiculo);
+
+    // Si el vehículo no es del usuario logueado
+    if (!existVehiculo) return -1;
+
+    const listaMunicipios = await this.proxy.getMunicipios();
+
+    const municipio = listaMunicipios.find((Municipio: any) => Municipio.Municipio === ruta.getOrigen());
+    const idMunicipio = municipio.IDMunicipio;
+
+    const estacionesEnMunicipio = await this.proxy.getEstacionesEnMunicipio(idMunicipio);
+
+    const precioStr = estacionesEnMunicipio.ListaEESSPrecio[0]["Precio Gasolina 95 E5"];
+
+    let precioNum = parseFloat(precioStr.replace(',', '.'));
+
+    let costeRuta = parseFloat((ruta.getKm() / 100 * vehiculo.getConsumo() * precioNum).toFixed(2)); 
+    console.log('El coste de la ruta es: ' + costeRuta + '€');
+    return costeRuta;
+  }
 }

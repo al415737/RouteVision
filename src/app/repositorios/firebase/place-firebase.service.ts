@@ -2,11 +2,11 @@ import { inject, Injectable } from '@angular/core';
 import { PlaceRepository } from '../interfaces/place-repository';
 import { Place } from '../../modelos/place';
 import { FirestoreService } from './firestore.service';
-import { AuthStateService } from '../../utils/auth-state.service';
 import { InvalidPlaceException } from '../../excepciones/invalid-place-exception';
-import { openRouteService } from '../../APIs/Geocoding/openRoute.service';
+import { OpenRouteService } from '../../APIs/Geocoding/openRoute.service';
 import { getAuth } from 'firebase/auth';
 import { firstValueFrom } from 'rxjs';
+import { AuthStateService } from '../../utils/auth-state.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +15,7 @@ import { firstValueFrom } from 'rxjs';
 export class PlaceFirebaseService implements PlaceRepository{
   private firestore: FirestoreService = inject(FirestoreService);
   private _authState: AuthStateService = inject(AuthStateService);
-  geocoding: openRouteService = inject(openRouteService);
+  geocoding: OpenRouteService = inject(OpenRouteService);
   private coordenadas: number[] = [];
   private toponimo: any ;
 
@@ -28,15 +28,15 @@ export class PlaceFirebaseService implements PlaceRepository{
     this.toponimo = await firstValueFrom(this.geocoding.searchCoordenadas(coordenadas[0],coordenadas[1]));
     let lugar = this.toponimo.features[0].properties.name;
 
-    const docRef = await this.firestore.getAutoIdReference(PATHPLACE);
-    const idPlace = docRef.id;
+        const docRef = await this.firestore.getAutoIdReference(PATHPLACE);
+        const idPlace = docRef.id;
 
 
-    const placeRegisterC: Place = new Place(idPlace, lugar, coordenadas);
+        const placeRegisterC: Place = new Place(idPlace, lugar, coordenadas);
 
-    await this.firestore.createPlaceC(placeRegisterC, PATHPLACE);
-    return placeRegisterC;
-}
+        await this.firestore.createPlaceC(placeRegisterC, PATHPLACE);
+        return placeRegisterC;
+    }
 
     async deletePlace(idPlace: string) {
         const uid = this._authState.currentUser?.uid;
@@ -65,7 +65,7 @@ export class PlaceFirebaseService implements PlaceRepository{
 
         const docRef = await this.firestore.getAutoIdReference(PATHPLACE);
         const idPlace = docRef.id;
-    
+
 
         const placeRegisterT: Place = new Place(idPlace, toponimo, this.coordenadas);
 

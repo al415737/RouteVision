@@ -139,8 +139,18 @@ export class FirestoreService {
       }); 
     } catch (error) {
       throw new ServerNotOperativeException();
-    }
-
-    
+    }    
   }
+
+  async ifExistVehicle(vehicle: Vehiculo) {
+    const _collection = collection(this._firestore, `vehiculo/${this._authState.currentUser?.uid}/listaVehiculos`);
+
+    const q = query(_collection, where('matricula', '==', vehicle.getMatricula()));
+
+    const querySnapshot = await getDocs(q);
+    if (querySnapshot.empty) 
+      return false;
+    
+    return true;
+  } 
 }

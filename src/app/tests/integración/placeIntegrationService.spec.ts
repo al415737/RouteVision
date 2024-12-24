@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { PlaceService } from '../../servicios/place.service';
 import { Place } from '../../modelos/place';
 import { PLACE_REPOSITORY_TOKEN, PlaceRepository } from '../../repositorios/interfaces/place-repository';
-import { openRouteService } from '../../APIs/Geocoding/openRoute.service';
+import { OpenRouteService } from '../../APIs/Geocoding/openRoute.service';
 import { provideHttpClient } from '@angular/common/http';
 import { PlaceFirebaseService } from '../../repositorios/firebase/place-firebase.service';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
@@ -18,7 +18,7 @@ import { ServerNotOperativeException } from '../../excepciones/server-not-operat
 describe('PlaceIntegrationService', () => {
 
   let servicePlace: PlaceService;
-  let geocodingRepositorio: openRouteService;
+  let geocodingRepositorio: OpenRouteService;
   let placeRepositorio: PlaceRepository;
 
   beforeEach(() => {
@@ -36,7 +36,7 @@ describe('PlaceIntegrationService', () => {
     placeRepositorio = TestBed.inject(PLACE_REPOSITORY_TOKEN);
 
     servicePlace = TestBed.inject(PlaceService);
-    geocodingRepositorio = TestBed.inject(openRouteService); 
+    geocodingRepositorio = TestBed.inject(OpenRouteService); 
   });
 
   //HISTORIA 5
