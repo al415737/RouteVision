@@ -17,6 +17,8 @@ import { firebaseConfig } from '../../app.config';
 import { RouteService } from '../../servicios/route.service';
 import { ROUTE_REPOSITORY_TOKEN, RouteRepository } from '../../repositorios/interfaces/route-repository';
 import { RouteFirebaseService } from '../../repositorios/firebase/route-firebase.service';
+import { Route } from '@angular/router';
+import { VehicleNotFoundException } from '../../excepciones/vehicle-not-Found-Exception';
 
 describe('VehiculoIntegrationService', () => {
     let service: UserService;
@@ -62,20 +64,32 @@ describe('VehiculoIntegrationService', () => {
 
 
     it('HU13E01. Cálculo de ruta entre dos puntos de interés (Escenario Válido)', async () => {
-            //Given: El Usuario  [“Ana2002”, “anita@gmail.com“,“aNa-24”] autenticado, lugares = [“Valencia”, “Castellón”, “Alicante”], 
+        //Given: El Usuario  [“Ana2002”, “anita@gmail.com“,“aNa-24”] autenticado, lugares = [“Valencia”, “Castellón”, “Alicante”], 
                     // vehículos = [“Coche1”, “Moto1”] .
-    
-            //When: El usuario solicita el calculo con “Valencia-Castellón” y vehículo “Coche1”.
-    
-            //Then: El sistema muestra Trayecto=[Valencia, Paterna, Puzol, Sagunto, Moncófar, Villareal, Castellon], distancia=84km, duración=1h.
-      });
-    
-      it('HU13E03. Método de movilidad no válido (Escenario Inválido)', async () => {
-          // Given: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] autenticado, lugares = [“Valencia”, “Castellón”, “Alicante”], vehículos = [“Coche1”, “Moto1”, “Bicicleta1”].
-          // When: El usuario solicita el calculo con “Valencia-Castellón” y vehículo “Coche2”.
-          //Then: El sistema lanza la excepción VehicleNotFoundException().
+        const mockData = { trayectoria: [ "0.363239, 39.464781", "-0.161966, 39.803153", "-0.076461, 39.979548", "-0.037829, 39.988886" ], distancia: 75688, duracion: 3610 };
+        spyOn(routeRepo, 'calcularRuta').and.resolveTo(mockData);
 
+        //When: El usuario solicita el calculo con “Valencia-Castellón” y vehículo “Coche1”.
+        const ruta = routeService.calcularRuta("Valencia", "Castellón de la Plana", "driving-car");
     
-      });
+        //Then: El sistema muestra Trayecto=[Valencia, Paterna, Puzol, Sagunto, Moncófar, Villareal, Castellon], distancia=84km, duración=1h.
+        expect(routeRepo.calcularRuta).toHaveBeenCalledWith("Valencia", "Castellón de la Plana", "driving-car");
+        expect(ruta).toEqual(mockData);
+
+    });
+    
+    it('HU13E03. Método de movilidad no válido (Escenario Inválido)', async () => {
+        // Given: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] autenticado, lugares = [“Valencia”, “Castellón”, “Alicante”], vehículos = [“Coche1”, “Moto1”, “Bicicleta1”].
+        spyOn(routeRepo, 'calcularRuta').and.resolveTo(VehicleNotFoundException);
+
+        try{
+            // When: El usuario solicita el calculo con “Valencia-Castellón” y vehículo “Coche2”.
+            routeService.calcularRuta("Valencia", "Castellón de la Plana", "Coche2");
+            expect(routeRepo.calcularRuta).toHaveBeenCalledWith("Valencia", "Castellón de la Plana", "Coche2");
+        } catch(error){
+                //Then: El sistema lanza la excepción VehicleNotFoundException().
+                expect(error).toBeInstanceOf(VehicleNotFoundException);
+        }
+    });
 
 });
