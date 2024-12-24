@@ -26,9 +26,9 @@ import { VehicleNotFoundException } from '../../excepciones/vehicle-not-Found-Ex
 
   describe('RutasService', () => {
   let serviceVehiculo: VehiculoService;
-  let servicioUsuario: UserService;
-  let servicioRutas: RouteService;
-  let servicioPlace: PlaceService;
+  let userService: UserService;
+  let servicio: RouteService;
+  let placeService: PlaceService;
   let openRoute: openRouteService;
 
   beforeEach(() => {
@@ -49,26 +49,26 @@ import { VehicleNotFoundException } from '../../excepciones/vehicle-not-Found-Ex
       ]
     });
     serviceVehiculo = TestBed.inject(VehiculoService);
-    servicioUsuario = TestBed.inject(UserService);
-    servicioRutas = TestBed.inject(RouteService);
-    servicioPlace = TestBed.inject(PlaceService);
+    userService = TestBed.inject(UserService);
+    servicio = TestBed.inject(RouteService);
+    placeService = TestBed.inject(PlaceService);
     openRoute = TestBed.inject(openRouteService);
   });
 
   it('HU13E01. Cálculo de ruta entre dos puntos de interés (Escenario Válido)', async () => {
         //Given: El Usuario  [“Ana2002”, “anita@gmail.com“,“aNa-24”] autenticado, lugares = [“Valencia”, “Castellón”, “Alicante”], 
                 // vehículos = [“Coche1”, “Moto1”] .
-        servicioUsuario.loginUser("test@test.com", "test123");
+        userService.loginUser("test@test.com", "test123");
 
-        const lugar1 = await servicioPlace.createPlaceT("Valencia");
-        const lugar2 = await servicioPlace.createPlaceT("Castellón");
-        const lugar3 = await servicioPlace.createPlaceT("Alicante");
+        const lugar1 = await placeService.createPlaceT("Valencia");
+        const lugar2 = await placeService.createPlaceT("Castellón");
+        const lugar3 = await placeService.createPlaceT("Alicante");
 
         serviceVehiculo.crearVehiculo("0987 CPK", "Peugeot", "407", "2004", 8.1);
         serviceVehiculo.crearVehiculo("8179 KLL", "BWM", "R 1250 RT", "2023", 4.8);
 
         //When: El usuario solicita el calculo con “Valencia-Castellón” y vehículo “Coche1”.
-        const ruta = await servicioRutas.calcularRuta("Valencia", "Castellon de la Plana", "driving-car");
+        const ruta = await servicio.calcularRuta("Valencia", "Castellon de la Plana", "driving-car");
         
         const trayectoria = ruta.features[0].geometry.coordinates;      //coordenadas de toda la trayectoria
         const distancia = ruta.features[0].properties.summary.distance; //metros
@@ -84,9 +84,9 @@ import { VehicleNotFoundException } from '../../excepciones/vehicle-not-Found-Ex
         expect(Math.abs(duracion - duracionEsperada)).toBeLessThan(300); //Margen de 5 minutos
 
         //Then: El sistema muestra Trayecto=[Valencia, Paterna, Puzol, Sagunto, Moncófar, Villareal, Castellon], distancia=84km, duración=1h.
-        servicioPlace.deletePlace(lugar1.idPlace);
-        servicioPlace.deletePlace(lugar2.idPlace);
-        servicioPlace.deletePlace(lugar3.idPlace);
+        placeService.deletePlace(lugar1.idPlace);
+        placeService.deletePlace(lugar2.idPlace);
+        placeService.deletePlace(lugar3.idPlace);
 
         serviceVehiculo.eliminarVehiculo("0987 CPK");
         serviceVehiculo.eliminarVehiculo("8179 KLL");
@@ -95,11 +95,11 @@ import { VehicleNotFoundException } from '../../excepciones/vehicle-not-Found-Ex
 
   it('HU13E03. Método de movilidad no válido (Escenario Inválido)', async () => {
       // Given: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] autenticado, lugares = [“Valencia”, “Castellón”, “Alicante”], vehículos = [“Coche1”, “Moto1”, “Bicicleta1”].
-      servicioUsuario.loginUser("test@test.com", "test123");
+      userService.loginUser("test@test.com", "test123");
 
-      const lugar1 = await servicioPlace.createPlaceT("Valencia");
-      const lugar2 = await servicioPlace.createPlaceT("Castellón");
-      const lugar3 = await servicioPlace.createPlaceT("Alicante");
+      const lugar1 = await placeService.createPlaceT("Valencia");
+      const lugar2 = await placeService.createPlaceT("Castellón");
+      const lugar3 = await placeService.createPlaceT("Alicante");
 
       serviceVehiculo.crearVehiculo("0987 CPK", "Peugeot", "407", "2004", 8.1);
       serviceVehiculo.crearVehiculo("8179 KLL", "BWM", "R 1250 RT", "2023", 4.8);
@@ -107,22 +107,20 @@ import { VehicleNotFoundException } from '../../excepciones/vehicle-not-Found-Ex
       try{
           // When: El usuario solicita el calculo con “Valencia-Castellón” y vehículo “Coche2”.
           try {
-            await servicioRutas.calcularRuta("Valencia", "Castellón de la Plana", "Coche2");
+            await servicio.calcularRuta("Valencia", "Castellón de la Plana", "Coche2");
           } catch(error){
              //Then: El sistema lanza la excepción VehicleNotFoundException().
             expect(error).toBeInstanceOf(VehicleNotFoundException);
           }
       } finally{
-        servicioPlace.deletePlace(lugar1.idPlace);
-        servicioPlace.deletePlace(lugar2.idPlace);
-        servicioPlace.deletePlace(lugar3.idPlace);
+        placeService.deletePlace(lugar1.idPlace);
+        placeService.deletePlace(lugar2.idPlace);
+        placeService.deletePlace(lugar3.idPlace);
 
         serviceVehiculo.eliminarVehiculo("0987 CPK");
         serviceVehiculo.eliminarVehiculo("8179 KLL");
       }
       
-      
-
   });
 
 });
