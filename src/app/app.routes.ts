@@ -21,7 +21,7 @@ export const routes: Routes = [
     {
       canActivateChild: [privateGuard()],
       path: 'vehiculos
-      loadChildren: () => import('./componentes/home.routes'),
+      loadChildren: () => import('./componentes/vehicle.routes'),
     },
     */
     {

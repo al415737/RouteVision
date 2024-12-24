@@ -143,7 +143,7 @@ describe('PlaceService', () => {
       await serviceUser.logoutUser();
    });
 
-   it('HU7E02. Consulta de lista de lugares dados de alta sin conexión a la BBDD (Escenario inválido):', async() => {
+   it('HU7E03. Consulta de lista de lugares dados de alta sin estar registrado:', async() => {
       //GIVEN:  El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] con  listaLugaresInteres-Ana2002 = [{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049], idLugar=”000”}, {NombreCiudad = “Bilbao”, Coordenadas = [Latitud: 43.26271, Longitud: -2.92528], idLugar=”001”}] no se encuentra registrado.
       await serviceUser.loginUser("test@test.com","test123");
       const lugar1 = await servicePlace.createPlaceC([39.98, -0.049], "Castellón de la plana");

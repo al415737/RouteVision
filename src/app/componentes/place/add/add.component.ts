@@ -7,11 +7,12 @@ import { HeaderComponent } from '../../home/header/header.component';
 import { PlaceService } from '../../../servicios/place.service';
 import { InvalidPlaceException } from '../../../excepciones/invalid-place-exception';
 import { InvalidCoordenatesException } from '../../../excepciones/invalid-coordenates-exception';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-add',
   standalone: true,
-  imports: [FormsModule, RouterLink, MapComponent, HeaderComponent],
+  imports: [FormsModule, RouterLink, MapComponent, HeaderComponent, MatTooltipModule],
   templateUrl: './add.component.html',
   styleUrl: './add.component.css'
 })
@@ -39,6 +40,8 @@ export default class AddComponent {
             }
           }
         });
+      }else{
+        toast.info('Por favor, introduzca un topónimo.');
       }
       
     }
@@ -54,6 +57,8 @@ export default class AddComponent {
             }
           }
         });
+      }else{
+        toast.info('Por favor, seleccione unas coordenadas.');
       }
     }
   }
@@ -67,6 +72,8 @@ export default class AddComponent {
         this._placeService.createPlaceT(this.resultado.nombre, [this.resultado.coordenadas.lat, this.resultado.coordenadas.lng]);
       }
       this._router.navigateByUrl('/lugares');
+    }else{
+      toast.info('Por favor, seleccione un lugar o coordenadas.');
     }
     
   }

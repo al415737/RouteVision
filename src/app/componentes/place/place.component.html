@@ -9,6 +9,10 @@
 <body class="body">
   <app-header></app-header>
   <h1 [style.color]="'white'">Tus lugares de interés</h1>
+  <button class="add-button" routerLink="/lugares/new">
+    <span class="add-icon">+</span>
+    Añadir Lugar
+  </button>
   <div class="mat-elevation-z8" id="table-container">
     <table mat-table [dataSource]="dataSource" [style.background]="'linear-gradient(180deg, #011640, #030F26)'">
       <!-- Position Column -->
@@ -26,16 +30,17 @@
       <ng-container matColumnDef="delete">
         <th mat-header-cell *matHeaderCellDef [style.color]="'white'"> Borrar </th>
         <td mat-cell *matCellDef="let place" [style.color]="'white'">
-            <button mat-raised-button color="warn" (click)="onDelete(place)">Delete</button>
+          <button mat-icon-button color="warn" class="delete-button" (click)="onDelete(place)">
+            <mat-icon>delete</mat-icon>
+          </button>
         </td>
     </ng-container>
   
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;" [style.color]="'white'"></tr>
     </table>
-  <mat-paginator [style.background]="'#025E73'" [pageSize]="20" [showFirstLastButtons]="true" [pageSizeOptions]="[5, 10, 20]" [pageIndex]="currentPage">
+  <mat-paginator [style.background]="'#025E73'" [pageSize]="5" [showFirstLastButtons]="true" [pageSizeOptions]="[5, 10, 20]" [pageIndex]="currentPage">
   </mat-paginator>
   </div>
-  <button class="add-button" routerLink="/lugares/new">Añadir Lugar</button>
 </body>
 </html>
