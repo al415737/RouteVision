@@ -1,33 +1,33 @@
 import { TestBed } from '@angular/core/testing';
-import { UserService } from '../../servicios/user.service';
+import { UserService } from '../../servicios/user.userService';
 import { User } from '../../modelos/user';
 import { MailExistingException } from '../../excepciones/mail-existing-exception';
 import { USER_REPOSITORY_TOKEN, UserRepository } from '../../repositorios/interfaces/user-repository';
 import { Vehiculo } from '../../modelos/vehiculo';
 import { VEHICULO_REPOSITORY_TOKEN, VehiculoRepository } from '../../repositorios/interfaces/vehiculo-repository';
-import { VehiculoService } from '../../servicios/vehiculo.service';
+import { VehiculoService } from '../../servicios/vehiculo.userService';
 import { of } from 'rxjs';
 import { NullLicenseException } from '../../excepciones/null-license-exception';
-import { UserFirebaseService } from '../../repositorios/firebase/user-firebase.service';
-import { VehiculoFirebaseService } from '../../repositorios/firebase/vehiculo-firebase.service';
+import { UserFirebaseService } from '../../repositorios/firebase/user-firebase.userService';
+import { VehiculoFirebaseService } from '../../repositorios/firebase/vehiculo-firebase.userService';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { firebaseConfig } from '../../app.config';
-import { RouteService } from '../../servicios/route.service';
+import { RouteService } from '../../servicios/route.userService';
 import { ROUTE_REPOSITORY_TOKEN, RouteRepository } from '../../repositorios/interfaces/route-repository';
-import { RouteFirebaseService } from '../../repositorios/firebase/route-firebase.service';
+import { RouteFirebaseService } from '../../repositorios/firebase/route-firebase.userService';
 import { Route } from '@angular/router';
 import { VehicleNotFoundException } from '../../excepciones/vehicle-not-Found-Exception';
 
 describe('VehiculoIntegrationService', () => {
-    let service: UserService;
+    let userService: UserService;
     let userRepo: UserRepository;
 
     let vehiculoService: VehiculoService;
     let vehiRepo: VehiculoRepository;
 
-    let routeService: RouteService;
+    let service: RouteService;
     let routeRepo: RouteRepository;
 
     beforeEach(() => {
@@ -52,13 +52,13 @@ describe('VehiculoIntegrationService', () => {
             ]
         }).compileComponents();
 
-        service = TestBed.inject(UserService);
+        userService = TestBed.inject(UserService);
         userRepo = TestBed.inject(USER_REPOSITORY_TOKEN);
 
         vehiculoService = TestBed.inject(VehiculoService);
         vehiRepo = TestBed.inject(VEHICULO_REPOSITORY_TOKEN);
 
-        routeService = TestBed.inject(RouteService);
+        service = TestBed.inject(RouteService);
         routeRepo = TestBed.inject(ROUTE_REPOSITORY_TOKEN);
     });
 
@@ -70,7 +70,7 @@ describe('VehiculoIntegrationService', () => {
         spyOn(routeRepo, 'calcularRuta').and.resolveTo(mockData);
 
         //When: El usuario solicita el calculo con “Valencia-Castellón” y vehículo “Coche1”.
-        const ruta = routeService.calcularRuta("Valencia", "Castellón de la Plana", "driving-car");
+        const ruta = service.calcularRuta("Valencia", "Castellón de la Plana", "driving-car");
     
         //Then: El sistema muestra Trayecto=[Valencia, Paterna, Puzol, Sagunto, Moncófar, Villareal, Castellon], distancia=84km, duración=1h.
         expect(routeRepo.calcularRuta).toHaveBeenCalledWith("Valencia", "Castellón de la Plana", "driving-car");
@@ -84,7 +84,7 @@ describe('VehiculoIntegrationService', () => {
 
         try{
             // When: El usuario solicita el calculo con “Valencia-Castellón” y vehículo “Coche2”.
-            routeService.calcularRuta("Valencia", "Castellón de la Plana", "Coche2");
+            service.calcularRuta("Valencia", "Castellón de la Plana", "Coche2");
             expect(routeRepo.calcularRuta).toHaveBeenCalledWith("Valencia", "Castellón de la Plana", "Coche2");
         } catch(error){
                 //Then: El sistema lanza la excepción VehicleNotFoundException().
