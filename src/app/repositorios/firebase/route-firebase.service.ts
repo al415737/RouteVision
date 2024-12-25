@@ -13,6 +13,7 @@ import { Place } from '../../modelos/place';
 })
 
 export class RouteFirebaseService implements RouteRepository{
+  
   servicioAPI: OpenRouteService = inject(OpenRouteService);
 
   constructor(private _firestore: FirestoreService, private proxy: ProxyCarburanteService,  private _geocoding: OpenRouteService) {}
@@ -62,9 +63,21 @@ export class RouteFirebaseService implements RouteRepository{
     return costeRuta;
   }
 
-  async costeRutaPieBicicleta(metodo: string){
-    const tiempo = ;
-    const coste = ;
+  async costeRutaPieBicicleta(metodo: string, origen: string, destino: string){
+    const ruta: any = await this.calcularRuta(origen, destino, metodo);
+    const duracion = (ruta.features[0].properties.summary.duration) / 3600;
+    let coste = 0;
+
+    const calorias_bicicleta = 500;
+    const calorias_pie = 300;
+
+    if(metodo == 'cycling-regular'){
+        coste = duracion * calorias_bicicleta;
+    } else if(metodo == 'foot-walking'){
+        coste = duracion * calorias_pie;
+    }
+
+    return coste;
   }
 
   async getRouteFSE(start: Place, end: Place, movilidad: string, preferencia: string): Promise<any> {
@@ -76,5 +89,5 @@ export class RouteFirebaseService implements RouteRepository{
 
     const response: any = await this._geocoding.getRouteFSE(start.getCoordenadas(), end.getCoordenadas(), movilidad, preferencia);
     return response;
-}
+  }
 }

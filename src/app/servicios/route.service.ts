@@ -55,12 +55,16 @@ export class RouteService {
     return this.routeRepository.getRouteFSE(start, end, movilidad, preferencia);
   }
 
-  costeRutaPieBicicleta(metodo: string){
-    if(metodo != 'Bicicleta' && metodo != 'pie'){
+  costeRutaPieBicicleta(metodo: string, origen: string, destino: string){
+    if(metodo != 'cycling-regular' && metodo != 'foot-walking'){
         throw new NoRouteFoundException();
     }
 
-    return this.routeRepository.costeRutaPieBicicleta(metodo);
+    return this.routeRepository.costeRutaPieBicicleta(metodo, origen, destino);
+  }
+
+  consultarRutas(){
+      
   }
 
 }
