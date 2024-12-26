@@ -185,11 +185,12 @@ describe('RutasService', () => {
     const place = await servicioPlace.createPlaceT("Sagunto");
     const place2 = await servicioPlace.createPlaceT("Castellón de la Plana");
 
-    const result = servicioRutas.createRoute('ruta01',place, place2, "driving-car", "fastest");
+    const result = await servicioRutas.createRoute('ruta01', place, place2, "driving-car", "fastest", 90, 60);
     expect(result).toBeInstanceOf(Route);
     
     await servicioPlace.deletePlace(place.idPlace);
     await servicioPlace.deletePlace(place2.idPlace);
+    await servicioRutas.deleteRoute('ruta01');
     await servicioUsuario.logoutUser();
   });
 
@@ -201,10 +202,11 @@ describe('RutasService', () => {
     const placeAux: Place = new Place('005', 'Madrid', []);
     const placeAux2: Place = new Place('006', 'Barcelona', []);
 
-    await expectAsync(servicioRutas.createRoute('ruta01', placeAux, placeAux2, "driving-car", "fastest")).toBeRejectedWith(new NotExistingObjectException());
+    await expectAsync(servicioRutas.createRoute('ruta01', placeAux, placeAux2, "driving-car", "fastest", 90, 60)).toBeRejectedWith(new NotExistingObjectException());
     
     await servicioPlace.deletePlace(place.idPlace);
     await servicioPlace.deletePlace(place2.idPlace);
+    await servicioRutas.deleteRoute('ruta01');
     await servicioUsuario.logoutUser();
   });
 

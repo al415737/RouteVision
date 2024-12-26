@@ -9,6 +9,7 @@ import { getAuth } from '@angular/fire/auth';
 import { Place } from '../../modelos/place';
 import { AuthStateService } from '../../utils/auth-state.service';
 import { ServerNotOperativeException } from '../../excepciones/server-not-operative-exception';
+import { Route } from '../../modelos/route';
 
 @Injectable({
   providedIn: 'root'
@@ -165,4 +166,21 @@ export class FirestoreService {
     
     return true;
   } 
+
+  async createRoute(route: Route, path: string) {
+    const _collection = collection(this._firestore, path);
+
+    
+    const docRef = doc(_collection, route.getNombre()); // Crea una referencia con un ID único
+    const nombre = docRef.id;
+    
+    const objetoPlano = { ...route, nombre }; 
+
+    return setDoc(docRef, objetoPlano);
+  }
+
+  async deleteRoute(path: string, nombre: string){
+    const docRef: DocumentReference = doc(this._firestore, path, nombre);
+    await deleteDoc(docRef);
+  }
 }

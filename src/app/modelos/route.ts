@@ -19,6 +19,10 @@ export class Route {
         this.duration = duration;
     }
 
+    getNombre() {
+        return this.nombre;
+    }
+    
     getOrigen(): string{
         return this.origen;
     }
@@ -43,7 +47,11 @@ export class Route {
         return this.duration;
     }
 
-    equal(other: Route): boolean {
-        return this.origen == other.getOrigen() && this.destino == other.getDestino() && this.option == other.getOption() && this.movilidad == other.getMovilidad();
+    setKm(km: number) {
+        this.kilometros = km;
+    }
+
+    setDuration(duration: number) {
+        this.duration = duration;
     }
 }
