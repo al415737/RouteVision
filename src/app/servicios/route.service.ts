@@ -60,11 +60,19 @@ export class RouteService {
         throw new NoRouteFoundException();
     }
 
+    if(!this.consultarRutaEspecifica(origen, destino, metodo)){
+        throw new NoRouteFoundException();
+    }
+
     return this.routeRepository.costeRutaPieBicicleta(metodo, origen, destino);
   }
 
-  consultarRutas(){
-      
+  consultarRutaEspecifica(origen: string, destino: string, metodo: string){
+    if(origen == '' || origen == null || destino == '' || destino == null || metodo == '' || metodo == null){
+      throw new InvalidCalculateRoute();
+    }
+
+    return this.routeRepository.consultarRutaEspecifica(origen, destino, metodo);
   }
 
 }

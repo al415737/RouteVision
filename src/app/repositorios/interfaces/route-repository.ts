@@ -10,5 +10,5 @@ export interface RouteRepository {
     calcularRuta(origen: string, destino: string, metodoMov: string): any;
     obtenerCosteRuta(vehiculo: Vehiculo, ruta: Route): Promise<number>;
     costeRutaPieBicicleta(metodo: string, origen: string, destino: string): any;
-    consultarRutas(): Promise<any>;
+    consultarRutaEspecifica(origen: string, destino: string, metodo: string): Promise<boolean>;
 }

@@ -64,6 +64,10 @@ export class RouteFirebaseService implements RouteRepository{
   }
 
   async costeRutaPieBicicleta(metodo: string, origen: string, destino: string){
+    //Comprobar si la ruta está en la BBDD
+
+    if(){}
+
     const ruta: any = await this.calcularRuta(origen, destino, metodo);
     const duracion = (ruta.features[0].properties.summary.duration) / 3600;
     let coste = 0;
@@ -89,5 +93,11 @@ export class RouteFirebaseService implements RouteRepository{
 
     const response: any = await this._geocoding.getRouteFSE(start.getCoordenadas(), end.getCoordenadas(), movilidad, preferencia);
     return response;
+  }
+
+  consultarRutaEspecifica(origen: string, destino: string, metodo: string): Promise<boolean> {
+      if(!this._firestore.ifExist()){
+
+      }
   }
 }
