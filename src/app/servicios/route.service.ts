@@ -54,4 +54,8 @@ export class RouteService {
     return this.routeRepository.getRouteFSE(start, end, movilidad, preferencia);
   }
 
+  createRoute(nombre: string, start: Place, end: Place, movilidad: string, preferencia: string) {
+    return null;
+  }
+
 }
