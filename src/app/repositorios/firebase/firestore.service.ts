@@ -190,13 +190,11 @@ export class FirestoreService {
         throw new ServerNotOperativeException();
       }
       const listaRutasRef = collection(this._firestore, `ruta/${this._authState.currentUser?.uid}/listaRutasInterés`);
-      console.log(listaRutasRef);
       const querySnapshot = await getDocs(listaRutasRef);
       
 
       return querySnapshot.docs.map(doc => { 
         const data = doc.data();
-        console.log(data);
         return new Route(
           data['nombre'],
           data['origen'],

@@ -60,7 +60,7 @@ describe('RutasService', () => {
     precioCarburante = TestBed.inject(PrecioCarburantes);
   });
 
-  /*it('HU13E01. Cálculo de ruta entre dos puntos de interés (Escenario Válido)', async () => {
+  it('HU13E01. Cálculo de ruta entre dos puntos de interés (Escenario Válido)', async () => {
     //Given: El Usuario  [“Ana2002”, “anita@gmail.com“,“aNa-24”] autenticado, lugares = [“Valencia”, “Castellón”, “Alicante”], 
             // vehículos = [“Coche1”, “Moto1”] .
     servicioUsuario.loginUser("test@test.com", "test123");
@@ -209,7 +209,7 @@ describe('RutasService', () => {
     await servicioPlace.deletePlace(place2.idPlace);
     await servicioRutas.deleteRoute('ruta01');
     await servicioUsuario.logoutUser();
-  });*/
+  });
 
   it('H18E01. Consultar rutas guardadas (Escenario Válido):', async() => {
       //  GIVEN: El usuario [“Test”, “test@test.com“,“test123”] tiene iniciada su sesión. Lista de rutas guardadas = [{Origen: Sagunto, Destino: Alicante, driving-car, fastest, 90, 60}, {Origen: Valencia, Destino: Castellón, driving-car, shortest, 84, 64}].
@@ -232,13 +232,13 @@ describe('RutasService', () => {
             expect(ruta).toBeInstanceOf(Route);
         });
   
-        /*await servicioPlace.deletePlace(place.idPlace);
+        await servicioPlace.deletePlace(place.idPlace);
         await servicioPlace.deletePlace(place2.idPlace);
         await servicioRutas.deleteRoute('ruta01');
         await servicioPlace.deletePlace(place3.idPlace);
         await servicioPlace.deletePlace(place4.idPlace);
         await servicioRutas.deleteRoute('ruta02');
-        await servicioUsuario.logoutUser();*/
+        await servicioUsuario.logoutUser();
      });
   
      it('H18E03. Intento de consulta de rutas guardadas pero el usuario no está registrado (Escenario Inválido):', async() => {

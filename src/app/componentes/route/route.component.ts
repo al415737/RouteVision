@@ -29,7 +29,6 @@ export default class RouteComponent {
   
     async ngOnInit(): Promise<void> {
       this.places = await this._placeService.getPlaces();
-      console.log(await this._routeService.getRoutes());
       this.updateDataSource();
     }
   
