@@ -87,7 +87,7 @@ async createRoute(nombre: string, start: Place, end: Place, movilidad: string, p
     await this._firestore.deleteRoute(`ruta/${uid}/listaRutasInterés`, nombre);
   }
 
-  getRoutes(): any {
-    return null;
+  getRoutes(): Promise<Route[]> {
+    return this._firestore.getRoutes();
   }
 }

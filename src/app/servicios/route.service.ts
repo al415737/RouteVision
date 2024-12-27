@@ -65,7 +65,7 @@ export class RouteService {
     this.routeRepository.deleteRoute(nombre);
   }
 
-  async getRoutes(): Promise<any> {
-    return null;
+  async getRoutes(): Promise<Route[]> {
+    return this.routeRepository.getRoutes();
   }
 }
