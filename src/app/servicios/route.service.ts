@@ -55,24 +55,24 @@ export class RouteService {
     return this.routeRepository.getRouteFSE(start, end, movilidad, preferencia);
   }
 
-  costeRutaPieBicicleta(metodo: string, origen: string, destino: string){
-    if(metodo != 'cycling-regular' && metodo != 'foot-walking'){
+  costeRutaPieBicicleta(ruta: Route){
+    if(ruta.getMovilidad() != 'cycling-regular' && ruta.getMovilidad() != 'foot-walking'){
         throw new NoRouteFoundException();
     }
 
-    if(!this.consultarRutaEspecifica(origen, destino, metodo)){
+    if(!this.consultarRutaEspecifica(ruta)){
         throw new NoRouteFoundException();
     }
 
-    return this.routeRepository.costeRutaPieBicicleta(metodo, origen, destino);
+    return this.routeRepository.costeRutaPieBicicleta(ruta);
   }
 
-  consultarRutaEspecifica(origen: string, destino: string, metodo: string){
-    if(origen == '' || origen == null || destino == '' || destino == null || metodo == '' || metodo == null){
+  consultarRutaEspecifica(ruta: Route){
+    if(ruta.getOrigen() == '' || ruta.getOrigen() == null || ruta.getDestino() == '' || ruta.getDestino() == null || ruta.getMovilidad() == '' || ruta.getMovilidad() == null){
       throw new InvalidCalculateRoute();
     }
 
-    return this.routeRepository.consultarRutaEspecifica(origen, destino, metodo);
+    return this.routeRepository.consultarRutaEspecifica(ruta);
   }
 
   createRoute(nombre: string, start: Place, end: Place, movilidad: string, preferencia: string, km: number, duracion: number): Promise<Route> {

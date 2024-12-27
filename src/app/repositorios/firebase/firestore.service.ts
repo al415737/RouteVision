@@ -178,7 +178,7 @@ export class FirestoreService {
           return false;
       }
 
-      return false;
+      return true;
   }
   
   async createRoute(route: Route, path: string) {

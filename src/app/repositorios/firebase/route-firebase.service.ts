@@ -9,6 +9,7 @@ import { firstValueFrom } from 'rxjs';
 import { Place } from '../../modelos/place';
 import { NotExistingObjectException } from '../../excepciones/notExistingObjectException';
 import { AuthStateService } from '../../utils/auth-state.service';
+import { getAuth } from 'firebase/auth';
 
 @Injectable({
   providedIn: 'root'
@@ -20,8 +21,10 @@ export class RouteFirebaseService implements RouteRepository{
 
   constructor(private _firestore: FirestoreService, private proxy: ProxyCarburanteService,  private _geocoding: OpenRouteService, private _authState: AuthStateService) {}
   
-  consultarRutaEspecifica(origen: string, destino: string, metodo: string): Promise<boolean> {
-    throw new Error('Method not implemented.');
+  consultarRutaEspecifica(ruta: Route): Promise<boolean> {
+    const uid = getAuth().currentUser?.uid;
+    const PATHROUTE = `rutas/${uid}/listaRutas`;
+    return this._firestore.ifExist("nombre", ruta.getNombre(), PATHROUTE);  //Comprobar si la ruta específica existe
   }
   
   async calcularRuta(origen: string, destino: string, metodoMov: string) {
@@ -69,21 +72,19 @@ export class RouteFirebaseService implements RouteRepository{
     return costeRuta;
   }
 
-  async costeRutaPieBicicleta(metodo: string, origen: string, destino: string){
-    //Comprobar si la ruta está en la BBDD
-
-
-
-    const ruta: any = await this.calcularRuta(origen, destino, metodo);
-    const duracion = (ruta.features[0].properties.summary.duration) / 3600;
+  async costeRutaPieBicicleta(ruta: Route){
+    const rutaAPI: any = await this.calcularRuta(ruta.getOrigen(), ruta.getDestino(), ruta.getMovilidad());
+    console.log("Duracion (seg):" + rutaAPI.features[0].properties.summary.duration);
+    const duracion = (rutaAPI.features[0].properties.summary.duration) / 3600;
+    console.log("Duracion (h):" + duracion);
     let coste = 0;
 
     const calorias_bicicleta = 500;
     const calorias_pie = 300;
 
-    if(metodo == 'cycling-regular'){
+    if(ruta.getMovilidad() == 'cycling-regular'){
         coste = duracion * calorias_bicicleta;
-    } else if(metodo == 'foot-walking'){
+    } else if(ruta.getMovilidad() == 'foot-walking'){
         coste = duracion * calorias_pie;
     }
 
@@ -94,14 +95,6 @@ export class RouteFirebaseService implements RouteRepository{
     const response: any = await this._geocoding.getRouteFSE(start.getCoordenadas(), end.getCoordenadas(), movilidad, preferencia);
     return response;
   }
-
-  /*
-  consultarRutaEspecifica(origen: string, destino: string, metodo: string): Promise<boolean> {
-      if(!this._firestore.ifExist()){
-
-      }
-  }
-      */
 
   async createRoute(nombre: string, start: Place, end: Place, movilidad: string, preferencia: string, km: number, duracion: number): Promise<Route> {
     const existPlace: boolean = await this._firestore.ifExistPlace(start);
