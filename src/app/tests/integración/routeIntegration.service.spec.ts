@@ -119,4 +119,32 @@ describe('RouteIntegrationService', () => {
         expect(error).toBeInstanceOf(TypeNotChosenException);
     }    
   });
+
+  it('H17E01. Guardar una ruta que no existe en el sistema (Escenario válido)', async () => {
+    const place: Place = new Place("000", 'Sagunto', []);
+    const place2: Place = new Place("001", 'Castellón de la Plana', []);
+    const mockRoute: Route = new Route("ruta01", place.getToponimo(), place2.getToponimo(), "driving-car", "fastest", 90, 60);
+
+    spyOn(routeRepo, 'createRoute').and.resolveTo(mockRoute);
+
+    const result = await service.createRoute("ruta01", place, place2, "driving-car", "fastest", 90, 60);
+    expect(routeRepo.createRoute).toHaveBeenCalledWith("ruta01", place, place2, "driving-car", "fastest", 90, 60);
+    expect(result).toEqual(mockRoute);
+  });
+
+
+  it('H17E02. Intento de guardar una ruta con lugares no registrados (Escenario inválido)', async () => {
+    const placeAux: Place = new Place('005', 'Madrid', []);
+    const placeAux2: Place = new Place('006', 'Barcelona', []);
+    const mockRoute: Route = new Route("ruta01", placeAux.getToponimo(), placeAux2.getToponimo(), "driving-car", "fastest", 90, 60);
+
+    spyOn(routeRepo, 'createRoute').and.resolveTo(mockRoute);
+
+    try {
+      service.createRoute("ruta01", placeAux, placeAux2, "driving-car", "fastest", 90, 60);
+      expect(routeRepo.createRoute).toHaveBeenCalledWith("ruta01", placeAux, placeAux2, "driving-car", "fastest", 90, 60);
+    } catch (error) {
+      expect(error).toBeInstanceOf(NotExistingObjectException);
+    } 
+  });
 });
