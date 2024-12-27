@@ -1,12 +1,20 @@
 import { Routes } from '@angular/router';
 
 export default [
-  /*{
+  
+  {
     path: '',
-    loadComponent: () => import('./vehiculos/consultar-vehiculos/consultar-vehiculos.component')
+    loadComponent: () => import('./vehiculos/consultar/consultar.component'),
   },
+  
   {
     path: 'new',
-    loadComponent: () => import('./vehiculos/crear-vehiculos/crear-vehiculos.component'),
-  },*/
+    loadComponent: () => import('./vehiculos/add/add.component'),
+  },
+
+  {
+    path: 'eliminar/:id',
+    loadComponent: () => import('./vehiculos/delete/delete.component'),
+  },
+
 ] as Routes;

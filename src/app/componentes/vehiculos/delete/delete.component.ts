@@ -7,6 +7,6 @@ import { Component } from '@angular/core';
   templateUrl: './delete.component.html',
   styleUrl: './delete.component.css'
 })
-export class DeleteComponent {
+export default class DeleteComponent {
 
 }

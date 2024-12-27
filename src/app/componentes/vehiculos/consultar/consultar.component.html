@@ -1,0 +1,18 @@
+<h1>Consultar Vehículos</h1>
+<table>
+    <tr>
+        <th>Nombre</th>
+        <th>Marca</th>
+        <th>Acciones</th>
+    </tr>
+
+    <tr *ngFor="let vehiculo of vehiculos">
+        <td>{{ vehiculo.nombre }}</td>
+        <td>{{ vehiculo.marca }}</td>
+        <td>
+            <button (click)="eliminarVehiculo(vehiculo.id)">Eliminar</button>
+        </td>
+    </tr>
+</table>
+
+<a routerLink="/add">Añadir Vehículo</a>
