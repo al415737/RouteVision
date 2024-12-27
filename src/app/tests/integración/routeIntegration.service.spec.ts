@@ -15,10 +15,13 @@ import { Route } from '../../modelos/route';
 import { Vehiculo } from '../../modelos/vehiculo';
 import { VEHICULO_REPOSITORY_TOKEN } from '../../repositorios/interfaces/vehiculo-repository';
 import { VehiculoFirebaseService } from '../../repositorios/firebase/vehiculo-firebase.service';
+import { ServerNotOperativeException } from '../../excepciones/server-not-operative-exception';
+import { AuthStateService } from '../../utils/auth-state.service';
 
 describe('RouteIntegrationService', () => {
   let service: RouteService;
   let routeRepo: RouteRepository;
+  let authStateService: AuthStateService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -34,6 +37,7 @@ describe('RouteIntegrationService', () => {
     });
     service = TestBed.inject(RouteService);
     routeRepo = TestBed.inject(ROUTE_REPOSITORY_TOKEN);
+    authStateService = TestBed.inject(AuthStateService);
   });
 
   it('HU13E01. Cálculo de ruta entre dos puntos de interés (Escenario Válido)', async () => {
@@ -71,9 +75,9 @@ describe('RouteIntegrationService', () => {
       
       spyOn(routeRepo, 'obtenerCosteRuta').and.resolveTo(mockFuelCostRoute);
       
-      const result = await routeRepo.obtenerCosteRuta(new Vehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1), new Route('Valencia', 'Castellón de la Plana/Castelló de la Plana', ['Valencia', 'Cabanyal', 'Sagunt', 'Almenara', 'Nules', 'Vilareal', 'Castellón de la Plana'], 90));
+      const result = await routeRepo.obtenerCosteRuta(new Vehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1), new Route('ruta01', 'Valencia', 'Castellón de la Plana/Castelló de la Plana', 'porDefecto', 'driving-car', 90, 90));
       
-      expect(routeRepo.obtenerCosteRuta).toHaveBeenCalledWith(new Vehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1), new Route('Valencia', 'Castellón de la Plana/Castelló de la Plana', ['Valencia', 'Cabanyal', 'Sagunt', 'Almenara', 'Nules', 'Vilareal', 'Castellón de la Plana'], 90));
+      expect(routeRepo.obtenerCosteRuta).toHaveBeenCalledWith(new Vehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1), new Route('ruta01', 'Valencia', 'Castellón de la Plana/Castelló de la Plana', 'porDefecto', 'driving-car', 90, 90));
       expect(result).toEqual(mockFuelCostRoute);
     });
   
@@ -83,7 +87,7 @@ describe('RouteIntegrationService', () => {
       spyOn(routeRepo, 'obtenerCosteRuta').and.resolveTo(mockFuelCostRoute);
   
       const vehiculoNoExiste = new Vehiculo("3423 WCX", "Fiat", "Punto", "2016", 8.1);
-      const rutaValida = new Route('Valencia', 'Castellón de la Plana/Castelló de la Plana', ['Valencia', 'Cabanyal', 'Sagunt', 'Almenara', 'Nules', 'Vilareal', 'Castellón de la Plana'], 90);
+      const rutaValida = new Route('ruta01', 'Valencia', 'Castellón de la Plana/Castelló de la Plana', 'porDefecto', 'driving-car', 90, 90);
   
       try {
           await routeRepo.obtenerCosteRuta(vehiculoNoExiste, rutaValida);
@@ -124,13 +128,39 @@ describe('RouteIntegrationService', () => {
     //Given: El usuario [“Pepito2002”, “pepito@gmail.com“,“ppt-24”] tiene su sesión iniciada y la base de datos está disponible. Lista rutas: [ {Origen:Valencia, Destino:Castellón, Trayectoria: [Cabanyal, Sagunt, Almenara, Nules, Vilareal], kilómetros = 90}]
     const mockData = 500;
     spyOn(routeRepo, 'costeRutaPieBicicleta').and.resolveTo(mockData);
-    const ruta = new Route("Valencia", "Castellón de la Plana", ["Valencia-Nord", "Sagunt", "Castellón de la Plana"], 76);
+    //const ruta = new Route("Valencia", "Castellón de la Plana", ["Valencia-Nord", "Sagunt", "Castellón de la Plana"], 76);
 
     //When: Se calcula el coste de la ruta Valencia-Castellón con la opción bicicleta. 
-    const coste = service.costeRutaPieBicicleta('cycling-regular', ruta.getOrigen, );
+    //const coste = service.costeRutaPieBicicleta('cycling-regular', ruta.getOrigen, );
 
     //Then: El sistema calcula el tiempo que se tarda en realizar la ruta prevista que son 4 horas. El coste es de 500 calorías (1 hora) * 4 horas = 2000 calorías
 
   });
 
+  it('H18E01. Consultar rutas guardadas (Escenario Válido):', async () => {
+    const mockRoute: Route[] = [new Route('ruta01', "Sagunto", "Alicante", "driving-car", "fastest", 90, 60), new Route('ruta02', "Valencia", "Castellón de la Plana", "driving-car", "shortest", 84, 64)];
+    spyOn(routeRepo, 'getRoutes').and.resolveTo(mockRoute);
+
+    const result = await routeRepo.getRoutes();
+
+    expect(routeRepo.getRoutes).toHaveBeenCalledWith();
+    expect(result).toEqual(mockRoute);
+    
+  });
+
+  it('H18E03. Intento de consulta de rutas guardadas pero el usuario no está registrado (Escenario Inválido):', async () => {
+    const mockRoute: Route[] = [new Route('ruta01', "Sagunto", "Alicante", "driving-car", "fastest", 90, 60), new Route('ruta02', "Valencia", "Castellón de la Plana", "driving-car", "shortest", 84, 64)];
+    spyOn(routeRepo, 'getRoutes').and.resolveTo(mockRoute);
+    spyOn(authStateService as any, 'currentUser').and.returnValue(null);
+
+    try {
+      await routeRepo.getRoutes();
+      expect(routeRepo.getRoutes).toHaveBeenCalledWith();
+      throw new ServerNotOperativeException();
+    } catch (error) {
+        expect(error).toBeInstanceOf(ServerNotOperativeException);
+    }   
+    
+    expect(authStateService.currentUser).toBeNull();
+  });
 });

@@ -29,13 +29,13 @@ export const routes: Routes = [
       path: 'lugares',
       loadChildren: () => import('./componentes/place.routes'),
     },
-    /*
+    
     {
       canActivateChild: [privateGuard()],
       path: 'rutas',
-      loadChildren: () => import('./componentes/home.routes'),
+      loadChildren: () => import('./componentes/route.routes'),
     },
-    */
+    
     {
       path: '**',
       redirectTo: '/home'

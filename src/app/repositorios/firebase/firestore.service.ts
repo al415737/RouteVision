@@ -9,6 +9,7 @@ import { getAuth } from '@angular/fire/auth';
 import { Place } from '../../modelos/place';
 import { AuthStateService } from '../../utils/auth-state.service';
 import { ServerNotOperativeException } from '../../excepciones/server-not-operative-exception';
+import { Route } from '../../modelos/route';
 
 @Injectable({
   providedIn: 'root'
@@ -178,5 +179,49 @@ export class FirestoreService {
       }
 
       return false;
+  }
+  
+  async createRoute(route: Route, path: string) {
+    const _collection = collection(this._firestore, path);
+
+    
+    const docRef = doc(_collection, route.getNombre()); // Crea una referencia con un ID único
+    const nombre = docRef.id;
+    
+    const objetoPlano = { ...route, nombre }; 
+
+    return setDoc(docRef, objetoPlano);
+  }
+
+  async deleteRoute(path: string, nombre: string){
+    const docRef: DocumentReference = doc(this._firestore, path, nombre);
+    await deleteDoc(docRef);
+  }
+
+  async getRoutes(): Promise<Route[]> {
+    try {
+      if (this._authState.currentUser == null) {
+        throw new ServerNotOperativeException();
+      }
+      const listaRutasRef = collection(this._firestore, `ruta/${this._authState.currentUser?.uid}/listaRutasInterés`);
+      const querySnapshot = await getDocs(listaRutasRef);
+      
+
+      return querySnapshot.docs.map(doc => { 
+        const data = doc.data();
+        return new Route(
+          data['nombre'],
+          data['origen'],
+          data['destino'],
+          data['option'],
+          data['movilidad'],
+          data['kilometros'],
+          data['duration']
+        );
+      });
+    } catch (error) {
+      throw new ServerNotOperativeException();
+    }
+    
   }
 }
