@@ -15,10 +15,13 @@ import { Route } from '../../modelos/route';
 import { Vehiculo } from '../../modelos/vehiculo';
 import { VEHICULO_REPOSITORY_TOKEN } from '../../repositorios/interfaces/vehiculo-repository';
 import { VehiculoFirebaseService } from '../../repositorios/firebase/vehiculo-firebase.service';
+import { ServerNotOperativeException } from '../../excepciones/server-not-operative-exception';
+import { AuthStateService } from '../../utils/auth-state.service';
 
 describe('RouteIntegrationService', () => {
   let service: RouteService;
   let routeRepo: RouteRepository;
+  let authStateService: AuthStateService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -34,6 +37,7 @@ describe('RouteIntegrationService', () => {
     });
     service = TestBed.inject(RouteService);
     routeRepo = TestBed.inject(ROUTE_REPOSITORY_TOKEN);
+    authStateService = TestBed.inject(AuthStateService);
   });
 
   it('HU13E01. Cálculo de ruta entre dos puntos de interés (Escenario Válido)', async () => {
@@ -118,5 +122,32 @@ describe('RouteIntegrationService', () => {
     } catch (error) {
         expect(error).toBeInstanceOf(TypeNotChosenException);
     }    
+  });
+
+  it('H18E01. Consultar rutas guardadas (Escenario Válido):', async () => {
+    const mockRoute: Route[] = [new Route('ruta01', "Sagunto", "Alicante", "driving-car", "fastest", 90, 60), new Route('ruta02', "Valencia", "Castellón de la Plana", "driving-car", "shortest", 84, 64)];
+    spyOn(routeRepo, 'getRoutes').and.resolveTo(mockRoute);
+
+    const result = await routeRepo.getRoutes();
+
+    expect(routeRepo.getRoutes).toHaveBeenCalledWith();
+    expect(result).toEqual(mockRoute);
+    
+  });
+
+  it('H18E03. Intento de consulta de rutas guardadas pero el usuario no está registrado (Escenario Inválido):', async () => {
+    const mockRoute: Route[] = [new Route('ruta01', "Sagunto", "Alicante", "driving-car", "fastest", 90, 60), new Route('ruta02', "Valencia", "Castellón de la Plana", "driving-car", "shortest", 84, 64)];
+    spyOn(routeRepo, 'getRoutes').and.resolveTo(mockRoute);
+    spyOn(authStateService as any, 'currentUser').and.returnValue(null);
+
+    try {
+      await routeRepo.getRoutes();
+      expect(routeRepo.getRoutes).toHaveBeenCalledWith();
+      throw new ServerNotOperativeException();
+    } catch (error) {
+        expect(error).toBeInstanceOf(ServerNotOperativeException);
+    }   
+    
+    expect(authStateService.currentUser).toBeNull();
   });
 });
