@@ -65,4 +65,7 @@ export class RouteService {
     this.routeRepository.deleteRoute(nombre);
   }
 
+  async getRoutes(): Promise<any> {
+    return null;
+  }
 }

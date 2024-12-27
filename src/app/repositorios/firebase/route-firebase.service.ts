@@ -86,4 +86,8 @@ async createRoute(nombre: string, start: Place, end: Place, movilidad: string, p
     const uid = this._authState.currentUser?.uid;
     await this._firestore.deleteRoute(`ruta/${uid}/listaRutasInterés`, nombre);
   }
+
+  getRoutes(): any {
+    return null;
+  }
 }

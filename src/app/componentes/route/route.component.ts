@@ -7,6 +7,7 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { RouterLink } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { RouteService } from '../../servicios/route.service';
 
 @Component({
   selector: 'app-route',
@@ -15,7 +16,7 @@ import { MatIconModule } from '@angular/material/icon';
   templateUrl: './route.component.html',
   styleUrl: './route.component.css'
 })
-export class RouteComponent {
+export default class RouteComponent {
   private _placeService: PlaceService = inject(PlaceService);
     readonly dialog = inject(MatDialog);
     places: Place[] = [];

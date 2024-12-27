@@ -11,4 +11,5 @@ export interface RouteRepository {
     obtenerCosteRuta(vehiculo: Vehiculo, ruta: Route): Promise<number>;
     createRoute(nombre: string, start: Place, end: Place, movilidad: string, preferencia: string, km: number, duracion: number): Promise<Route>;
     deleteRoute(nombre: string): Promise<void>;
+    getRoutes(): any;
 }

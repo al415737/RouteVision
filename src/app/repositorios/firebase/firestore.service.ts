@@ -183,4 +183,8 @@ export class FirestoreService {
     const docRef: DocumentReference = doc(this._firestore, path, nombre);
     await deleteDoc(docRef);
   }
+
+  getRoutes(path: string): any {
+    return null;
+  }
 }
