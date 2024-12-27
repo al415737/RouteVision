@@ -20,6 +20,10 @@ export class RouteFirebaseService implements RouteRepository{
 
   constructor(private _firestore: FirestoreService, private proxy: ProxyCarburanteService,  private _geocoding: OpenRouteService, private _authState: AuthStateService) {}
   
+  consultarRutaEspecifica(origen: string, destino: string, metodo: string): Promise<boolean> {
+    throw new Error('Method not implemented.');
+  }
+  
   async calcularRuta(origen: string, destino: string, metodoMov: string) {
       const origenCoord = await new Promise<string> ((resolve) => {
         this._geocoding.searchToponimo(origen).subscribe({
