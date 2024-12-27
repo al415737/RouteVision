@@ -18,6 +18,7 @@ import { RouteService } from '../../servicios/route.service';
 })
 export default class RouteComponent {
   private _placeService: PlaceService = inject(PlaceService);
+  private _routeService: RouteService = inject(RouteService);
     readonly dialog = inject(MatDialog);
     places: Place[] = [];
     currentPage = 0;
@@ -28,6 +29,7 @@ export default class RouteComponent {
   
     async ngOnInit(): Promise<void> {
       this.places = await this._placeService.getPlaces();
+      console.log(await this._routeService.getRoutes());
       this.updateDataSource();
     }
   
