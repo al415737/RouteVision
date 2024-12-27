@@ -1,1 +1,36 @@
-<p>add works!</p>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formulario de Vehículo</title>
+  <link rel="stylesheet" href="add.component.css">
+</head>
+<body>
+  <app-header></app-header>
+
+  <div class="container">
+    <div class="input-container" style="margin-left: 20px;">
+      <h2>Añadir Vehículo</h2>
+
+      <label for="matricula">Matrícula:</label>
+      <input id="matricula" type="text" [(ngModel)]="matricula" placeholder="Introduce la matrícula" required />
+      
+      <label for="marca">Marca:</label>
+      <input id="marca" type="text" [(ngModel)]="marca" placeholder="Introduce la marca del vehículo" required />
+      
+      <label for="modelo">Modelo:</label>
+      <input id="modelo" type="text" [(ngModel)]="modelo" placeholder="Introduce el modelo del vehículo" required />
+      
+      <label for="anyo_fabricacion">Año de fabricación:</label>
+      <input id="anyo_fabricacion" type="string" [(ngModel)]="anyo_fabricacion" placeholder="Introduce el año de fabricación" required />
+      
+      <label for="consumo">Consumo (L/100km):</label>
+      <input id="consumo" type="number" [(ngModel)]="consumo" placeholder="Introduce el consumo" required />
+
+      <button (click)="guardarVehiculo()" class="btn-success">Añadir Vehículo</button>
+      <button class="btn-secondary back-button" routerLink="/vehiculos">Volver</button>
+    </div>
+  </div>
+</body>
+</html>
