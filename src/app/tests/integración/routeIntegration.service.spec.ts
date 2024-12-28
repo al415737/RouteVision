@@ -15,10 +15,13 @@ import { Route } from '../../modelos/route';
 import { Vehiculo } from '../../modelos/vehiculo';
 import { VEHICULO_REPOSITORY_TOKEN } from '../../repositorios/interfaces/vehiculo-repository';
 import { VehiculoFirebaseService } from '../../repositorios/firebase/vehiculo-firebase.service';
+import { ServerNotOperativeException } from '../../excepciones/server-not-operative-exception';
+import { AuthStateService } from '../../utils/auth-state.service';
 
 describe('RouteIntegrationService', () => {
   let service: RouteService;
   let routeRepo: RouteRepository;
+  let authStateService: AuthStateService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -34,6 +37,7 @@ describe('RouteIntegrationService', () => {
     });
     service = TestBed.inject(RouteService);
     routeRepo = TestBed.inject(ROUTE_REPOSITORY_TOKEN);
+    authStateService = TestBed.inject(AuthStateService);
   });
 
   it('HU13E01. Cálculo de ruta entre dos puntos de interés (Escenario Válido)', async () => {
@@ -71,9 +75,9 @@ describe('RouteIntegrationService', () => {
       
       spyOn(routeRepo, 'obtenerCosteRuta').and.resolveTo(mockFuelCostRoute);
       
-      const result = await routeRepo.obtenerCosteRuta(new Vehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1), new Route('Valencia', 'Castellón de la Plana/Castelló de la Plana', ['Valencia', 'Cabanyal', 'Sagunt', 'Almenara', 'Nules', 'Vilareal', 'Castellón de la Plana'], 90));
+      const result = await routeRepo.obtenerCosteRuta(new Vehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1), new Route('ruta01', 'Valencia', 'Castellón de la Plana/Castelló de la Plana', 'porDefecto', 'driving-car', 90, 90));
       
-      expect(routeRepo.obtenerCosteRuta).toHaveBeenCalledWith(new Vehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1), new Route('Valencia', 'Castellón de la Plana/Castelló de la Plana', ['Valencia', 'Cabanyal', 'Sagunt', 'Almenara', 'Nules', 'Vilareal', 'Castellón de la Plana'], 90));
+      expect(routeRepo.obtenerCosteRuta).toHaveBeenCalledWith(new Vehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1), new Route('ruta01', 'Valencia', 'Castellón de la Plana/Castelló de la Plana', 'porDefecto', 'driving-car', 90, 90));
       expect(result).toEqual(mockFuelCostRoute);
     });
   
@@ -83,7 +87,7 @@ describe('RouteIntegrationService', () => {
       spyOn(routeRepo, 'obtenerCosteRuta').and.resolveTo(mockFuelCostRoute);
   
       const vehiculoNoExiste = new Vehiculo("3423 WCX", "Fiat", "Punto", "2016", 8.1);
-      const rutaValida = new Route('Valencia', 'Castellón de la Plana/Castelló de la Plana', ['Valencia', 'Cabanyal', 'Sagunt', 'Almenara', 'Nules', 'Vilareal', 'Castellón de la Plana'], 90);
+      const rutaValida = new Route('ruta01', 'Valencia', 'Castellón de la Plana/Castelló de la Plana', 'porDefecto', 'driving-car', 90, 90);
   
       try {
           await routeRepo.obtenerCosteRuta(vehiculoNoExiste, rutaValida);
@@ -118,5 +122,60 @@ describe('RouteIntegrationService', () => {
     } catch (error) {
         expect(error).toBeInstanceOf(TypeNotChosenException);
     }    
+  });
+
+  it('H17E01. Guardar una ruta que no existe en el sistema (Escenario válido)', async () => {
+    const place: Place = new Place("000", 'Sagunto', []);
+    const place2: Place = new Place("001", 'Castellón de la Plana', []);
+    const mockRoute: Route = new Route("ruta01", place.getToponimo(), place2.getToponimo(), "driving-car", "fastest", 90, 60);
+
+    spyOn(routeRepo, 'createRoute').and.resolveTo(mockRoute);
+
+    const result = await service.createRoute("ruta01", place, place2, "driving-car", "fastest", 90, 60);
+    expect(routeRepo.createRoute).toHaveBeenCalledWith("ruta01", place, place2, "driving-car", "fastest", 90, 60);
+    expect(result).toEqual(mockRoute);
+  });
+
+
+  it('H17E02. Intento de guardar una ruta con lugares no registrados (Escenario inválido)', async () => {
+    const placeAux: Place = new Place('005', 'Madrid', []);
+    const placeAux2: Place = new Place('006', 'Barcelona', []);
+    const mockRoute: Route = new Route("ruta01", placeAux.getToponimo(), placeAux2.getToponimo(), "driving-car", "fastest", 90, 60);
+
+    spyOn(routeRepo, 'createRoute').and.resolveTo(mockRoute);
+
+    try {
+      service.createRoute("ruta01", placeAux, placeAux2, "driving-car", "fastest", 90, 60);
+      expect(routeRepo.createRoute).toHaveBeenCalledWith("ruta01", placeAux, placeAux2, "driving-car", "fastest", 90, 60);
+    } catch (error) {
+      expect(error).toBeInstanceOf(NotExistingObjectException);
+    } 
+  });
+
+  it('H18E01. Consultar rutas guardadas (Escenario Válido):', async () => {
+    const mockRoute: Route[] = [new Route('ruta01', "Sagunto", "Alicante", "driving-car", "fastest", 90, 60), new Route('ruta02', "Valencia", "Castellón de la Plana", "driving-car", "shortest", 84, 64)];
+    spyOn(routeRepo, 'getRoutes').and.resolveTo(mockRoute);
+
+    const result = await routeRepo.getRoutes();
+
+    expect(routeRepo.getRoutes).toHaveBeenCalledWith();
+    expect(result).toEqual(mockRoute);
+    
+  });
+
+  it('H18E03. Intento de consulta de rutas guardadas pero el usuario no está registrado (Escenario Inválido):', async () => {
+    const mockRoute: Route[] = [new Route('ruta01', "Sagunto", "Alicante", "driving-car", "fastest", 90, 60), new Route('ruta02', "Valencia", "Castellón de la Plana", "driving-car", "shortest", 84, 64)];
+    spyOn(routeRepo, 'getRoutes').and.resolveTo(mockRoute);
+    spyOn(authStateService as any, 'currentUser').and.returnValue(null);
+
+    try {
+      await routeRepo.getRoutes();
+      expect(routeRepo.getRoutes).toHaveBeenCalledWith();
+      throw new ServerNotOperativeException();
+    } catch (error) {
+        expect(error).toBeInstanceOf(ServerNotOperativeException);
+    }   
+    
+    expect(authStateService.currentUser).toBeNull();
   });
 });

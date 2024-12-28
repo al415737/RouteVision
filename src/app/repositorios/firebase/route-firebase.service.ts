@@ -7,19 +7,20 @@ import { ProxyCarburanteService } from '../../utils/proxy-carburante.service';
 import { OpenRouteService } from '../../APIs/Geocoding/openRoute.service';
 import { firstValueFrom } from 'rxjs';
 import { Place } from '../../modelos/place';
+import { NotExistingObjectException } from '../../excepciones/notExistingObjectException';
+import { AuthStateService } from '../../utils/auth-state.service';
 
 @Injectable({
   providedIn: 'root'
 })
 
 export class RouteFirebaseService implements RouteRepository{
-  servicioAPI: OpenRouteService = inject(OpenRouteService);
 
-  constructor(private _firestore: FirestoreService, private proxy: ProxyCarburanteService,  private _geocoding: OpenRouteService) {}
+  constructor(private _firestore: FirestoreService, private proxy: ProxyCarburanteService,  private _geocoding: OpenRouteService, private _authState: AuthStateService) {}
   
   async calcularRuta(origen: string, destino: string, metodoMov: string) {
       const origenCoord = await new Promise<string> ((resolve) => {
-        this.servicioAPI.searchToponimo(origen).subscribe({
+        this._geocoding.searchToponimo(origen).subscribe({
           next: (response: any) => {
               const coordenadas = response.features[0].geometry.coordinates;
               resolve(`${coordenadas[0]},${coordenadas[1]}`);
@@ -28,7 +29,7 @@ export class RouteFirebaseService implements RouteRepository{
       });
 
       const destinoCoord = await new Promise<string> ((resolve) => {
-        this.servicioAPI.searchToponimo(destino).subscribe({
+        this._geocoding.searchToponimo(destino).subscribe({
           next: (response: any) => {
               const coordenadas = response.features[0].geometry.coordinates;
               resolve(`${coordenadas[0]},${coordenadas[1]}`);
@@ -36,7 +37,7 @@ export class RouteFirebaseService implements RouteRepository{
         });
       });
 
-      return firstValueFrom(this.servicioAPI.getRuta(origenCoord, destinoCoord, metodoMov));
+      return firstValueFrom(this._geocoding.getRuta(origenCoord, destinoCoord, metodoMov));
   }
 
   
@@ -65,11 +66,33 @@ export class RouteFirebaseService implements RouteRepository{
   async getRouteFSE(start: Place, end: Place, movilidad: string, preferencia: string): Promise<any> {
     const existPlace: boolean = await this._firestore.ifExistPlace(start);
     const existPlace2: boolean = await this._firestore.ifExistPlace(end);
-
     if(!existPlace || !existPlace2)
-        return [];
+      throw new NotExistingObjectException();
 
     const response: any = await this._geocoding.getRouteFSE(start.getCoordenadas(), end.getCoordenadas(), movilidad, preferencia);
     return response;
 }
+
+async createRoute(nombre: string, start: Place, end: Place, movilidad: string, preferencia: string, km: number, duracion: number): Promise<Route> {
+  const existPlace: boolean = await this._firestore.ifExistPlace(start);
+  const existPlace2: boolean = await this._firestore.ifExistPlace(end);
+
+  if(!existPlace || !existPlace2)
+    throw new NotExistingObjectException();
+
+  const newRoute: Route = new Route(nombre, start.getToponimo(), end.getToponimo(), preferencia, movilidad, km, duracion);
+  const uid = this._authState.currentUser?.uid;
+
+  await this._firestore.createRoute(newRoute, `ruta/${uid}/listaRutasInterés`);
+
+  return newRoute;
+}
+  async deleteRoute(nombre: string): Promise<void> {
+    const uid = this._authState.currentUser?.uid;
+    await this._firestore.deleteRoute(`ruta/${uid}/listaRutasInterés`, nombre);
+  }
+
+  async getRoutes(): Promise<Route[]> {
+    return await this._firestore.getRoutes();
+  }
 }
