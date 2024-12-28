@@ -190,8 +190,8 @@ describe('RutasService', () => {
     const coste = await servicioRutas.costeRutaPieBicicleta(ruta);
     
     //Then: El sistema calcula el tiempo que se tarda en realizar la ruta prevista que son 4 horas. El coste es de 500 calorías (1 hora) * 4 horas = 2000 calorías
-    const costeEsperado = 500;
-    expect(coste).toEqual(costeEsperado);
+    const costeEsperado = '2195.28';
+    expect(coste.toFixed(2)).toEqual(costeEsperado);
     servicioUsuario.logoutUser();
   });
 

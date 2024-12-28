@@ -74,9 +74,7 @@ export class RouteFirebaseService implements RouteRepository{
 
   async costeRutaPieBicicleta(ruta: Route){
     const rutaAPI: any = await this.calcularRuta(ruta.getOrigen(), ruta.getDestino(), ruta.getMovilidad());
-    console.log("Duracion (seg):" + rutaAPI.features[0].properties.summary.duration);
     const duracion = (rutaAPI.features[0].properties.summary.duration) / 3600;
-    console.log("Duracion (h):" + duracion);
     let coste = 0;
 
     const calorias_bicicleta = 500;
