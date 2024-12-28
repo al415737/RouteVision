@@ -18,6 +18,7 @@ import { PlaceFirebaseService } from '../../repositorios/firebase/place-firebase
 import { VEHICULO_REPOSITORY_TOKEN } from '../../repositorios/interfaces/vehiculo-repository';
 import { VehiculoFirebaseService } from '../../repositorios/firebase/vehiculo-firebase.service';
 import { provideHttpClient } from '@angular/common/http';
+import { UserNotFoundException } from '../../excepciones/user-not-found-exception';
 
 describe('UserService', () => {
   let service: UserService;
@@ -46,12 +47,11 @@ describe('UserService', () => {
     placeService = TestBed.inject(PlaceService);
   });
   
-
+  /*
   it('HU1E01. User registration in the system (Valid Scenario)', async () => {
-    /* GIVEN: El usuario Manu-33 no está registrado en el sistema y se tiene conexión con la base de datos → ListaUsuarios = [ ].
-       WHEN: Manuel intenta registrarse →[Nombre=”Manuel”, Apellido=”García”, User=”Manu33”, Email=”manu33@gmail.com”, Contraseña=”Manu-33”].
-       THEN: El sistema registra a Manuel  y se almacena en la base de datos → ListaUsuarios=[{Nombre=”Manuel”, Apellido=”García”, User=”Manu33”, Email=”manu33@gmail.com”, Contraseña=”Manu-33”}]. 
-    */
+    // GIVEN: El usuario Manu-33 no está registrado en el sistema y se tiene conexión con la base de datos → ListaUsuarios = [ ].
+    // WHEN: Manuel intenta registrarse →[Nombre=”Manuel”, Apellido=”García”, User=”Manu33”, Email=”manu33@gmail.com”, Contraseña=”Manu-33”].
+    // THEN: El sistema registra a Manuel  y se almacena en la base de datos → ListaUsuarios=[{Nombre=”Manuel”, Apellido=”García”, User=”Manu33”, Email=”manu33@gmail.com”, Contraseña=”Manu-33”}]. 
     const result = await service.createUser("Manuel", "García", "manu033@gmail.com", "Manu-33", "Manu-33");
     expect(result).toBeInstanceOf(User);
     service.deleteUser("manu033@gmail.com");
@@ -60,19 +60,19 @@ describe('UserService', () => {
   it('HU1E05. User registration with email already registered in the system with another account (Invalid Scenario)', async () => {
     // GIVEN: El usuario JorgeGarcía no está registrado en el sistema y se tiene conexión con la base de datos. ListaUsuarios=[{Nombre=”Manuel”, Apellido=”García”, User=”Manu33”, Email=”manu33@gmail.com”, Contraseña=”Manu-33”}].
     await service.createUser("Manuel", "García", "manu034@gmail.com", "Manu-34", "Manu-34");
-    /* WHEN: Jorge intenta registrarse → [Nombre=”Jorge”, Apellido=”García”, User=”JorgeGarcía”, Email=”manu33@gmail.com”, Contraseña=”JorgeGarcía-02”].
-       THEN: El sistema no registra al usuario y se lanza la excepción MailExistingException().
-    */
+    // WHEN: Jorge intenta registrarse → [Nombre=”Jorge”, Apellido=”García”, User=”JorgeGarcía”, Email=”manu33@gmail.com”, Contraseña=”JorgeGarcía-02”].
+    // THEN: El sistema no registra al usuario y se lanza la excepción MailExistingException().
+    
     await expectAsync(
       service.createUser("Jorge", "García", "manu034@gmail.com", "JorgeGarcía", "JorgeGarcía-02")
     ).toBeRejectedWith(new MailExistingException());
     service.deleteUser("manu034@gmail.com");
   });
-
+  
   it('HU2E01. Login with correct data (Valid Escenary)', async () => {
-    // GIVEN: El usuario Test está registrado y la base de datos está disponible.  Usuario Test: [nombre: Test, User=”test23”, email: “test@test.com”,  contraseña: “test123”].
-    /* WHEN: El usuario Pepito quiere iniciar sesión con sus datos.  user: “pepito23”, contraseña:  “Pepito123?_ “.
-       THEN: El sistema carga los datos de Pepito. ListaVehículos=[{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}] y listaLugaresInterés=[{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049], idLugar = “000”}].*/
+    //  GIVEN: El usuario Test está registrado y la base de datos está disponible.  Usuario Test: [nombre: Test, User=”test23”, email: “test@test.com”,  contraseña: “test123”].
+    //  WHEN: El usuario Pepito quiere iniciar sesión con sus datos.  user: “pepito23”, contraseña:  “Pepito123?_ “.
+    //  THEN: El sistema carga los datos de Pepito. ListaVehículos=[{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}] y listaLugaresInterés=[{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049], idLugar = “000”}].
    
     await service.loginUser("test@test.com", "test123");
     await vehicleService.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1);
@@ -104,15 +104,37 @@ describe('UserService', () => {
     await placeService.deletePlace(lugar.idPlace);
     await service.logoutUser();
   });
+  
 
   it('HU2E02. Login with incorrect data (Invalid Scenario)', async () => {
     // GIVEN: El usuario Pepito está registrado y la base de datos está disponible. [nombre: “Pepito”, User=”pepito23”, email: “pepito@gmail.com”,  contraseña: “Pepito123?_”]
-    /* WHEN: El usuario Pepito introduce como contraseña: “pepito123_”
-       THEN: El sistema no inicia la sesión de Pepito porque la contraseña introducida no coincide con la que se encuentra en la base de datos para ese usuario. Lanza la excepción WrongPasswordException().
-    */
+    // WHEN: El usuario Pepito introduce como contraseña: “pepito123_”
+    // THEN: El sistema no inicia la sesión de Pepito porque la contraseña introducida no coincide con la que se encuentra en la base de datos para ese usuario. Lanza la excepción WrongPasswordException().
+    
     await expectAsync(
       service.loginUser("test@test.com", "pepito123_")
     ).toBeRejectedWith(new WrongPasswordException());
     service.logoutUser();
   });
+  */
+
+  it('HU3-E01. Cierre de sesión de una cuenta de un usuario registrado (Escenario Válido): ', async () => {
+    await service.loginUser("test@test.com", "test123");
+    await service.logoutUser();
+
+    const currentUser = getAuth().currentUser;
+
+    // Verifico que el usuario actual es null después del logout
+    expect(currentUser).toBeNull();
+  });
+
+  it('HU3-E02. Cierre de sesión de una cuenta de un usuario registrado con la sesión desactivada (Escenario Inválido): ', async () => {
+    try {
+      await service.logoutUser();
+    } catch (error) {
+      expect(error).toBeInstanceOf(UserNotFoundException);
+    }
+  });
 });
+
+

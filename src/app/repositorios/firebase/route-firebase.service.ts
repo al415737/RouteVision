@@ -90,6 +90,11 @@ export class RouteFirebaseService implements RouteRepository{
   }
 
   async getRouteFSE(start: Place, end: Place, movilidad: string, preferencia: string): Promise<any> {
+    const existPlace: boolean = await this._firestore.ifExistPlace(start);
+    const existPlace2: boolean = await this._firestore.ifExistPlace(end);
+    if(!existPlace || !existPlace2)
+      throw new NotExistingObjectException();
+
     const response: any = await this._geocoding.getRouteFSE(start.getCoordenadas(), end.getCoordenadas(), movilidad, preferencia);
     return response;
   }
