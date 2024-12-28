@@ -167,6 +167,20 @@ export class FirestoreService {
     return true;
   } 
 
+  async ifExist(campo: string, valor: string, path: string){
+      const _collection = collection(this._firestore, path);
+
+      const q = query(_collection, where(campo, '==', valor));
+
+      const querySnapshot = await getDocs(q);
+
+      if(querySnapshot.empty){
+          return false;
+      }
+
+      return true;
+  }
+  
   async createRoute(route: Route, path: string) {
     const _collection = collection(this._firestore, path);
 

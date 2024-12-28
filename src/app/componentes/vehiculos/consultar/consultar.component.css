@@ -1,0 +1,59 @@
+.body {
+    background-color: #030F26;
+    font-family: Arial, sans-serif;
+  }
+  
+  h1 {
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  .add-button {
+    background-color: #025E73;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 20px auto;
+    display: block;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  .add-button .add-icon {
+    font-weight: bold;
+    margin-right: 5px;
+  }
+  
+  .add-button:hover {
+    background-color: #038A99;
+  }
+  
+  #table-container {
+    margin: 20px auto;
+    width: 90%;
+    max-width: 1200px;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  th, td {
+    text-align: left;
+    padding: 10px;
+  }
+  
+  .delete-button {
+    color: white;
+    background-color: red;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  
+  .delete-button:hover {
+    background-color: darkred;
+  }
+  
