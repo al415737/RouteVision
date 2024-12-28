@@ -17,6 +17,7 @@ import { VEHICULO_REPOSITORY_TOKEN } from '../../repositorios/interfaces/vehicul
 import { VehiculoFirebaseService } from '../../repositorios/firebase/vehiculo-firebase.service';
 import { ServerNotOperativeException } from '../../excepciones/server-not-operative-exception';
 import { AuthStateService } from '../../utils/auth-state.service';
+import { NoRouteFoundException } from '../../excepciones/no-route-found-exception';
 
 describe('RouteIntegrationService', () => {
   let service: RouteService;
@@ -126,16 +127,33 @@ describe('RouteIntegrationService', () => {
 
   it('HU15E01. Cálculo de coste calórico de la ruta Valencia-Castellón (Escenario Válido)', async () => {
     //Given: El usuario [“Pepito2002”, “pepito@gmail.com“,“ppt-24”] tiene su sesión iniciada y la base de datos está disponible. Lista rutas: [ {Origen:Valencia, Destino:Castellón, Trayectoria: [Cabanyal, Sagunt, Almenara, Nules, Vilareal], kilómetros = 90}]
-    const mockData = 500;
+    const mockData = '2195.28';
     spyOn(routeRepo, 'costeRutaPieBicicleta').and.resolveTo(mockData);
-    //const ruta = new Route("Valencia", "Castellón de la Plana", ["Valencia-Nord", "Sagunt", "Castellón de la Plana"], 76);
+    const ruta = new Route("Valencia-Castellón", "Valencia", "Castellón de la Plana", "economica", "cycling-regular", 76, 3600);
 
-    //When: Se calcula el coste de la ruta Valencia-Castellón con la opción bicicleta. 
-    //const coste = service.costeRutaPieBicicleta('cycling-regular', ruta.getOrigen, );
+    //When: Se calcula el coste de la ruta Valencia-Castellón con la opción bicicleta
+    const coste = await service.costeRutaPieBicicleta(ruta);
 
     //Then: El sistema calcula el tiempo que se tarda en realizar la ruta prevista que son 4 horas. El coste es de 500 calorías (1 hora) * 4 horas = 2000 calorías
+    expect(routeRepo.costeRutaPieBicicleta).toHaveBeenCalledWith(ruta);
+    expect(coste).toEqual(mockData);
+  }); 
 
+  it('HU15E03. Intento de cálculo de gasto calórico pero no hay rutas dadas de alta (Escenario Inválido)', async () => {
+      //Given: El usuario [“Pepito2002”, “pepito@gmail.com“,“crm-24”] ha iniciado sesión y la base de datos está disponible. Lista rutas = []  
+      spyOn(routeRepo, 'costeRutaPieBicicleta').and.resolveTo(NoRouteFoundException);
+      const ruta = new Route("Valencia-Castellón", "Valencia", "Castellón de la Plana", "economica", "cycling-regular", 76, 3600);
+  
+      try {
+          //When: El usuario Pepito quiere realizar la ruta entre Valencia y Castellón en bicicleta.
+          await service.costeRutaPieBicicleta(ruta);  
+          expect(routeRepo.costeRutaPieBicicleta).toHaveBeenCalledWith(ruta);
+      } catch(error){
+          //Then: El sistema no puede calcular el gasto calórico y lanza la excepción  NoRouteFoundException()
+          expect(error).toBeInstanceOf(NoRouteFoundException);
+      }
   });
+
 
   it('H18E01. Consultar rutas guardadas (Escenario Válido):', async () => {
     const mockRoute: Route[] = [new Route('ruta01', "Sagunto", "Alicante", "driving-car", "fastest", 90, 60), new Route('ruta02', "Valencia", "Castellón de la Plana", "driving-car", "shortest", 84, 64)];

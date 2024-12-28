@@ -11,6 +11,7 @@ import { Vehiculo } from '../modelos/vehiculo';
 import { Route } from '../modelos/route';
 import { NotExistingObjectException } from '../excepciones/notExistingObjectException';
 import { NoRouteFoundException } from '../excepciones/no-route-found-exception';
+import { InvalidCalculoCosteException } from '../excepciones/invalid-calculo-coste-exception';
 
 
 @Injectable({
@@ -57,7 +58,7 @@ export class RouteService {
 
   costeRutaPieBicicleta(ruta: Route){
     if(ruta.getMovilidad() != 'cycling-regular' && ruta.getMovilidad() != 'foot-walking'){
-        throw new NoRouteFoundException();
+        throw new InvalidCalculoCosteException();
     }
 
     if(!this.consultarRutaEspecifica(ruta)){

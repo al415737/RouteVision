@@ -212,7 +212,7 @@ describe('RutasService', () => {
         //When: El usuario Pepito quiere realizar la ruta entre Valencia y Castellón en bicicleta.
         await servicioRutas.costeRutaPieBicicleta(ruta);  
     } catch(error){
-        //Then: El sistema no puede calcular el gasto calórico y lanza la excepción  NoRouteFoundException()
+        //Then: El sistema no puede calcular el gasto calórico y lanza la excepción NoRouteFoundException()
         expect(error).toBeInstanceOf(NoRouteFoundException);
     }
   });

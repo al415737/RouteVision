@@ -1,5 +1,5 @@
 export class NoRouteFoundException extends Error {
     constructor(){
-        super("Metodo de viaje inválido.");
+        super("No existe la ruta en la base de datos");
     }
 }
