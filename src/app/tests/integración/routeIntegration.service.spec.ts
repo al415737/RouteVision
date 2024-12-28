@@ -124,32 +124,6 @@ describe('RouteIntegrationService', () => {
     }    
   });
 
-  it('H18E01. Consultar rutas guardadas (Escenario Válido):', async () => {
-    const mockRoute: Route[] = [new Route('ruta01', "Sagunto", "Alicante", "driving-car", "fastest", 90, 60), new Route('ruta02', "Valencia", "Castellón de la Plana", "driving-car", "shortest", 84, 64)];
-    spyOn(routeRepo, 'getRoutes').and.resolveTo(mockRoute);
-
-    const result = await routeRepo.getRoutes();
-
-    expect(routeRepo.getRoutes).toHaveBeenCalledWith();
-    expect(result).toEqual(mockRoute);
-    
-  });
-
-  it('H18E03. Intento de consulta de rutas guardadas pero el usuario no está registrado (Escenario Inválido):', async () => {
-    const mockRoute: Route[] = [new Route('ruta01', "Sagunto", "Alicante", "driving-car", "fastest", 90, 60), new Route('ruta02', "Valencia", "Castellón de la Plana", "driving-car", "shortest", 84, 64)];
-    spyOn(routeRepo, 'getRoutes').and.resolveTo(mockRoute);
-    spyOn(authStateService as any, 'currentUser').and.returnValue(null);
-
-    try {
-      await routeRepo.getRoutes();
-      expect(routeRepo.getRoutes).toHaveBeenCalledWith();
-      throw new ServerNotOperativeException();
-    } catch (error) {
-        expect(error).toBeInstanceOf(ServerNotOperativeException);
-    }   
-    
-    expect(authStateService.currentUser).toBeNull();
-
   it('H17E01. Guardar una ruta que no existe en el sistema (Escenario válido)', async () => {
     const place: Place = new Place("000", 'Sagunto', []);
     const place2: Place = new Place("001", 'Castellón de la Plana', []);
@@ -176,5 +150,32 @@ describe('RouteIntegrationService', () => {
     } catch (error) {
       expect(error).toBeInstanceOf(NotExistingObjectException);
     } 
+  });
+
+  it('H18E01. Consultar rutas guardadas (Escenario Válido):', async () => {
+    const mockRoute: Route[] = [new Route('ruta01', "Sagunto", "Alicante", "driving-car", "fastest", 90, 60), new Route('ruta02', "Valencia", "Castellón de la Plana", "driving-car", "shortest", 84, 64)];
+    spyOn(routeRepo, 'getRoutes').and.resolveTo(mockRoute);
+
+    const result = await routeRepo.getRoutes();
+
+    expect(routeRepo.getRoutes).toHaveBeenCalledWith();
+    expect(result).toEqual(mockRoute);
+    
+  });
+
+  it('H18E03. Intento de consulta de rutas guardadas pero el usuario no está registrado (Escenario Inválido):', async () => {
+    const mockRoute: Route[] = [new Route('ruta01', "Sagunto", "Alicante", "driving-car", "fastest", 90, 60), new Route('ruta02', "Valencia", "Castellón de la Plana", "driving-car", "shortest", 84, 64)];
+    spyOn(routeRepo, 'getRoutes').and.resolveTo(mockRoute);
+    spyOn(authStateService as any, 'currentUser').and.returnValue(null);
+
+    try {
+      await routeRepo.getRoutes();
+      expect(routeRepo.getRoutes).toHaveBeenCalledWith();
+      throw new ServerNotOperativeException();
+    } catch (error) {
+        expect(error).toBeInstanceOf(ServerNotOperativeException);
+    }   
+    
+    expect(authStateService.currentUser).toBeNull();
   });
 });
