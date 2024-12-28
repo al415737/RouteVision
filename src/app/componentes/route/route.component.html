@@ -15,22 +15,45 @@
   </button>
   <div class="mat-elevation-z8" id="table-container">
     <table mat-table [dataSource]="dataSource" [style.background]="'linear-gradient(180deg, #011640, #030F26)'">
-      <!-- Position Column -->
-      <ng-container matColumnDef="toponimo">
-        <th mat-header-cell *matHeaderCellDef [style.color]="'white'">Toponimo</th>
-        <td mat-cell *matCellDef="let place" [style.color]="'white'"> {{place.toponimo}} </td>
+      <ng-container matColumnDef="nombre">
+        <th mat-header-cell *matHeaderCellDef [style.color]="'white'">Nombre</th>
+        <td mat-cell *matCellDef="let ruta" [style.color]="'white'"> {{ruta.nombre}} </td>
       </ng-container>
   
-      <!-- Name Column -->
-      <ng-container matColumnDef="coordenadas">
-        <th mat-header-cell *matHeaderCellDef [style.color]="'white'"> Coordenadas </th>
-        <td mat-cell *matCellDef="let place" [style.color]="'white'"> {{place.coordenadas}} </td>
+      <ng-container matColumnDef="origen">
+        <th mat-header-cell *matHeaderCellDef [style.color]="'white'"> Origen </th>
+        <td mat-cell *matCellDef="let ruta" [style.color]="'white'"> {{ruta.origen}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="destino">
+        <th mat-header-cell *matHeaderCellDef [style.color]="'white'">Destino</th>
+        <td mat-cell *matCellDef="let ruta" [style.color]="'white'"> {{ruta.destino}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="option">
+        <th mat-header-cell *matHeaderCellDef [style.color]="'white'">Modo</th>
+        <td mat-cell *matCellDef="let ruta" [style.color]="'white'"> {{ruta.option}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="movilidad">
+        <th mat-header-cell *matHeaderCellDef [style.color]="'white'">Movilidad</th>
+        <td mat-cell *matCellDef="let ruta" [style.color]="'white'"> {{ruta.movilidad}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="kilometros">
+        <th mat-header-cell *matHeaderCellDef [style.color]="'white'">Kilometros</th>
+        <td mat-cell *matCellDef="let ruta" [style.color]="'white'"> {{ruta.kilometros}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="duration">
+        <th mat-header-cell *matHeaderCellDef [style.color]="'white'">Duración</th>
+        <td mat-cell *matCellDef="let ruta" [style.color]="'white'"> {{ruta.duration}} </td>
       </ng-container>
 
       <ng-container matColumnDef="delete">
-        <th mat-header-cell *matHeaderCellDef [style.color]="'white'"> Borrar </th>
-        <td mat-cell *matCellDef="let place" [style.color]="'white'">
-          <button mat-icon-button color="warn" class="delete-button" (click)="onDelete(place)">
+        <th mat-header-cell *matHeaderCellDef [style.color]="'white'"></th>
+        <td mat-cell *matCellDef="let ruta" [style.color]="'white'">
+          <button mat-icon-button color="warn" class="delete-button" (click)="onDelete(ruta)">
             <mat-icon>delete</mat-icon>
           </button>
         </td>

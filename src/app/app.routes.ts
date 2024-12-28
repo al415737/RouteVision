@@ -17,25 +17,25 @@ export const routes: Routes = [
       path: 'home',
       loadComponent: () => import('./componentes/home/home.component')
     },
-    /*
+    
     {
       canActivateChild: [privateGuard()],
-      path: 'vehiculos
+      path: 'vehiculos',
       loadChildren: () => import('./componentes/vehicle.routes'),
     },
-    */
+    
     {
       canActivateChild: [privateGuard()],
       path: 'lugares',
       loadChildren: () => import('./componentes/place.routes'),
     },
-    /*
+    
     {
       canActivateChild: [privateGuard()],
       path: 'rutas',
-      loadChildren: () => import('./componentes/home.routes'),
+      loadChildren: () => import('./componentes/route.routes'),
     },
-    */
+    
     {
       path: '**',
       redirectTo: '/home'

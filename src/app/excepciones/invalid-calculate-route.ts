@@ -1,5 +1,5 @@
 export class InvalidCalculateRoute extends Error {
     constructor(){
-        super("Faltan por introducir argumentos para calcular la ruta.");
+        super("Argumentos inválidos para calcular la ruta.");
     }
 }

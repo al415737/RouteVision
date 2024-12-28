@@ -10,6 +10,8 @@ import { VEHICULO_REPOSITORY_TOKEN, VehiculoRepository } from '../repositorios/i
 import { Vehiculo } from '../modelos/vehiculo';
 import { Route } from '../modelos/route';
 import { NotExistingObjectException } from '../excepciones/notExistingObjectException';
+import { NoRouteFoundException } from '../excepciones/no-route-found-exception';
+import { InvalidCalculoCosteException } from '../excepciones/invalid-calculo-coste-exception';
 
 
 @Injectable({
@@ -54,4 +56,38 @@ export class RouteService {
     return this.routeRepository.getRouteFSE(start, end, movilidad, preferencia);
   }
 
+  costeRutaPieBicicleta(ruta: Route){
+    if(ruta.getMovilidad() != 'cycling-regular' && ruta.getMovilidad() != 'foot-walking'){
+        throw new InvalidCalculoCosteException();
+    }
+
+    if(!this.consultarRutaEspecifica(ruta)){
+        throw new NoRouteFoundException();
+    }
+
+    return this.routeRepository.costeRutaPieBicicleta(ruta);
+  }
+
+  consultarRutaEspecifica(ruta: Route){
+    if(ruta.getOrigen() == '' || ruta.getOrigen() == null || ruta.getDestino() == '' || ruta.getDestino() == null || ruta.getMovilidad() == '' || ruta.getMovilidad() == null){
+      throw new InvalidCalculateRoute();
+    }
+
+    return this.routeRepository.consultarRutaEspecifica(ruta);
+  }
+
+  createRoute(nombre: string, start: Place, end: Place, movilidad: string, preferencia: string, km: number, duracion: number): Promise<Route> {
+    if (!nombre.trim() && !movilidad.trim() && !preferencia.trim() && km > 0 && duracion > 0)
+      throw new ObligatoryFieldsException();
+
+    return this.routeRepository.createRoute(nombre, start, end, movilidad, preferencia, km, duracion);
+  }
+
+  async deleteRoute(nombre: string): Promise<void> {
+    this.routeRepository.deleteRoute(nombre);
+  }
+
+  async getRoutes(): Promise<Route[]> {
+    return this.routeRepository.getRoutes();
+  }
 }
