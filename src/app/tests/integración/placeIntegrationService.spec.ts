@@ -14,12 +14,14 @@ import { InvalidCoordenatesException } from '../../excepciones/invalid-coordenat
 import { InvalidPlaceException } from '../../excepciones/invalid-place-exception';
 import { ServerNotOperativeException } from '../../excepciones/server-not-operative-exception';
 import { OpenRouteService } from '../../APIs/Geocoding/openRoute.service';
+import { AuthStateService } from '../../utils/auth-state.service';
 
 describe('PlaceIntegrationService', () => {
 
   let servicePlace: PlaceService;
   let geocodingRepositorio: OpenRouteService;
   let placeRepositorio: PlaceRepository;
+  let authStateService: AuthStateService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -37,6 +39,7 @@ describe('PlaceIntegrationService', () => {
 
     servicePlace = TestBed.inject(PlaceService);
     geocodingRepositorio = TestBed.inject(OpenRouteService); 
+    authStateService = TestBed.inject(AuthStateService);
   });
 
   //HISTORIA 5
@@ -98,16 +101,18 @@ describe('PlaceIntegrationService', () => {
     expect(result).toEqual(mockPlace);
   });
 
-  it('PRUEBA INTEGRACIÓN --> HU7E02. Consulta de lista de lugares dados de alta sin conexión a la BBDD (Escenario inválido):', async () => {
+  it('PRUEBA INTEGRACIÓN --> HU7E02. Consulta de lista de lugares dados de alta sin estar registrado (Escenario inválido):', async () => {
     const mockPlace: Place[] = [new Place('001', "Castellón de la Plana", [39.98, -0.049]), new Place('002', "Barcelona", [33.98, -0.049]),];
-
     spyOn(placeRepositorio, 'getPlaces').and.resolveTo(mockPlace);
+    spyOn(authStateService as any, 'currentUser').and.returnValue(null);
   
     try{
       servicePlace.getPlaces();
       expect(placeRepositorio.getPlaces).toHaveBeenCalledWith();
+      throw new ServerNotOperativeException();
     } catch(error) {
       expect(error).toBeInstanceOf(ServerNotOperativeException);
     }
+    expect(authStateService.currentUser).toBeNull();
   });
 })

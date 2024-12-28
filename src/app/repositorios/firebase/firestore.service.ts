@@ -183,4 +183,31 @@ export class FirestoreService {
     const docRef: DocumentReference = doc(this._firestore, path, nombre);
     await deleteDoc(docRef);
   }
+
+  async getRoutes(): Promise<Route[]> {
+    try {
+      if (this._authState.currentUser == null) {
+        throw new ServerNotOperativeException();
+      }
+      const listaRutasRef = collection(this._firestore, `ruta/${this._authState.currentUser?.uid}/listaRutasInterés`);
+      const querySnapshot = await getDocs(listaRutasRef);
+      
+
+      return querySnapshot.docs.map(doc => { 
+        const data = doc.data();
+        return new Route(
+          data['nombre'],
+          data['origen'],
+          data['destino'],
+          data['option'],
+          data['movilidad'],
+          data['kilometros'],
+          data['duration']
+        );
+      });
+    } catch (error) {
+      throw new ServerNotOperativeException();
+    }
+    
+  }
 }
