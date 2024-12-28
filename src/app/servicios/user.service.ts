@@ -1,11 +1,14 @@
-import { Injectable, Inject } from '@angular/core';
+import { Injectable, Inject, inject } from '@angular/core';
 import { UserRepository, USER_REPOSITORY_TOKEN } from '../repositorios/interfaces/user-repository';
 import { ObligatoryFieldsException } from '../excepciones/obligatory-fields-exception';
+import { UserNotFoundException } from '../excepciones/user-not-found-exception';
+import { Auth } from '@angular/fire/auth';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
+  private _auth = inject(Auth);
   
   constructor(@Inject(USER_REPOSITORY_TOKEN) private userRepo: UserRepository) {}
 
@@ -28,7 +31,9 @@ export class UserService {
   }
 
   async logoutUser(): Promise<void> {
+    if (!this._auth.currentUser) {
+      throw new UserNotFoundException();
+    }
     await this.userRepo.logoutUser();
   }
-
 }
