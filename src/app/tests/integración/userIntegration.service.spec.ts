@@ -11,6 +11,7 @@ import { UserFirebaseService } from '../../repositorios/firebase/user-firebase.s
 import { Vehiculo } from '../../modelos/vehiculo';
 import { Place } from '../../modelos/place';
 import { WrongPasswordException } from '../../excepciones/wrong-password-exception';
+import { UserNotFoundException } from '../../excepciones/user-not-found-exception';
 
 describe('UserIntegrationService', () => {
   let service: UserService;
@@ -105,4 +106,15 @@ describe('UserIntegrationService', () => {
     expect(userRepo.logoutUser).toHaveBeenCalledWith();
     expect(result).toBeUndefined();
   });
+
+  it('PRUEBA INTEGRACIÓN --> HU3-E02. Cierre de sesión de una cuenta de un usuario registrado con la sesión desactivada (Escenario Inválido): ', async () => {
+    spyOn(userRepo, 'logoutUser').and.resolveTo();
+
+    try {
+      await service.logoutUser();
+    } catch (error) {
+     expect(error).toBeInstanceOf(UserNotFoundException);
+    }
+  });
+
 });
