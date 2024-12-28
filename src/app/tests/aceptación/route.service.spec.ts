@@ -183,16 +183,16 @@ describe('RutasService', () => {
   });
 
   it('HU15E01. Cálculo de coste calórico de la ruta Valencia-Castellón (Escenario Válido)', async () => {
-    //Given: El usuario [“Pepito2002”, “pepito@gmail.com“,“ppt-24”] tiene su sesión iniciada y la base de datos está disponible. Lista rutas: [ {Origen:Valencia, Destino:Castellón, Trayectoria: [Cabanyal, Sagunt, Almenara, Nules, Vilareal], kilómetros = 90}]
+    //Given: El usuario [“Pepito2002”, “pepito@gmail.com“,“ppt-24”] tiene su sesión iniciada y la base de datos está disponible. Lista rutas: [ {nombre: Valencia-Castellón, Origen:Valencia, Destino:Castellón de la Plana, Opción: economica, Movilidad: cycling-regular, kilómetros = 76, duracion = 15806}]
     servicioUsuario.loginUser("test@test.com", "test123");
     const origen = await servicioPlace.createPlaceT("Valencia");
     const destino = await servicioPlace.createPlaceT("Castellón de la Plana");
-    const ruta = await servicioRutas.createRoute("Valencia-Castellón", origen, destino, "cycling-regular", "economica", 76, 3600);
+    const ruta = await servicioRutas.createRoute("Valencia-Castellón", origen, destino, "cycling-regular", "economica", 76, 15806);
 
     //When: Se calcula el coste de la ruta Valencia-Castellón con la opción bicicleta. 
     const coste = await servicioRutas.costeRutaPieBicicleta(ruta);
     
-    //Then: El sistema calcula el tiempo que se tarda en realizar la ruta prevista que son 4 horas. El coste es de 500 calorías (1 hora) * 4 horas = 2000 calorías
+    //Then: El sistema calcula el tiempo que se tarda en realizar la ruta prevista que son 4 horas. El coste es de 500 calorías (1 hora) * 4,39 horas = 2195.28 calorías
     const costeEsperado = '2195.28';
     expect(coste.toFixed(2)).toEqual(costeEsperado);
 
@@ -206,7 +206,7 @@ describe('RutasService', () => {
   it('HU15E03. Intento de cálculo de gasto calórico pero no hay rutas dadas de alta (Escenario Inválido)', async () => {
     //Given: El usuario [“Pepito2002”, “pepito@gmail.com“,“crm-24”] ha iniciado sesión y la base de datos está disponible. Lista rutas = []  
     servicioUsuario.loginUser("test@test.com", "test123");
-    const ruta = new Route("Valencia-Castellón", "Valencia", "Castellón de la Plana", "economica", "cycling-regular", 76, 3600);
+    const ruta = new Route("Valencia-Castellón", "Valencia", "Castellón de la Plana", "economica", "cycling-regular", 76, 15806);
 
     try {
         //When: El usuario Pepito quiere realizar la ruta entre Valencia y Castellón en bicicleta.
