@@ -95,4 +95,14 @@ describe('UserIntegrationService', () => {
   });
   */
 
+  
+  //HISTORIA 3
+  it('PRUEBA INTEGRACIÓN --> HU3-E01. Cierre de sesión de una cuenta de un usuario registrado (Escenario Válido): ', async () => {
+    spyOn(userRepo, 'logoutUser').and.resolveTo();
+
+    await service.loginUser("test@test.com", "test123");
+    const result = await service.logoutUser();
+    expect(userRepo.logoutUser).toHaveBeenCalledWith();
+    expect(result).toBeUndefined();
+  });
 });
