@@ -25,6 +25,7 @@ import { VEHICULO_REPOSITORY_TOKEN } from '../../repositorios/interfaces/vehicul
 import { VehiculoService } from '../../servicios/vehiculo.service';
 import { Place } from '../../modelos/place';
 import { ServerNotOperativeException } from '../../excepciones/server-not-operative-exception';
+import { NoRouteFoundException } from '../../excepciones/no-route-found-exception';
 
 
 describe('RutasService', () => {
@@ -184,7 +185,9 @@ describe('RutasService', () => {
   it('HU15E01. Cálculo de coste calórico de la ruta Valencia-Castellón (Escenario Válido)', async () => {
     //Given: El usuario [“Pepito2002”, “pepito@gmail.com“,“ppt-24”] tiene su sesión iniciada y la base de datos está disponible. Lista rutas: [ {Origen:Valencia, Destino:Castellón, Trayectoria: [Cabanyal, Sagunt, Almenara, Nules, Vilareal], kilómetros = 90}]
     servicioUsuario.loginUser("test@test.com", "test123");
-    const ruta = new Route("Valencia-Castellón", "Valencia", "Castellón de la Plana", "economica", "cycling-regular", 76, 3600);
+    const origen = await servicioPlace.createPlaceT("Valencia");
+    const destino = await servicioPlace.createPlaceT("Castellón de la Plana");
+    const ruta = await servicioRutas.createRoute("Valencia-Castellón", origen, destino, "cycling-regular", "economica", 76, 3600);
 
     //When: Se calcula el coste de la ruta Valencia-Castellón con la opción bicicleta. 
     const coste = await servicioRutas.costeRutaPieBicicleta(ruta);
@@ -192,23 +195,28 @@ describe('RutasService', () => {
     //Then: El sistema calcula el tiempo que se tarda en realizar la ruta prevista que son 4 horas. El coste es de 500 calorías (1 hora) * 4 horas = 2000 calorías
     const costeEsperado = '2195.28';
     expect(coste.toFixed(2)).toEqual(costeEsperado);
+
+    await servicioPlace.deletePlace(origen.getIdPlace());
+    await servicioPlace.deletePlace(destino.getIdPlace());
+    await servicioRutas.deleteRoute("Valencia-Castellón");
     servicioUsuario.logoutUser();
   });
 
-  /*
+  
   it('HU15E03. Intento de cálculo de gasto calórico pero no hay rutas dadas de alta (Escenario Inválido)', async () => {
     //Given: El usuario [“Pepito2002”, “pepito@gmail.com“,“crm-24”] ha iniciado sesión y la base de datos está disponible. Lista rutas = []  
     servicioUsuario.loginUser("test@test.com", "test123");
+    const ruta = new Route("Valencia-Castellón", "Valencia", "Castellón de la Plana", "economica", "cycling-regular", 76, 3600);
 
-    //When: El usuario Pepito quiere realizar la ruta entre Valencia y Castellón en bicicleta.
-    
     try {
-        
-    } catch(){
+        //When: El usuario Pepito quiere realizar la ruta entre Valencia y Castellón en bicicleta.
+        await servicioRutas.costeRutaPieBicicleta(ruta);  
+    } catch(error){
         //Then: El sistema no puede calcular el gasto calórico y lanza la excepción  NoRouteFoundException()
+        expect(error).toBeInstanceOf(NoRouteFoundException);
     }
-  */
-
+  });
+  
     it('H17E01. Guardar una ruta que no existe en el sistema (Escenario válido)', async () => {
       await servicioUsuario.loginUser("test@test.com", "test123");
       const place = await servicioPlace.createPlaceT("Sagunto");
@@ -267,7 +275,7 @@ describe('RutasService', () => {
           await servicioPlace.deletePlace(place4.idPlace);
           await servicioRutas.deleteRoute('ruta02');
           await servicioUsuario.logoutUser();
-       });
+    });
     
        it('H18E03. Intento de consulta de rutas guardadas pero el usuario no está registrado (Escenario Inválido):', async() => {
           //GIVEN: El usuario [“Test”, “test@test.com“,“test123”] con lista de rutas guardadas = [{Origen: Valencia, Destino: Castellón, driving-car, shortest, 84, 64}]  no está iniciado en el sistema. 
@@ -286,7 +294,6 @@ describe('RutasService', () => {
             await servicioRutas.deleteRoute('ruta01');
             await servicioUsuario.logoutUser();
       });
-    
 });
 
   

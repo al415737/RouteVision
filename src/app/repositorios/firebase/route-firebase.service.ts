@@ -23,7 +23,7 @@ export class RouteFirebaseService implements RouteRepository{
   
   consultarRutaEspecifica(ruta: Route): Promise<boolean> {
     const uid = getAuth().currentUser?.uid;
-    const PATHROUTE = `rutas/${uid}/listaRutas`;
+    const PATHROUTE = `ruta/${uid}/listaRutasInteré`;
     return this._firestore.ifExist("nombre", ruta.getNombre(), PATHROUTE);  //Comprobar si la ruta específica existe
   }
   
