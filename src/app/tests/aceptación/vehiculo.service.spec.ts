@@ -16,7 +16,7 @@ import { USER_REPOSITORY_TOKEN } from '../../repositorios/interfaces/user-reposi
 import { UserFirebaseService } from '../../repositorios/firebase/user-firebase.service';
 
   describe('VehiculoService', () => {
-  let service: VehiculoService;
+  let serviceV: VehiculoService;
   let servicioUser: UserService;
 
   beforeEach(() => {
@@ -30,7 +30,7 @@ import { UserFirebaseService } from '../../repositorios/firebase/user-firebase.s
         { provide: USER_REPOSITORY_TOKEN, useClass: UserFirebaseService }, 
       ]
     });
-    service = TestBed.inject(VehiculoService);
+    serviceV = TestBed.inject(VehiculoService);
     servicioUser = TestBed.inject(UserService);
   });
 
@@ -39,28 +39,28 @@ import { UserFirebaseService } from '../../repositorios/firebase/user-firebase.s
     servicioUser.loginUser("test@test.com", "test123");
 
     //WHEN: El usuario intenta dar de alta un vehículo → [Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1].
-    const resul = await service.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1);
+    const resul = await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1);
 
     //THEN: El sistema registra el vehículo en la parte de la base de datos dirigida a Ana2002 →  listaVehículos-Ana2002= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1}].      
     expect(resul).toBeInstanceOf(Vehiculo);
-    service.eliminarVehiculo("1234 BBB"); 
+    serviceV.eliminarVehiculo("1234 BBB"); 
   });
 
   it('HU9E05. Registro de vehículo sin matricula (Escenario Inválido)', async () => {
     try {
       //Given: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] con listaVehículos-Ana2002= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1}].
       servicioUser.loginUser("test@test.com", "test123");
-      const resul = await service.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1); 
+      const resul = await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1); 
 
       try {
         //When: El usuario intenta dar de alta un vehículo → [Matrícula=” ”, Marca=”Seat”, Modelo=”Ibiza”, Año Fabricación=”2003”, Consumo=4.3].
-        await service.crearVehiculo("", "Seat", "Ibiza", "2003", 4.3);
+        await serviceV.crearVehiculo("", "Seat", "Ibiza", "2003", 4.3);
       } catch(error){
           //Then: El sistema no registra el vehículo y lanza una excepción NullLicenseException() →  listaVehículos-Ana2002= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1}].
           expect(error).toBeInstanceOf(NullLicenseException);
       }
     } finally {
-        await service.eliminarVehiculo("1234 BBB");
+        await serviceV.eliminarVehiculo("1234 BBB");
     }
   });
 
@@ -68,10 +68,10 @@ import { UserFirebaseService } from '../../repositorios/firebase/user-firebase.s
   
     //Given: El usuario Ana con la sesión iniciada y la listaVehículos = [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1}].
     await servicioUser.loginUser("test@test.com", "test123"); 
-    await service.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1);
+    await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1);
     
     //When: El usuario pide mostrar sus vehículos.
-    const vehiculos = await service.consultarVehiculo(); 
+    const vehiculos = await serviceV.consultarVehiculo(); 
     
 //         //Then: El sistema devuelve la lista de listaVehículos =  [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}]
 //         expect(vehiculos.length).toBe(1);
@@ -80,7 +80,7 @@ import { UserFirebaseService } from '../../repositorios/firebase/user-firebase.s
         expect(vehiculo).toBeInstanceOf(Vehiculo);
     });
 
-    service.eliminarVehiculo("1234 BBB");
+    serviceV.eliminarVehiculo("1234 BBB");
 
   });
 
@@ -89,9 +89,27 @@ import { UserFirebaseService } from '../../repositorios/firebase/user-firebase.s
         await servicioUser.loginUser("test1@test.com", "test123");
 
       //When: Ana consulta los vehículos.
-        const vehiculos = await service.consultarVehiculo();
+        const vehiculos = await serviceV.consultarVehiculo();
 
       //Then: El sistema no muestra ningún dato.
       expect(vehiculos.length).toBe(0);
   }); 
+
+
+  //HISTORIA 11
+  it('H11-E01. Eliminar vehículo existente del sistema (Escenario Válido): ', async () => {
+    await servicioUser.loginUser("test@test.com", "test123"); 
+    const vehiculoV = await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1);
+    //habrá que añadir atributos cuando se tenga el factory
+
+    serviceV.eliminarVehiculo(vehiculoV.getMatricula());
+
+    const listaVehiculos = await serviceV.consultarVehiculo();  //cojo la lista de vehículos
+    const vehiculoEncontrado = listaVehiculos.find((vehiculo: { matricula: string; }) => vehiculo.matricula === vehiculoV.getMatricula());
+
+    expect(vehiculoEncontrado).toBeNull();    
+  });
+
+
+
 });
