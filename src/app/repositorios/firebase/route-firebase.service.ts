@@ -6,6 +6,7 @@ import { Vehiculo } from '../../modelos/vehiculo';
 import { ProxyCarburanteService } from '../../utils/proxy-carburante.service';
 import { OpenRouteService } from '../../APIs/Geocoding/openRoute.service';
 import { firstValueFrom } from 'rxjs';
+import { Place } from '../../modelos/place';
 
 @Injectable({
   providedIn: 'root'
@@ -14,29 +15,13 @@ import { firstValueFrom } from 'rxjs';
 export class RouteFirebaseService implements RouteRepository{
   servicioAPI: OpenRouteService = inject(OpenRouteService);
   constructor(private _firestore: FirestoreService, private proxy: ProxyCarburanteService) {}
-  
 
+  async calcularRuta(origen: Place, destino: Place, metodoMov: string) {
+      if(!this._firestore.ifExistPlace(origen) || !this._firestore.ifExistPlace(destino)){ 
 
-  async calcularRuta(origen: string, destino: string, metodoMov: string) {
-      const origenCoord = await new Promise<string> ((resolve) => {
-        this.servicioAPI.searchToponimo(origen).subscribe({
-          next: (response: any) => {
-              const coordenadas = response.features[0].geometry.coordinates;
-              resolve(`${coordenadas[0]},${coordenadas[1]}`);
-          }
-        });
-      });
+      }
 
-      const destinoCoord = await new Promise<string> ((resolve) => {
-        this.servicioAPI.searchToponimo(destino).subscribe({
-          next: (response: any) => {
-              const coordenadas = response.features[0].geometry.coordinates;
-              resolve(`${coordenadas[0]},${coordenadas[1]}`);
-          }
-        });
-      });
-
-      return firstValueFrom(this.servicioAPI.getRuta(origenCoord, destinoCoord, metodoMov));
+      return firstValueFrom(this.servicioAPI.getRuta(origen.getCoordenadas(), destino.getCoordenadas(), metodoMov));  
   }
 
   

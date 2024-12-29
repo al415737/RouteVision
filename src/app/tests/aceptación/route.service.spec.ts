@@ -73,7 +73,7 @@ describe('RutasService', () => {
         serviceVehiculo.crearVehiculo("8179 KLL", "BWM", "R 1250 RT", "2023", 4.8);
 
         //When: El usuario solicita el calculo con “Valencia-Castellón” y vehículo “Coche1”.
-        const ruta = await servicioRutas.calcularRuta("Valencia", "Castellon de la Plana", "driving-car");
+        const ruta = await servicioRutas.calcularRuta(lugar1, lugar2, "driving-car");
         
         const trayectoria = ruta.features[0].geometry.coordinates;      //coordenadas de toda la trayectoria
         const distancia = ruta.features[0].properties.summary.distance; //metros
@@ -103,7 +103,7 @@ describe('RutasService', () => {
       // Given: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] autenticado, lugares = [“Valencia”, “Castellón”, “Alicante”], vehículos = [“Coche1”, “Moto1”, “Bicicleta1”].
       servicioUsuario.loginUser("test@test.com", "test123");
 
-      const lugar1 = await servicioPlace.createPlaceT("Valencia");
+      const lugar1 = await servicioPlace.createPlaceT("Valencia"); 
       const lugar2 = await servicioPlace.createPlaceT("Castellón");
       const lugar3 = await servicioPlace.createPlaceT("Alicante");
 

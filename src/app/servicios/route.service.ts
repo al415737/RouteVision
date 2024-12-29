@@ -7,6 +7,7 @@ import { VEHICULO_REPOSITORY_TOKEN, VehiculoRepository } from '../repositorios/i
 import { Vehiculo } from '../modelos/vehiculo';
 import { Route } from '../modelos/route';
 import { NotExistingObjectException } from '../excepciones/notExistingObjectException';
+import { Place } from '../modelos/place';
 
 
 @Injectable({
@@ -18,11 +19,7 @@ export class RouteService {
 
   constructor(@Inject(ROUTE_REPOSITORY_TOKEN) private routeRepository: RouteRepository, @Inject(VEHICULO_REPOSITORY_TOKEN) private servicioVehículo: VehiculoRepository) { }
 
-  calcularRuta(origen: string, destino: string, metodoMov: string) {
-      if(origen == '' || origen == null || destino == '' || destino == null || metodoMov == '' || metodoMov == null){
-          throw new InvalidCalculateRoute();
-      }
-
+  calcularRuta(origen: Place, destino: Place, metodoMov: string) {
       if(metodoMov != 'driving-car' && metodoMov != 'cycling' && metodoMov != 'foot-walking' && metodoMov != 'foot-hiking'){
           throw new VehicleNotFoundException();
       }
