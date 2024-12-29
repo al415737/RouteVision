@@ -7,11 +7,12 @@ import { VehicleNotFoundException } from '../excepciones/vehicle-not-Found-Excep
 import { inject, Inject, Injectable } from '@angular/core';
 import { AuthStateService } from '../utils/auth-state.service';
 import { VEHICULO_REPOSITORY_TOKEN, VehiculoRepository } from '../repositorios/interfaces/vehiculo-repository';
-import { Vehiculo } from '../modelos/vehiculo';
+import { Vehiculo } from '../modelos/vehiculos/vehiculo';
 import { Route } from '../modelos/route';
 import { NotExistingObjectException } from '../excepciones/notExistingObjectException';
 import { NoRouteFoundException } from '../excepciones/no-route-found-exception';
 import { InvalidCalculoCosteException } from '../excepciones/invalid-calculo-coste-exception';
+import { IncorrectMethodException } from '../excepciones/incorrect-method-exception';
 
 
 @Injectable({
@@ -27,7 +28,7 @@ export class RouteService {
       }
 
       if(metodoMov != 'driving-car' && metodoMov != 'cycling' && metodoMov != 'foot-walking' && metodoMov != 'foot-hiking'){
-          throw new VehicleNotFoundException();
+          throw new IncorrectMethodException();
       }
 
       return this.routeRepository.calcularRuta(origen, destino, metodoMov);

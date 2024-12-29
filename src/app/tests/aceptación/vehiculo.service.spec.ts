@@ -1,7 +1,7 @@
 
 import { TestBed } from '@angular/core/testing';
 import { VehiculoService } from '../../servicios/vehiculo.service';
-import { Vehiculo } from '../../modelos/vehiculo';
+import { Vehiculo } from '../../modelos/vehiculos/vehiculo';
 import { NullLicenseException } from '../../excepciones/null-license-exception';
 import { provideFirebaseApp } from '@angular/fire/app';
 import { initializeApp } from 'firebase/app';

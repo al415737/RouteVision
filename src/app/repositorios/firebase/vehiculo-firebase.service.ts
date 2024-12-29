@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { VehiculoRepository } from '../interfaces/vehiculo-repository';
-import { Vehiculo } from '../../modelos/vehiculo';
+import { Vehiculo } from '../../modelos/vehiculos/vehiculo';
 import { FirestoreService } from './firestore.service';
 import { getAuth } from 'firebase/auth';
 import { NullLicenseException } from '../../excepciones/null-license-exception';

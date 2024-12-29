@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { UserService } from '../../servicios/user.service';
 import { USER_REPOSITORY_TOKEN, UserRepository } from '../../repositorios/interfaces/user-repository';
-import { Vehiculo } from '../../modelos/vehiculo';
+import { Vehiculo } from '../../modelos/vehiculos/vehiculo';
 import { VEHICULO_REPOSITORY_TOKEN, VehiculoRepository } from '../../repositorios/interfaces/vehiculo-repository';
 import { VehiculoService } from '../../servicios/vehiculo.service';
 import { NullLicenseException } from '../../excepciones/null-license-exception';

@@ -19,13 +19,14 @@ import { PrecioCarburantes } from '../../APIs/PrecioCarburantes/precioCarburante
 import { NotExistingObjectException } from '../../excepciones/notExistingObjectException';
 import { VehicleNotFoundException } from '../../excepciones/vehicle-not-Found-Exception';
 import { Route } from '../../modelos/route';
-import { Vehiculo } from '../../modelos/vehiculo';
+import { Vehiculo } from '../../modelos/vehiculos/vehiculo';
 import { VehiculoFirebaseService } from '../../repositorios/firebase/vehiculo-firebase.service';
 import { VEHICULO_REPOSITORY_TOKEN } from '../../repositorios/interfaces/vehiculo-repository';
 import { VehiculoService } from '../../servicios/vehiculo.service';
 import { Place } from '../../modelos/place';
 import { ServerNotOperativeException } from '../../excepciones/server-not-operative-exception';
 import { NoRouteFoundException } from '../../excepciones/no-route-found-exception';
+import { IncorrectMethodException } from '../../excepciones/incorrect-method-exception';
 
 
 describe('RutasService', () => {
@@ -117,7 +118,7 @@ describe('RutasService', () => {
           await servicioRutas.calcularRuta("Valencia", "Castellón de la Plana", "Coche2");
         } catch(error){
           //Then: El sistema lanza la excepción VehicleNotFoundException().
-          expect(error).toBeInstanceOf(VehicleNotFoundException);
+          expect(error).toBeInstanceOf(IncorrectMethodException);
         }
     } finally{
       servicioPlace.deletePlace(lugar1.idPlace);

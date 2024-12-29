@@ -1,6 +1,6 @@
 import { InjectionToken } from '@angular/core';
 import { User } from "../../modelos/user";
-import { Vehiculo } from '../../modelos/vehiculo';
+import { Vehiculo } from '../../modelos/vehiculos/vehiculo';
 import { Place } from '../../modelos/place';
 
 export const USER_REPOSITORY_TOKEN = new InjectionToken<UserRepository>('UserRepository');

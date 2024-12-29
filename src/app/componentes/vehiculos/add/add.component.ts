@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { HeaderComponent } from '../../home/header/header.component';
 import { FormsModule } from '@angular/forms';
 import { VehiculoService } from '../../../servicios/vehiculo.service';
-import { Vehiculo } from '../../../modelos/vehiculo';
+import { Vehiculo } from '../../../modelos/vehiculos/vehiculo';
 
 @Component({
   selector: 'app-add',

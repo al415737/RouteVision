@@ -11,7 +11,7 @@ import { getAuth, provideAuth } from '@angular/fire/auth';
 import { VehiculoService } from '../../servicios/vehiculo.service';
 import { PlaceService } from '../../servicios/place.service';
 import { WrongPasswordException } from '../../excepciones/wrong-password-exception';
-import { Vehiculo } from '../../modelos/vehiculo';
+import { Vehiculo } from '../../modelos/vehiculos/vehiculo';
 import { Place } from '../../modelos/place';
 import { PLACE_REPOSITORY_TOKEN } from '../../repositorios/interfaces/place-repository';
 import { PlaceFirebaseService } from '../../repositorios/firebase/place-firebase.service';

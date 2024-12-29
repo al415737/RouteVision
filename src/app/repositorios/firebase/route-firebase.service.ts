@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { Route } from '../../modelos/route';
 import { RouteRepository } from '../interfaces/route-repository';
 import { FirestoreService } from './firestore.service';
-import { Vehiculo } from '../../modelos/vehiculo';
+import { Vehiculo } from '../../modelos/vehiculos/vehiculo';
 import { ProxyCarburanteService } from '../../utils/proxy-carburante.service';
 import { OpenRouteService } from '../../APIs/Geocoding/openRoute.service';
 import { firstValueFrom } from 'rxjs';

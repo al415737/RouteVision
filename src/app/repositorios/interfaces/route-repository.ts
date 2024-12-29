@@ -1,6 +1,6 @@
 import { InjectionToken } from '@angular/core';
 import { Route } from '../../modelos/route';
-import { Vehiculo } from '../../modelos/vehiculo';
+import { Vehiculo } from '../../modelos/vehiculos/vehiculo';
 import { Place } from '../../modelos/place';
 
 export const ROUTE_REPOSITORY_TOKEN = new InjectionToken<RouteRepository>('RouteRepository');

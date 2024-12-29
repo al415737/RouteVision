@@ -12,7 +12,7 @@ import { Place } from '../../modelos/place';
 import { VehicleNotFoundException } from '../../excepciones/vehicle-not-Found-Exception';
 import { NotExistingObjectException } from '../../excepciones/notExistingObjectException';
 import { Route } from '../../modelos/route';
-import { Vehiculo } from '../../modelos/vehiculo';
+import { Vehiculo } from '../../modelos/vehiculos/vehiculo';
 import { VEHICULO_REPOSITORY_TOKEN } from '../../repositorios/interfaces/vehiculo-repository';
 import { VehiculoFirebaseService } from '../../repositorios/firebase/vehiculo-firebase.service';
 import { ServerNotOperativeException } from '../../excepciones/server-not-operative-exception';

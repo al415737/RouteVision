@@ -8,7 +8,7 @@ import { firebaseConfig } from '../../app.config';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { UserFirebaseService } from '../../repositorios/firebase/user-firebase.service';
-import { Vehiculo } from '../../modelos/vehiculo';
+import { Vehiculo } from '../../modelos/vehiculos/vehiculo';
 import { Place } from '../../modelos/place';
 import { WrongPasswordException } from '../../excepciones/wrong-password-exception';
 import { UserNotFoundException } from '../../excepciones/user-not-found-exception';

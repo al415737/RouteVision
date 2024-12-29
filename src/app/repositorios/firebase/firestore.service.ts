@@ -4,7 +4,7 @@ import { deleteDoc, doc, DocumentReference, getDocs, query, setDoc, where } from
 import { User } from '../../modelos/user';
 import { AuthService } from './auth.service';
 import { MailExistingException } from '../../excepciones/mail-existing-exception';
-import { Vehiculo } from '../../modelos/vehiculo';
+import { Vehiculo } from '../../modelos/vehiculos/vehiculo';
 import { getAuth } from '@angular/fire/auth';
 import { Place } from '../../modelos/place';
 import { AuthStateService } from '../../utils/auth-state.service';
