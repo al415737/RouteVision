@@ -7,5 +7,5 @@ export interface PlaceRepository {
     createPlaceC(coordenadas: number[]): Promise<Place>;
     createPlaceT(toponimo: string): Promise<Place>;
     getPlaces(): Promise<any>;
-    deletePlace(idPlace: string): Promise<void>;
+    deletePlace(idPlace: string): Promise<boolean>;
 }
