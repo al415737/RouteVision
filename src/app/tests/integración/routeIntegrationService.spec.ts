@@ -50,8 +50,8 @@ describe('VehiculoIntegrationService', () => {
         const mockData = { trayectoria: [ "0.363239, 39.464781", "-0.161966, 39.803153", "-0.076461, 39.979548", "-0.037829, 39.988886" ], distancia: 75688, duracion: 3610 };
         spyOn(routeRepo, 'calcularRuta').and.resolveTo(mockData);
 
-        const lugar1 = await servicioPlace.createPlaceT("Valencia");
-        const lugar2 = await servicioPlace.createPlaceT("Castellón");
+        const lugar1 = await servicioPlace.createPlaceT("València, España");
+        const lugar2 = await servicioPlace.createPlaceT("Castellón de la Plana");
 
         //When: El usuario solicita el calculo con “Valencia-Castellón” y vehículo “Coche1”.
         const ruta = routeService.calcularRuta(lugar1, lugar2, "driving-car");
@@ -65,8 +65,8 @@ describe('VehiculoIntegrationService', () => {
     it('HU13E03. Método de movilidad no válido (Escenario Inválido)', async () => {
         // Given: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] autenticado, lugares = [“Valencia”, “Castellón”, “Alicante”], vehículos = [“Coche1”, “Moto1”, “Bicicleta1”].
         spyOn(routeRepo, 'calcularRuta').and.resolveTo(VehicleNotFoundException);
-        const lugar1 = await servicioPlace.createPlaceT("Valencia");
-        const lugar2 = await servicioPlace.createPlaceT("Castellón");
+        const lugar1 = await servicioPlace.createPlaceT("València, España");
+        const lugar2 = await servicioPlace.createPlaceT("Castellón de la Plana");
 
         try{
             // When: El usuario solicita el calculo con “Valencia-Castellón” y vehículo “Coche2”.

@@ -104,8 +104,8 @@ describe('RutasService', () => {
       // Given: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] autenticado, lugares = [“Valencia”, “Castellón”, “Alicante”], vehículos = [“Coche1”, “Moto1”, “Bicicleta1”].
       servicioUsuario.loginUser("test@test.com", "test123");
 
-      const lugar1 = await servicioPlace.createPlaceT("Valencia"); 
-      const lugar2 = await servicioPlace.createPlaceT("Castellón");
+      const lugar1 = await servicioPlace.createPlaceT("València, España"); 
+      const lugar2 = await servicioPlace.createPlaceT("Castellón de la Plana");
       const lugar3 = await servicioPlace.createPlaceT("Alicante");
 
       serviceVehiculo.crearVehiculo("0987 CPK", "Peugeot", "407", "2004", 8.1);
