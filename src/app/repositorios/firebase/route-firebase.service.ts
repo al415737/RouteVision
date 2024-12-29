@@ -7,6 +7,7 @@ import { ProxyCarburanteService } from '../../utils/proxy-carburante.service';
 import { OpenRouteService } from '../../APIs/Geocoding/openRoute.service';
 import { firstValueFrom } from 'rxjs';
 import { Place } from '../../modelos/place';
+import { PlaceNotFoundException } from '../../excepciones/place-not-found-exception';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,7 @@ export class RouteFirebaseService implements RouteRepository{
 
   async calcularRuta(origen: Place, destino: Place, metodoMov: string) {
       if(!this._firestore.ifExistPlace(origen) || !this._firestore.ifExistPlace(destino)){ 
-
+          throw new PlaceNotFoundException();
       }
 
       return firstValueFrom(this.servicioAPI.getRuta(origen.getCoordenadas(), destino.getCoordenadas(), metodoMov));  

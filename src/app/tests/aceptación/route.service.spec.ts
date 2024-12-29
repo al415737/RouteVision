@@ -25,6 +25,7 @@ import { PrecioCarburantes } from '../../APIs/PrecioCarburantes/precioCarburante
 import { Route } from '../../modelos/route';
 import { NotExistingObjectException } from '../../excepciones/notExistingObjectException';
 import { VehicleNotFoundException } from '../../excepciones/vehicle-not-Found-Exception';
+import { IncorrectMethodException } from '../../excepciones/incorrect-method-exception';
 
 
 describe('RutasService', () => {
@@ -113,10 +114,10 @@ describe('RutasService', () => {
       try{
           // When: El usuario solicita el calculo con “Valencia-Castellón” y vehículo “Coche2”.
           try {
-            await servicioRutas.calcularRuta("Valencia", "Castellón de la Plana", "Coche2");
+            await servicioRutas.calcularRuta(lugar1, lugar2, "Coche2");
           } catch(error){
              //Then: El sistema lanza la excepción VehicleNotFoundException().
-            expect(error).toBeInstanceOf(VehicleNotFoundException);
+            expect(error).toBeInstanceOf(IncorrectMethodException);
           }
       } finally{
         servicioPlace.deletePlace(lugar1.idPlace);

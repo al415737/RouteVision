@@ -8,6 +8,7 @@ import { Vehiculo } from '../modelos/vehiculo';
 import { Route } from '../modelos/route';
 import { NotExistingObjectException } from '../excepciones/notExistingObjectException';
 import { Place } from '../modelos/place';
+import { IncorrectMethodException } from '../excepciones/incorrect-method-exception';
 
 
 @Injectable({
@@ -21,7 +22,7 @@ export class RouteService {
 
   calcularRuta(origen: Place, destino: Place, metodoMov: string) {
       if(metodoMov != 'driving-car' && metodoMov != 'cycling' && metodoMov != 'foot-walking' && metodoMov != 'foot-hiking'){
-          throw new VehicleNotFoundException();
+          throw new IncorrectMethodException();
       }
 
       return this.routeRepository.calcularRuta(origen, destino, metodoMov);
