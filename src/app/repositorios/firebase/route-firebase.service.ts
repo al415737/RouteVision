@@ -10,6 +10,7 @@ import { Place } from '../../modelos/place';
 import { NotExistingObjectException } from '../../excepciones/notExistingObjectException';
 import { AuthStateService } from '../../utils/auth-state.service';
 import { getAuth } from 'firebase/auth';
+import { ServerNotOperativeException } from '../../excepciones/server-not-operative-exception';
 
 @Injectable({
   providedIn: 'root'
@@ -114,9 +115,13 @@ export class RouteFirebaseService implements RouteRepository{
     return newRoute;
   }
   
-  async deleteRoute(nombre: string): Promise<void> {
+  async deleteRoute(nombre: string): Promise<boolean> {
+    if (this._authState.currentUser == null) {
+      throw new ServerNotOperativeException();
+    }
     const uid = this._authState.currentUser?.uid;
     await this._firestore.deleteRoute(`ruta/${uid}/listaRutasInterés`, nombre);
+    return true;
   }
 
   async getRoutes(): Promise<Route[]> {
