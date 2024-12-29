@@ -77,7 +77,8 @@ export class FirestoreService {
         data['marca'],
         data['modelo'],
         data['año_fabricacion'],
-        data['consumo']
+        data['consumo'],
+        data['tipo']
       );
      }); 
   }
