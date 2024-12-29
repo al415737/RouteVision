@@ -209,4 +209,29 @@ describe('RouteIntegrationService', () => {
     
     expect(authStateService.currentUser).toBeNull();
   });
+
+  it('H19E01. Eliminar una ruta que existe en el sistema (Escenario válido):', async () => {
+    spyOn(routeRepo, 'deleteRoute').and.resolveTo(true);
+
+    const result = await routeRepo.deleteRoute('ruta01');
+
+    expect(routeRepo.deleteRoute).toHaveBeenCalledWith('ruta01');
+    expect(result).toEqual(true);
+    
+  });
+
+  it('H19E04. Intento de eliminar una ruta sin estar registrado (Escenario inválido):', async () => {
+    spyOn(routeRepo, 'deleteRoute').and.resolveTo(true);
+    spyOn(authStateService as any, 'currentUser').and.returnValue(null);
+
+    try {
+      await routeRepo.deleteRoute('ruta1');
+      expect(routeRepo.deleteRoute).toHaveBeenCalledWith('ruta1');
+      throw new ServerNotOperativeException();
+    } catch (error) {
+        expect(error).toBeInstanceOf(ServerNotOperativeException);
+    }   
+    
+    expect(authStateService.currentUser).toBeNull();
+  });
 });
