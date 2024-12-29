@@ -3,7 +3,7 @@ import { Route } from '../../modelos/route';
 import { RouteRepository } from '../interfaces/route-repository';
 import { FirestoreService } from './firestore.service';
 import { Vehiculo } from '../../modelos/vehiculos/vehiculo';
-import { ProxyCarburanteService } from '../../utils/proxy-carburante.service';
+import { ProxysCalculoCombustibleService } from '../../utils/proxys-calculo-combustible.service';
 import { OpenRouteService } from '../../APIs/Geocoding/openRoute.service';
 import { firstValueFrom } from 'rxjs';
 import { Place } from '../../modelos/place';
@@ -20,7 +20,7 @@ export class RouteFirebaseService implements RouteRepository{
   
   servicioAPI: OpenRouteService = inject(OpenRouteService);
 
-  constructor(private _firestore: FirestoreService, private proxy: ProxyCarburanteService,  private _geocoding: OpenRouteService, private _authState: AuthStateService) {}
+  constructor(private _firestore: FirestoreService, private proxy: ProxysCalculoCombustibleService,  private _geocoding: OpenRouteService, private _authState: AuthStateService) {}
   
   consultarRutaEspecifica(ruta: Route): Promise<boolean> {
     const uid = getAuth().currentUser?.uid;
@@ -39,20 +39,26 @@ export class RouteFirebaseService implements RouteRepository{
   
   async obtenerCosteRuta(vehiculo: Vehiculo, ruta: Route,): Promise<number> {
     const existVehiculo = this._firestore.ifExistVehicle(vehiculo);
-
-    // Si el vehículo no es del usuario logueado
+    
     if (!existVehiculo) return -1;
 
-    const listaMunicipios = await this.proxy.getMunicipios();
+    let costeRuta: number;
 
-    const municipio = listaMunicipios.find((Municipio: any) => Municipio.Municipio === ruta.getOrigen());
-    const idMunicipio = municipio.IDMunicipio;
+    if(vehiculo.getTipo() == 'Eléctrico'){
+      costeRuta=0;
+      //llamar a api luz
+      //llamar a obtenerCoste
 
-    const estacionesEnMunicipio = await this.proxy.getEstacionesEnMunicipio(idMunicipio);
+    } else {
+      const listaMunicipios = await this.proxy.getMunicipios();
 
-    const precioStr = estacionesEnMunicipio.ListaEESSPrecio[0];
+      const municipio = listaMunicipios.find((Municipio: any) => Municipio.Municipio === ruta.getOrigen());
+      const idMunicipio = municipio.IDMunicipio;
+  
+      const estacionesEnMunicipio = await this.proxy.getEstacionesEnMunicipio(idMunicipio);
 
-    let costeRuta = vehiculo.obtenerCoste(ruta.getKm(), precioStr);
+      costeRuta = vehiculo.obtenerCoste(ruta.getKm(), estacionesEnMunicipio.ListaEESSPrecio[0]);
+    }
 
     console.log('El coste de la ruta es: ' + costeRuta + '€');
     return costeRuta;
