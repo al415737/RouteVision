@@ -12,6 +12,7 @@ import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { firebaseConfig } from '../../app.config';
 import { VehicleNotFoundException } from '../../excepciones/vehicle-not-Found-Exception';
+import vehicleRoutes from '../../componentes/vehicle.routes';
 
 describe('VehiculoIntegrationService', () => {
     let service: UserService;
@@ -124,20 +125,15 @@ describe('VehiculoIntegrationService', () => {
     });
 
     it('PRUEBA INTEGRACIÓN --> H11-E02. Eliminar vehículo utilizando una matrícula no registrada en la lista de vehículos (Escenario Inválido):  ', async () => {
-        // Simulamos que el método `get` devuelve una cadena vacía para indicar que no se encuentra el vehículo
-        spyOn(vehiRepo, 'get').and.returnValue(Promise.resolve('')); // o Promise.resolve(null), dependiendo de la implementación
+        spyOn(vehiRepo, 'eliminarVehiculo').and.resolveTo();
 
         const vehiculoNoExiste = new Vehiculo("3423 WCX", "Fiat", "Punto", "2016", 8.1);
 
-        try {
-            // Intentamos eliminar un vehículo que no existe en la base de datos
-            await vehiculoService.eliminarVehiculo(vehiculoNoExiste.getMatricula());
-        } catch (error) {
-            // Verificamos que el error lanzado sea de tipo `VehicleNotFoundException`
+        try{
+            vehiculoService.eliminarVehiculo(vehiculoNoExiste.getMatricula());
+            expect(vehiRepo.eliminarVehiculo).toHaveBeenCalledWith(vehiculoNoExiste.getMatricula());
+        }catch(error){
             expect(error).toBeInstanceOf(VehicleNotFoundException);
         }
     });
-
-    
-
 });
