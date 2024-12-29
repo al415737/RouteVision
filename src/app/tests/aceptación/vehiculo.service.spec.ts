@@ -36,7 +36,6 @@ import { VehicleNotFoundException } from '../../excepciones/vehicle-not-Found-Ex
   });
 
 
-  /*
   it('HU9E01. Vehículo registrado en el sistema (Escenario Válido)', async () => {
     //GIVEN: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] con listaVehículos-Ana2002 = [ ].
     servicioUser.loginUser("test@test.com", "test123");
@@ -94,7 +93,6 @@ import { VehicleNotFoundException } from '../../excepciones/vehicle-not-Found-Ex
       //Then: El sistema no muestra ningún dato.
       expect(vehiculos.length).toBe(0);
   }); 
-  */
 
   //HISTORIA 11
   it('H11-E01. Eliminar vehículo existente del sistema (Escenario Válido): ', async () => {
