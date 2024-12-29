@@ -217,83 +217,120 @@ describe('RutasService', () => {
     }
   });
   
-    it('H17E01. Guardar una ruta que no existe en el sistema (Escenario válido)', async () => {
-      await servicioUsuario.loginUser("test@test.com", "test123");
-      const place = await servicioPlace.createPlaceT("Sagunto");
-      const place2 = await servicioPlace.createPlaceT("Castellón de la Plana");
+  it('H17E01. Guardar una ruta que no existe en el sistema (Escenario válido)', async () => {
+    await servicioUsuario.loginUser("test@test.com", "test123");
+    const place = await servicioPlace.createPlaceT("Sagunto");
+    const place2 = await servicioPlace.createPlaceT("Castellón de la Plana");
+
+    const result = await servicioRutas.createRoute('ruta01', place, place2, "driving-car", "fastest", 90, 60);
+    expect(result).toBeInstanceOf(Route);
+    
+    await servicioPlace.deletePlace(place.idPlace);
+    await servicioPlace.deletePlace(place2.idPlace);
+    await servicioRutas.deleteRoute('ruta01');
+    await servicioUsuario.logoutUser();
+  });
+
+  it('H17E02. Intento de guardar una ruta con lugares no registrados (Escenario inválido)', async () => {
+    await servicioUsuario.loginUser("test@test.com", "test123");
+    const place = await servicioPlace.createPlaceT("Sagunto");
+    const place2 = await servicioPlace.createPlaceT("Castellón de la Plana");
+
+    const placeAux: Place = new Place('005', 'Madrid', []);
+    const placeAux2: Place = new Place('006', 'Barcelona', []);
+
+    await expectAsync(servicioRutas.createRoute('ruta01', placeAux, placeAux2, "driving-car", "fastest", 90, 60)).toBeRejectedWith(new NotExistingObjectException());
+    
+    await servicioPlace.deletePlace(place.idPlace);
+    await servicioPlace.deletePlace(place2.idPlace);
+    await servicioRutas.deleteRoute('ruta01');
+    await servicioUsuario.logoutUser();
+  });
+
+  it('H18E01. Consultar rutas guardadas (Escenario Válido):', async() => {
+      //  GIVEN: El usuario [“Test”, “test@test.com“,“test123”] tiene iniciada su sesión. Lista de rutas guardadas = [{Origen: Sagunto, Destino: Alicante, driving-car, fastest, 90, 60}, {Origen: Valencia, Destino: Castellón, driving-car, shortest, 84, 64}].
+          await servicioUsuario.loginUser("test@test.com","test123");
+          const place = await servicioPlace.createPlaceT("Sagunto");
+          const place2 = await servicioPlace.createPlaceT("Alicante");
+          await servicioRutas.createRoute('ruta01', place, place2, "driving-car", "fastest", 90, 60);
+
+          const place3 = await servicioPlace.createPlaceT("Valencia");
+          const place4 = await servicioPlace.createPlaceT("Castellón de la Plana");
+          await servicioRutas.createRoute('ruta02', place3, place4, "driving-car", "shortest", 84, 64);
   
-      const result = await servicioRutas.createRoute('ruta01', place, place2, "driving-car", "fastest", 90, 60);
-      expect(result).toBeInstanceOf(Route);
-      
+      //WHEN: El usuario Test quiere consultar las rutas que tiene guardadas.
+          const rutas = await servicioRutas.getRoutes();
+  
+      //THEN: El sistema muestra las rutas guardadas. Lista de rutas guardadas =  [{Origen: Sagunto, Destino: Alicante, driving-car, fastest, 90, 60}, {Origen: Valencia, Destino: Castellón, driving-car, shortest, 84, 64}] .
+          expect(rutas.length).toBe(2);
+  
+          rutas.forEach((ruta: Route) => {
+            expect(ruta).toBeInstanceOf(Route);
+        });
+  
+        await servicioPlace.deletePlace(place.idPlace);
+        await servicioPlace.deletePlace(place2.idPlace);
+        await servicioRutas.deleteRoute('ruta01');
+        await servicioPlace.deletePlace(place3.idPlace);
+        await servicioPlace.deletePlace(place4.idPlace);
+        await servicioRutas.deleteRoute('ruta02');
+        await servicioUsuario.logoutUser();
+  });
+  
+  it('H18E03. Intento de consulta de rutas guardadas pero el usuario no está registrado (Escenario Inválido):', async() => {
+    //GIVEN: El usuario [“Test”, “test@test.com“,“test123”] con lista de rutas guardadas = [{Origen: Valencia, Destino: Castellón, driving-car, shortest, 84, 64}]  no está iniciado en el sistema. 
+      await servicioUsuario.loginUser("test@test.com","test123");
+      const place = await servicioPlace.createPlaceT("Valencia");
+      const place2 = await servicioPlace.createPlaceT("Castellón de la Plana");
+      await servicioRutas.createRoute('ruta01', place, place2, "driving-car", "shortest", 84, 64);
+      await servicioUsuario.logoutUser();
+    //WHEN: El usuario quiere consultar las rutas que tiene guardadas.
+    //THEN: El sistema lanza una excepción ServerNotOperativeException().
+      await expectAsync(servicioRutas.getRoutes()).toBeRejectedWith(new ServerNotOperativeException());
+
+      await servicioUsuario.loginUser("test@test.com","test123");
       await servicioPlace.deletePlace(place.idPlace);
       await servicioPlace.deletePlace(place2.idPlace);
       await servicioRutas.deleteRoute('ruta01');
       await servicioUsuario.logoutUser();
-    });
-  
-    it('H17E02. Intento de guardar una ruta con lugares no registrados (Escenario inválido)', async () => {
-      await servicioUsuario.loginUser("test@test.com", "test123");
-      const place = await servicioPlace.createPlaceT("Sagunto");
-      const place2 = await servicioPlace.createPlaceT("Castellón de la Plana");
-  
-      const placeAux: Place = new Place('005', 'Madrid', []);
-      const placeAux2: Place = new Place('006', 'Barcelona', []);
-  
-      await expectAsync(servicioRutas.createRoute('ruta01', placeAux, placeAux2, "driving-car", "fastest", 90, 60)).toBeRejectedWith(new NotExistingObjectException());
-      
-      await servicioPlace.deletePlace(place.idPlace);
-      await servicioPlace.deletePlace(place2.idPlace);
-      await servicioRutas.deleteRoute('ruta01');
-      await servicioUsuario.logoutUser();
-    });
-  
-    it('H18E01. Consultar rutas guardadas (Escenario Válido):', async() => {
-        //  GIVEN: El usuario [“Test”, “test@test.com“,“test123”] tiene iniciada su sesión. Lista de rutas guardadas = [{Origen: Sagunto, Destino: Alicante, driving-car, fastest, 90, 60}, {Origen: Valencia, Destino: Castellón, driving-car, shortest, 84, 64}].
-            await servicioUsuario.loginUser("test@test.com","test123");
-            const place = await servicioPlace.createPlaceT("Sagunto");
-            const place2 = await servicioPlace.createPlaceT("Alicante");
-            await servicioRutas.createRoute('ruta01', place, place2, "driving-car", "fastest", 90, 60);
-  
-            const place3 = await servicioPlace.createPlaceT("Valencia");
-            const place4 = await servicioPlace.createPlaceT("Castellón de la Plana");
-            await servicioRutas.createRoute('ruta02', place3, place4, "driving-car", "shortest", 84, 64);
-    
-        //WHEN: El usuario Test quiere consultar las rutas que tiene guardadas.
-            const rutas = await servicioRutas.getRoutes();
-    
-        //THEN: El sistema muestra las rutas guardadas. Lista de rutas guardadas =  [{Origen: Sagunto, Destino: Alicante, driving-car, fastest, 90, 60}, {Origen: Valencia, Destino: Castellón, driving-car, shortest, 84, 64}] .
-            expect(rutas.length).toBe(2);
-    
-            rutas.forEach((ruta: Route) => {
-              expect(ruta).toBeInstanceOf(Route);
-          });
-    
-          await servicioPlace.deletePlace(place.idPlace);
-          await servicioPlace.deletePlace(place2.idPlace);
-          await servicioRutas.deleteRoute('ruta01');
-          await servicioPlace.deletePlace(place3.idPlace);
-          await servicioPlace.deletePlace(place4.idPlace);
-          await servicioRutas.deleteRoute('ruta02');
-          await servicioUsuario.logoutUser();
-    });
-    
-       it('H18E03. Intento de consulta de rutas guardadas pero el usuario no está registrado (Escenario Inválido):', async() => {
-          //GIVEN: El usuario [“Test”, “test@test.com“,“test123”] con lista de rutas guardadas = [{Origen: Valencia, Destino: Castellón, driving-car, shortest, 84, 64}]  no está iniciado en el sistema. 
-            await servicioUsuario.loginUser("test@test.com","test123");
-            const place = await servicioPlace.createPlaceT("Valencia");
-            const place2 = await servicioPlace.createPlaceT("Castellón de la Plana");
-            await servicioRutas.createRoute('ruta01', place, place2, "driving-car", "shortest", 84, 64);
-            await servicioUsuario.logoutUser();
-          //WHEN: El usuario quiere consultar las rutas que tiene guardadas.
-          //THEN: El sistema lanza una excepción ServerNotOperativeException().
-            await expectAsync(servicioRutas.getRoutes()).toBeRejectedWith(new ServerNotOperativeException());
-  
-            await servicioUsuario.loginUser("test@test.com","test123");
-            await servicioPlace.deletePlace(place.idPlace);
-            await servicioPlace.deletePlace(place2.idPlace);
-            await servicioRutas.deleteRoute('ruta01');
-            await servicioUsuario.logoutUser();
-      });
+  });
+
+  it('H19E01. Eliminar una ruta que existe en el sistema (Escenario válido):', async() => {
+    //  GIVEN: El usuario [“Test”, “test@test.com“,“test123”] con la sesión de su cuenta activa con lista de rutas guardadas = [{Nombre: ruta01, Origen: Valencia, Destino: Castellón, driving-car, shortest, 84, 64}].
+        await servicioUsuario.loginUser("test@test.com","test123");
+        const place = await servicioPlace.createPlaceT("Valencia");
+        const place2 = await servicioPlace.createPlaceT("Castellón de la Plana");
+        await servicioRutas.createRoute('ruta01', place, place2, "driving-car", "shortest", 84, 64);
+
+    //WHEN: El usuario quiere eliminar la ruta ruta01.
+        await servicioRutas.deleteRoute('ruta01');
+
+    //THEN: El sistema borra la ruta y actualiza la lista de rutas = {}.
+        const rutas = await servicioRutas.getRoutes();
+        expect(rutas.length).toBe(0);
+
+        await servicioPlace.deletePlace(place.idPlace);
+        await servicioPlace.deletePlace(place2.idPlace);
+        await servicioUsuario.logoutUser();
+  });
+
+  it('H19E04. Intento de eliminar una ruta sin estar registrado (Escenario inválido):', async() => {
+    //GIVEN: El usuario [“Test”, “test@test.com“,“test123”] con lista de rutas guardadas = [{Origen: Valencia, Destino: Castellón, driving-car, shortest, 84, 64}]  no está iniciado en el sistema. 
+    await servicioUsuario.loginUser("test@test.com","test123");
+    const place = await servicioPlace.createPlaceT("Valencia");
+    const place2 = await servicioPlace.createPlaceT("Castellón de la Plana");
+    await servicioRutas.createRoute('ruta01', place, place2, "driving-car", "shortest", 84, 64);
+  //WHEN: El usuario quiere consultar las rutas que tiene guardadas.
+  //THEN: El sistema lanza una excepción ServerNotOperativeException().
+    await servicioUsuario.logoutUser();
+    await expectAsync(servicioRutas.deleteRoute('ruta01')).toBeRejectedWith(new ServerNotOperativeException());
+
+    await servicioUsuario.loginUser("test@test.com","test123");
+    await servicioPlace.deletePlace(place.idPlace);
+    await servicioPlace.deletePlace(place2.idPlace);
+    await servicioRutas.deleteRoute('ruta01');
+    await servicioUsuario.logoutUser();
+});
 });
 
   
