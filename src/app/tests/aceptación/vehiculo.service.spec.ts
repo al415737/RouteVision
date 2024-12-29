@@ -14,6 +14,7 @@ import { VehiculoFirebaseService } from '../../repositorios/firebase/vehiculo-fi
 import { UserService } from '../../servicios/user.service';
 import { USER_REPOSITORY_TOKEN } from '../../repositorios/interfaces/user-repository';
 import { UserFirebaseService } from '../../repositorios/firebase/user-firebase.service';
+import { VehicleNotFoundException } from '../../excepciones/vehicle-not-Found-Exception';
 
   describe('VehiculoService', () => {
   let serviceV: VehiculoService;
@@ -109,5 +110,17 @@ import { UserFirebaseService } from '../../repositorios/firebase/user-firebase.s
     const vehiculoEncontrado = listaVehiculos.find((vehiculo: { matricula: string; }) => vehiculo.matricula === vehiculoV.getMatricula());
 
     expect(vehiculoEncontrado).toBeUndefined(); //find devuelve undefined
+  });
+
+  it('H11-E02. Eliminar vehículo utilizando una matrícula no registrada en la lista de vehículos (Escenario Inválido): ', async () => {
+    await servicioUser.loginUser("test@test.com", "test123"); 
+    const vehiculo = await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1);
+    const vehiculoNoExiste = new Vehiculo("3423 WCX", "Fiat", "Punto", "2016", 8.1);
+    //habrá que añadir atributos cuando se tenga el factory
+
+    await expectAsync(serviceV.eliminarVehiculo(vehiculoNoExiste.getMatricula()))
+    .toBeRejectedWithError(VehicleNotFoundException); // Manejo por tipo de excepción
+    serviceV.eliminarVehiculo(vehiculo.getMatricula());
+    servicioUser.logoutUser();
   });
 });
