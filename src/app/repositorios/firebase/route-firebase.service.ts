@@ -10,6 +10,7 @@ import { Place } from '../../modelos/place';
 import { NotExistingObjectException } from '../../excepciones/notExistingObjectException';
 import { AuthStateService } from '../../utils/auth-state.service';
 import { getAuth } from 'firebase/auth';
+import { PlaceNotFoundException } from '../../excepciones/place-not-found-exception';
 
 @Injectable({
   providedIn: 'root'
@@ -27,26 +28,12 @@ export class RouteFirebaseService implements RouteRepository{
     return this._firestore.ifExist("nombre", ruta.getNombre(), PATHROUTE);  //Comprobar si la ruta específica existe
   }
   
-  async calcularRuta(origen: string, destino: string, metodoMov: string) {
-      const origenCoord = await new Promise<string> ((resolve) => {
-        this._geocoding.searchToponimo(origen).subscribe({
-          next: (response: any) => {
-              const coordenadas = response.features[0].geometry.coordinates;
-              resolve(`${coordenadas[0]},${coordenadas[1]}`);
-          }
-        });
-      });
+  async calcularRuta(origen: Place, destino: Place, metodoMov: string) {
+    if(!this._firestore.ifExistPlace(origen) || !this._firestore.ifExistPlace(destino)){
+        throw new PlaceNotFoundException();
+    }
 
-      const destinoCoord = await new Promise<string> ((resolve) => {
-        this._geocoding.searchToponimo(destino).subscribe({
-          next: (response: any) => {
-              const coordenadas = response.features[0].geometry.coordinates;
-              resolve(`${coordenadas[0]},${coordenadas[1]}`);
-          }
-        });
-      });
-
-      return firstValueFrom(this._geocoding.getRuta(origenCoord, destinoCoord, metodoMov));
+      return firstValueFrom(this._geocoding.getRuta(origen.getCoordenadas().join(','), destino.getCoordenadas().join(','), metodoMov));
   }
 
   
@@ -72,8 +59,8 @@ export class RouteFirebaseService implements RouteRepository{
     return costeRuta;
   }
 
-  async costeRutaPieBicicleta(ruta: Route){
-    const rutaAPI: any = await this.calcularRuta(ruta.getOrigen(), ruta.getDestino(), ruta.getMovilidad());
+  async costeRutaPieBicicleta(ruta: Route, origen: Place, destino: Place){
+    const rutaAPI: any = await this.calcularRuta(origen, destino, ruta.getMovilidad());
     const duracion = (rutaAPI.features[0].properties.summary.duration) / 3600;
     let coste = 0;
 

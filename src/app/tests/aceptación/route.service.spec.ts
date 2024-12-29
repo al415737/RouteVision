@@ -66,15 +66,15 @@ describe('RutasService', () => {
             // vehículos = [“Coche1”, “Moto1”] .
     servicioUsuario.loginUser("test@test.com", "test123");
 
-    const lugar1 = await servicioPlace.createPlaceT("Valencia");
-    const lugar2 = await servicioPlace.createPlaceT("Castellón");
+    const lugar1 = await servicioPlace.createPlaceT("València, España");
+    const lugar2 = await servicioPlace.createPlaceT("Castellón de la Plana");
     const lugar3 = await servicioPlace.createPlaceT("Alicante");
 
     serviceVehiculo.crearVehiculo("0987 CPK", "Peugeot", "407", "2004", 8.1);
     serviceVehiculo.crearVehiculo("8179 KLL", "BWM", "R 1250 RT", "2023", 4.8);
 
     //When: El usuario solicita el calculo con “Valencia-Castellón” y vehículo “Coche1”.
-    const ruta = await servicioRutas.calcularRuta("Valencia", "Castellon de la Plana", "driving-car");
+    const ruta = await servicioRutas.calcularRuta(lugar1, lugar2, "driving-car");
     
     const trayectoria = ruta.features[0].geometry.coordinates;      //coordenadas de toda la trayectoria
     const distancia = ruta.features[0].properties.summary.distance; //metros
@@ -104,8 +104,8 @@ describe('RutasService', () => {
     // Given: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] autenticado, lugares = [“Valencia”, “Castellón”, “Alicante”], vehículos = [“Coche1”, “Moto1”, “Bicicleta1”].
     servicioUsuario.loginUser("test@test.com", "test123");
 
-    const lugar1 = await servicioPlace.createPlaceT("Valencia");
-    const lugar2 = await servicioPlace.createPlaceT("Castellón");
+    const lugar1 = await servicioPlace.createPlaceT("València, España");
+    const lugar2 = await servicioPlace.createPlaceT("Castellón de la Plana");
     const lugar3 = await servicioPlace.createPlaceT("Alicante");
 
     serviceVehiculo.crearVehiculo("0987 CPK", "Peugeot", "407", "2004", 8.1);
@@ -114,7 +114,7 @@ describe('RutasService', () => {
     try{
         // When: El usuario solicita el calculo con “Valencia-Castellón” y vehículo “Coche2”.
         try {
-          await servicioRutas.calcularRuta("Valencia", "Castellón de la Plana", "Coche2");
+          await servicioRutas.calcularRuta(lugar1, lugar2, "Coche2");
         } catch(error){
           //Then: El sistema lanza la excepción VehicleNotFoundException().
           expect(error).toBeInstanceOf(VehicleNotFoundException);
@@ -185,12 +185,12 @@ describe('RutasService', () => {
   it('HU15E01. Cálculo de coste calórico de la ruta Valencia-Castellón (Escenario Válido)', async () => {
     //Given: El usuario [“Pepito2002”, “pepito@gmail.com“,“ppt-24”] tiene su sesión iniciada y la base de datos está disponible. Lista rutas: [ {nombre: Valencia-Castellón, Origen:Valencia, Destino:Castellón de la Plana, Opción: economica, Movilidad: cycling-regular, kilómetros = 76, duracion = 15806}]
     servicioUsuario.loginUser("test@test.com", "test123");
-    const origen = await servicioPlace.createPlaceT("Valencia");
+    const origen = await servicioPlace.createPlaceT("València, España");
     const destino = await servicioPlace.createPlaceT("Castellón de la Plana");
     const ruta = await servicioRutas.createRoute("Valencia-Castellón", origen, destino, "cycling-regular", "economica", 76, 15806);
 
     //When: Se calcula el coste de la ruta Valencia-Castellón con la opción bicicleta. 
-    const coste = await servicioRutas.costeRutaPieBicicleta(ruta);
+    const coste = await servicioRutas.costeRutaPieBicicleta(ruta, origen, destino);
     
     //Then: El sistema calcula el tiempo que se tarda en realizar la ruta prevista que son 4 horas. El coste es de 500 calorías (1 hora) * 4,39 horas = 2195.28 calorías
     const costeEsperado = '2195.28';
@@ -206,11 +206,13 @@ describe('RutasService', () => {
   it('HU15E03. Intento de cálculo de gasto calórico pero no hay rutas dadas de alta (Escenario Inválido)', async () => {
     //Given: El usuario [“Pepito2002”, “pepito@gmail.com“,“crm-24”] ha iniciado sesión y la base de datos está disponible. Lista rutas = []  
     servicioUsuario.loginUser("test@test.com", "test123");
+    const origen = await servicioPlace.createPlaceT("València, España");
+    const destino = await servicioPlace.createPlaceT("Castellón de la Plana");
     const ruta = new Route("Valencia-Castellón", "Valencia", "Castellón de la Plana", "economica", "cycling-regular", 76, 15806);
 
     try {
         //When: El usuario Pepito quiere realizar la ruta entre Valencia y Castellón en bicicleta.
-        await servicioRutas.costeRutaPieBicicleta(ruta);  
+        await servicioRutas.costeRutaPieBicicleta(ruta, origen, destino);  
     } catch(error){
         //Then: El sistema no puede calcular el gasto calórico y lanza la excepción NoRouteFoundException()
         expect(error).toBeInstanceOf(NoRouteFoundException);

@@ -21,11 +21,7 @@ export class RouteService {
 
   constructor(@Inject(ROUTE_REPOSITORY_TOKEN) private routeRepository: RouteRepository, @Inject(VEHICULO_REPOSITORY_TOKEN) private servicioVehículo: VehiculoRepository) { }
 
-  calcularRuta(origen: string, destino: string, metodoMov: string) {
-      if(origen == '' || origen == null || destino == '' || destino == null || metodoMov == '' || metodoMov == null){
-          throw new InvalidCalculateRoute();
-      }
-
+  calcularRuta(origen: Place, destino: Place, metodoMov: string) {
       if(metodoMov != 'driving-car' && metodoMov != 'cycling' && metodoMov != 'foot-walking' && metodoMov != 'foot-hiking'){
           throw new VehicleNotFoundException();
       }
@@ -56,7 +52,7 @@ export class RouteService {
     return this.routeRepository.getRouteFSE(start, end, movilidad, preferencia);
   }
 
-  costeRutaPieBicicleta(ruta: Route){
+  costeRutaPieBicicleta(ruta: Route, origen: Place, destino: Place){
     if(ruta.getMovilidad() != 'cycling-regular' && ruta.getMovilidad() != 'foot-walking'){
         throw new InvalidCalculoCosteException();
     }
@@ -65,7 +61,7 @@ export class RouteService {
         throw new NoRouteFoundException();
     }
 
-    return this.routeRepository.costeRutaPieBicicleta(ruta);
+    return this.routeRepository.costeRutaPieBicicleta(ruta, origen, destino);
   }
 
   consultarRutaEspecifica(ruta: Route){
