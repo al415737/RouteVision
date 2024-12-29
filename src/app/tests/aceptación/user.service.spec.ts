@@ -135,6 +135,21 @@ describe('UserService', () => {
       expect(error).toBeInstanceOf(UserNotFoundException);
     }
   });
+
+  it('HU4-E01. Eliminar una cuenta de un usuario registrado (Escenario Válido)', async () => {
+      //Given: Lista actual de usuarios = {Pepa, Pepito, Alba, Dani}.
+      //When: El usuario Pepa quiere eliminar su cuenta del sistema.
+      //Then: Lista actual de usuarios {Pepito, Alba, Dani}
+      
+    
+  });
+
+  it('HU4-E02. Eliminar una cuenta de un usuario no registrado (Escenario Inválido)', async () => {
+      //Given: Lista actual de usuarios = {Pepito, Alba, Dani}.
+      //When: El usuario Random quiere eliminar su cuenta del sistema.
+      //Then: El sistema lanza una excepción UserNotFoundException().
+    
+  });
 });
 
 
