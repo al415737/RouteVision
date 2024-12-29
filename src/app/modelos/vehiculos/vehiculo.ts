@@ -1,4 +1,4 @@
-export class Vehiculo {
+export abstract class Vehiculo {
     private matricula: string;
     private marca: string;
     private modelo: string;
@@ -23,8 +23,22 @@ export class Vehiculo {
         return this.consumo;
     }
 
+    getMarca(){
+        return this.marca;
+    }
+
+    getModelo(){
+        return this.modelo;
+    }
+
+    getAñoFabricacion(){
+        return this.año_fabricacion;
+    }
+
     getTipo(){
         return this.tipo;
     }
+
+    abstract obtenerCoste(kilometros: number, precio: any): any;
     
 }

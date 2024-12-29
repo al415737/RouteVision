@@ -19,13 +19,15 @@ export default class AddComponent {
   modelo: string = '';
   anyo_fabricacion: string = '';
   consumo: number = 0;
+  tipo: string = '';
 
   guardarVehiculo(){
     this.servicioVehiculo.crearVehiculo(
       this.matricula, 
       this.marca, this.modelo, 
       this.anyo_fabricacion,
-      this.consumo
+      this.consumo,
+      this.tipo
     );
   }
 }

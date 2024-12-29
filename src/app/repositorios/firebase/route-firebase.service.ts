@@ -50,11 +50,10 @@ export class RouteFirebaseService implements RouteRepository{
 
     const estacionesEnMunicipio = await this.proxy.getEstacionesEnMunicipio(idMunicipio);
 
-    const precioStr = estacionesEnMunicipio.ListaEESSPrecio[0]["Precio Gasolina 95 E5"];
+    const precioStr = estacionesEnMunicipio.ListaEESSPrecio[0];
 
-    let precioNum = parseFloat(precioStr.replace(',', '.'));
+    let costeRuta = vehiculo.obtenerCoste(ruta.getKm(), precioStr);
 
-    let costeRuta = parseFloat((ruta.getKm() / 100 * vehiculo.getConsumo() * precioNum).toFixed(2)); 
     console.log('El coste de la ruta es: ' + costeRuta + '€');
     return costeRuta;
   }

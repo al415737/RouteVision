@@ -19,6 +19,10 @@ import { ServerNotOperativeException } from '../../excepciones/server-not-operat
 import { AuthStateService } from '../../utils/auth-state.service';
 import { NoRouteFoundException } from '../../excepciones/no-route-found-exception';
 import { PlaceService } from '../../servicios/place.service';
+import { CocheDiesel } from '../../modelos/vehiculos/cocheDiesel';
+import { CocheGasolina } from '../../modelos/vehiculos/cocheGasolina';
+import { PLACE_REPOSITORY_TOKEN } from '../../repositorios/interfaces/place-repository';
+import { PlaceFirebaseService } from '../../repositorios/firebase/place-firebase.service';
 
 describe('RouteIntegrationService', () => {
   let service: RouteService;
@@ -36,6 +40,7 @@ describe('RouteIntegrationService', () => {
         RouteService,  
         { provide: ROUTE_REPOSITORY_TOKEN, useClass: RouteFirebaseService },  
         { provide: VEHICULO_REPOSITORY_TOKEN, useClass: VehiculoFirebaseService },       
+        { provide: PLACE_REPOSITORY_TOKEN, useClass: PlaceFirebaseService },
       ]
     });
     service = TestBed.inject(RouteService);
@@ -83,9 +88,9 @@ describe('RouteIntegrationService', () => {
       
       spyOn(routeRepo, 'obtenerCosteRuta').and.resolveTo(mockFuelCostRoute);
       
-      const result = await routeRepo.obtenerCosteRuta(new Vehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1), new Route('ruta01', 'Valencia', 'Castellón de la Plana/Castelló de la Plana', 'porDefecto', 'driving-car', 90, 90));
+      const result = await routeRepo.obtenerCosteRuta(new CocheDiesel("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasoleo A"), new Route('ruta01', 'Valencia', 'Castellón de la Plana/Castelló de la Plana', 'porDefecto', 'driving-car', 90, 90));
       
-      expect(routeRepo.obtenerCosteRuta).toHaveBeenCalledWith(new Vehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1), new Route('ruta01', 'Valencia', 'Castellón de la Plana/Castelló de la Plana', 'porDefecto', 'driving-car', 90, 90));
+      expect(routeRepo.obtenerCosteRuta).toHaveBeenCalledWith(new CocheDiesel("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasoleo A"), new Route('ruta01', 'Valencia', 'Castellón de la Plana/Castelló de la Plana', 'porDefecto', 'driving-car', 90, 90));
       expect(result).toEqual(mockFuelCostRoute);
     });
   
@@ -94,7 +99,7 @@ describe('RouteIntegrationService', () => {
   
       spyOn(routeRepo, 'obtenerCosteRuta').and.resolveTo(mockFuelCostRoute);
   
-      const vehiculoNoExiste = new Vehiculo("3423 WCX", "Fiat", "Punto", "2016", 8.1);
+      const vehiculoNoExiste = new CocheGasolina("3423 WCX", "Fiat", "Punto", "2016", 8.1, "Precio Gasolina 95 E5");
       const rutaValida = new Route('ruta01', 'Valencia', 'Castellón de la Plana/Castelló de la Plana', 'porDefecto', 'driving-car', 90, 90);
   
       try {

@@ -27,11 +27,10 @@ import { Place } from '../../modelos/place';
 import { ServerNotOperativeException } from '../../excepciones/server-not-operative-exception';
 import { NoRouteFoundException } from '../../excepciones/no-route-found-exception';
 import { IncorrectMethodException } from '../../excepciones/incorrect-method-exception';
-import { VehiculoFactory } from '../../modelos/vehiculos/vehiculoFactory';
-
+import { CocheGasolina } from '../../modelos/vehiculos/cocheGasolina';
+import { CocheDiesel } from '../../modelos/vehiculos/cocheDiesel';
 
 describe('RutasService', () => {
-  let serviceVehiculoFactory: VehiculoFactory;
   let servicioVehiculo: VehiculoService;
   let servicioUsuario: UserService;
   let servicioRutas: RouteService;
@@ -56,7 +55,6 @@ describe('RutasService', () => {
         { provide: PLACE_REPOSITORY_TOKEN, useClass: PlaceFirebaseService },
       ]
     });
-    serviceVehiculoFactory = TestBed.inject(VehiculoFactory);
     servicioVehiculo = TestBed.inject(VehiculoService);
     servicioUsuario = TestBed.inject(UserService);
     servicioRutas = TestBed.inject(RouteService);
@@ -74,8 +72,8 @@ describe('RutasService', () => {
     const lugar2 = await servicioPlace.createPlaceT("Castellón de la Plana");
     const lugar3 = await servicioPlace.createPlaceT("Alicante");
 
-    await serviceVehiculoFactory.crearVehiculo("0987 CPK", "Peugeot", "407", "2004", 8.1, "diesel");  
-    await serviceVehiculoFactory.crearVehiculo("8179 KLL", "BWM", "R 1250 RT", "2023", 4.8, "gasolina");
+    await servicioVehiculo.crearVehiculo("0987 CPK", "Peugeot", "407", "2004", 8.1, "Precio Gasoleo A");  
+    await servicioVehiculo.crearVehiculo("8179 KLL", "BWM", "R 1250 RT", "2023", 4.8, "Precio Gasolina 95 E5");
 
     //When: El usuario solicita el calculo con “Valencia-Castellón” y vehículo “Coche1”.
     const ruta = await servicioRutas.calcularRuta(lugar1, lugar2, "driving-car");
@@ -112,8 +110,8 @@ describe('RutasService', () => {
     const lugar2 = await servicioPlace.createPlaceT("Castellón de la Plana");
     const lugar3 = await servicioPlace.createPlaceT("Alicante");
 
-    await serviceVehiculoFactory.crearVehiculo("0987 CPK", "Peugeot", "407", "2004", 8.1, "diesel");  
-    await serviceVehiculoFactory.crearVehiculo("8179 KLL", "BWM", "R 1250 RT", "2023", 4.8, "gasolina");
+    await servicioVehiculo.crearVehiculo("0987 CPK", "Peugeot", "407", "2004", 8.1, "Precio Gasoleo A");  
+    await servicioVehiculo.crearVehiculo("8179 KLL", "BWM", "R 1250 RT", "2023", 4.8, "Precio Gasolina 95 E5");
 
     try{
         // When: El usuario solicita el calculo con “Valencia-Castellón” y vehículo “Coche2”.
@@ -138,25 +136,25 @@ describe('RutasService', () => {
   it('H14-E01. Cálculo del coste asociado a la realización de una ruta en coche (Escenario Válido): ', async () => {
     // Given: 
     await servicioUsuario.loginUser("test@test.com", "test123"); 
-    const vehiculo = await serviceVehiculo.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1);
+    const vehiculo = await servicioVehiculo.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, 'Precio Gasoleo A');
 
     const ruta = new Route('ruta01', 'Valencia', 'Castellón de la Plana/Castelló de la Plana', 'porDefecto', 'driving-car', 90, 90);
     
     const costeRuta = await servicioRutas.obtenerCosteRuta(vehiculo, ruta);
-    serviceVehiculo.eliminarVehiculo(vehiculo.getMatricula());
+    servicioVehiculo.eliminarVehiculo(vehiculo.getMatricula());
     expect(costeRuta).toBeTruthy();
   });
 
 
   it('H14-E04. Cálculo del coste asociado a la realización de una ruta en coche utilizando una matrícula no registrada en la lista de vehículos (Escenario Inválido): ', async () => {
     await servicioUsuario.loginUser("test@test.com", "test123"); 
-    const vehiculo = await serviceVehiculo.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1);
+    const vehiculo = await servicioVehiculo.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, 'Precio Gasoleo A');
     // const vehiculoNoExiste = await serviceVehiculo.crearVehiculo("3423 WCX", "Fiat", "Punto", "2016", 8.1); //este vehículo NO EXISTE EN LA BBDD DEL USUARIO
     const ruta = new Route('ruta01','Valencia', 'Castellón de la Plana/Castelló de la Plana', 'porDefecto', 'driving-car', 90, 90);
-    const vehiculoNoExiste = new Vehiculo("3423 WCX", "Fiat", "Punto", "2016", 8.1);
+    const vehiculoNoExiste = new CocheDiesel("3423 WCX", "Fiat", "Punto", "2016", 8.1,'Precio Gasoleo A');
 
     await expectAsync(servicioRutas.obtenerCosteRuta(vehiculoNoExiste, ruta)).toBeRejectedWith(new NotExistingObjectException());
-    serviceVehiculo.eliminarVehiculo(vehiculo.getMatricula());
+    servicioVehiculo.eliminarVehiculo(vehiculo.getMatricula());
     servicioUsuario.logoutUser();
   });
 
