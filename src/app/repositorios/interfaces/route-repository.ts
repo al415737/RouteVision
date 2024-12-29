@@ -7,9 +7,9 @@ export const ROUTE_REPOSITORY_TOKEN = new InjectionToken<RouteRepository>('Route
 
 export interface RouteRepository {
     getRouteFSE(start: Place, end: Place, movilidad: string, preferencia: string): Promise<any>;
-    calcularRuta(origen: string, destino: string, metodoMov: string): any;
+    calcularRuta(origen: Place, destino: Place, metodoMov: string): any;
     obtenerCosteRuta(vehiculo: Vehiculo, ruta: Route): Promise<number>;
-    costeRutaPieBicicleta(ruta: Route): any;
+    costeRutaPieBicicleta(ruta: Route, origen: Place, destino: Place): any;
     consultarRutaEspecifica(ruta: Route): Promise<boolean>;
     createRoute(nombre: string, start: Place, end: Place, movilidad: string, preferencia: string, km: number, duracion: number): Promise<Route>;
     deleteRoute(nombre: string): Promise<void>;
