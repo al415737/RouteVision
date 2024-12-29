@@ -22,6 +22,7 @@ import { Route } from '../../modelos/route';
 describe('VehiculoIntegrationService', () => {
     let routeService: RouteService;
     let routeRepo: RouteRepository;
+    let servicioPlace: PlaceService;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
@@ -39,6 +40,7 @@ describe('VehiculoIntegrationService', () => {
 
         routeService = TestBed.inject(RouteService);
         routeRepo = TestBed.inject(ROUTE_REPOSITORY_TOKEN);
+        servicioPlace = TestBed.inject(PlaceService);
     });
 
 
@@ -48,11 +50,14 @@ describe('VehiculoIntegrationService', () => {
         const mockData = { trayectoria: [ "0.363239, 39.464781", "-0.161966, 39.803153", "-0.076461, 39.979548", "-0.037829, 39.988886" ], distancia: 75688, duracion: 3610 };
         spyOn(routeRepo, 'calcularRuta').and.resolveTo(mockData);
 
+        const lugar1 = await servicioPlace.createPlaceT("Valencia");
+        const lugar2 = await servicioPlace.createPlaceT("Castellón");
+
         //When: El usuario solicita el calculo con “Valencia-Castellón” y vehículo “Coche1”.
-        const ruta = routeService.calcularRuta("Valencia", "Castellón de la Plana", "driving-car");
+        const ruta = routeService.calcularRuta(lugar1, lugar2, "driving-car");
     
         //Then: El sistema muestra Trayecto=[Valencia, Paterna, Puzol, Sagunto, Moncófar, Villareal, Castellon], distancia=84km, duración=1h.
-        expect(routeRepo.calcularRuta).toHaveBeenCalledWith("Valencia", "Castellón de la Plana", "driving-car");
+        expect(routeRepo.calcularRuta).toHaveBeenCalledWith(lugar1, lugar2, "driving-car");
         expect(ruta).toEqual(mockData);
 
     });
@@ -60,11 +65,13 @@ describe('VehiculoIntegrationService', () => {
     it('HU13E03. Método de movilidad no válido (Escenario Inválido)', async () => {
         // Given: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] autenticado, lugares = [“Valencia”, “Castellón”, “Alicante”], vehículos = [“Coche1”, “Moto1”, “Bicicleta1”].
         spyOn(routeRepo, 'calcularRuta').and.resolveTo(VehicleNotFoundException);
+        const lugar1 = await servicioPlace.createPlaceT("Valencia");
+        const lugar2 = await servicioPlace.createPlaceT("Castellón");
 
         try{
             // When: El usuario solicita el calculo con “Valencia-Castellón” y vehículo “Coche2”.
-            routeService.calcularRuta("Valencia", "Castellón de la Plana", "Coche2");
-            expect(routeRepo.calcularRuta).toHaveBeenCalledWith("Valencia", "Castellón de la Plana", "Coche2");
+            routeService.calcularRuta(lugar1, lugar2, "Coche2");
+            expect(routeRepo.calcularRuta).toHaveBeenCalledWith(lugar1, lugar2, "Coche2");
         } catch(error){
                 //Then: El sistema lanza la excepción VehicleNotFoundException().
                 expect(error).toBeInstanceOf(VehicleNotFoundException);

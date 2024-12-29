@@ -21,7 +21,7 @@ export class RouteService {
   constructor(@Inject(ROUTE_REPOSITORY_TOKEN) private routeRepository: RouteRepository, @Inject(VEHICULO_REPOSITORY_TOKEN) private servicioVehículo: VehiculoRepository) { }
 
   calcularRuta(origen: Place, destino: Place, metodoMov: string) {
-      if(metodoMov != 'driving-car' && metodoMov != 'cycling' && metodoMov != 'foot-walking' && metodoMov != 'foot-hiking'){
+      if(metodoMov != 'driving-car' && metodoMov != 'cycling-regular' && metodoMov != 'foot-walking' && metodoMov != 'foot-hiking'){
           throw new IncorrectMethodException();
       }
 

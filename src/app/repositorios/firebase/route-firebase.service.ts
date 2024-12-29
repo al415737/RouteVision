@@ -22,7 +22,7 @@ export class RouteFirebaseService implements RouteRepository{
           throw new PlaceNotFoundException();
       }
 
-      return firstValueFrom(this.servicioAPI.getRuta(origen.getCoordenadas(), destino.getCoordenadas(), metodoMov));  
+      return firstValueFrom(this.servicioAPI.getRuta(origen.getCoordenadas().join(','), destino.getCoordenadas().join(','), metodoMov));  
   }
 
   
