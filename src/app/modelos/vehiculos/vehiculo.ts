@@ -4,15 +4,15 @@ export class Vehiculo {
     private modelo: string;
     private año_fabricacion: string;
     private consumo: number;
-    private tipoCombustible: string;
+    private tipo: string;
 
-    constructor (matricula: string, marca: string, modelo: string, año_fabricacion: string, consumo: number, tipoCombustible: string) {
+    constructor (matricula: string, marca: string, modelo: string, año_fabricacion: string, consumo: number, tipo: string) {
         this.matricula = matricula;
         this.marca = marca;
         this.modelo = modelo;
         this.año_fabricacion = año_fabricacion;
         this.consumo = consumo;
-        this.tipoCombustible = tipoCombustible;
+        this.tipo = tipo;
     }
 
     getMatricula(): string {
@@ -23,8 +23,8 @@ export class Vehiculo {
         return this.consumo;
     }
 
-    getTipoCombustible(){
-        return this.tipoCombustible;
+    getTipo(){
+        return this.tipo;
     }
     
 }

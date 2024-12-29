@@ -27,10 +27,12 @@ import { Place } from '../../modelos/place';
 import { ServerNotOperativeException } from '../../excepciones/server-not-operative-exception';
 import { NoRouteFoundException } from '../../excepciones/no-route-found-exception';
 import { IncorrectMethodException } from '../../excepciones/incorrect-method-exception';
+import { VehiculoFactory } from '../../modelos/vehiculos/vehiculoFactory';
 
 
 describe('RutasService', () => {
-  let serviceVehiculo: VehiculoService;
+  let serviceVehiculoFactory: VehiculoFactory;
+  let servicioVehiculo: VehiculoService;
   let servicioUsuario: UserService;
   let servicioRutas: RouteService;
   let servicioPlace: PlaceService;
@@ -54,7 +56,8 @@ describe('RutasService', () => {
         { provide: PLACE_REPOSITORY_TOKEN, useClass: PlaceFirebaseService },
       ]
     });
-    serviceVehiculo = TestBed.inject(VehiculoService);
+    serviceVehiculoFactory = TestBed.inject(VehiculoFactory);
+    servicioVehiculo = TestBed.inject(VehiculoService);
     servicioUsuario = TestBed.inject(UserService);
     servicioRutas = TestBed.inject(RouteService);
     servicioPlace = TestBed.inject(PlaceService);
@@ -71,8 +74,8 @@ describe('RutasService', () => {
     const lugar2 = await servicioPlace.createPlaceT("Castellón");
     const lugar3 = await servicioPlace.createPlaceT("Alicante");
 
-    serviceVehiculo.crearVehiculo("0987 CPK", "Peugeot", "407", "2004", 8.1);
-    serviceVehiculo.crearVehiculo("8179 KLL", "BWM", "R 1250 RT", "2023", 4.8);
+    await serviceVehiculoFactory.crearVehiculo("0987 CPK", "Peugeot", "407", "2004", 8.1, "diesel");  
+    await serviceVehiculoFactory.crearVehiculo("8179 KLL", "BWM", "R 1250 RT", "2023", 4.8, "gasolina");
 
     //When: El usuario solicita el calculo con “Valencia-Castellón” y vehículo “Coche1”.
     const ruta = await servicioRutas.calcularRuta("Valencia", "Castellon de la Plana", "driving-car");
@@ -95,8 +98,8 @@ describe('RutasService', () => {
     servicioPlace.deletePlace(lugar2.idPlace);
     servicioPlace.deletePlace(lugar3.idPlace);
 
-    serviceVehiculo.eliminarVehiculo("0987 CPK");
-    serviceVehiculo.eliminarVehiculo("8179 KLL");
+    servicioVehiculo.eliminarVehiculo("0987 CPK");
+    servicioVehiculo.eliminarVehiculo("8179 KLL");
     servicioUsuario.logoutUser();
 
   });
@@ -109,8 +112,8 @@ describe('RutasService', () => {
     const lugar2 = await servicioPlace.createPlaceT("Castellón");
     const lugar3 = await servicioPlace.createPlaceT("Alicante");
 
-    serviceVehiculo.crearVehiculo("0987 CPK", "Peugeot", "407", "2004", 8.1);
-    serviceVehiculo.crearVehiculo("8179 KLL", "BWM", "R 1250 RT", "2023", 4.8);
+    await serviceVehiculoFactory.crearVehiculo("0987 CPK", "Peugeot", "407", "2004", 8.1, "diesel");  
+    await serviceVehiculoFactory.crearVehiculo("8179 KLL", "BWM", "R 1250 RT", "2023", 4.8, "gasolina");
 
     try{
         // When: El usuario solicita el calculo con “Valencia-Castellón” y vehículo “Coche2”.
@@ -125,8 +128,8 @@ describe('RutasService', () => {
       servicioPlace.deletePlace(lugar2.idPlace);
       servicioPlace.deletePlace(lugar3.idPlace);
 
-      serviceVehiculo.eliminarVehiculo("0987 CPK");
-      serviceVehiculo.eliminarVehiculo("8179 KLL");
+      servicioVehiculo.eliminarVehiculo("0987 CPK");
+      servicioVehiculo.eliminarVehiculo("8179 KLL");
       servicioUsuario.logoutUser();
     }
     
