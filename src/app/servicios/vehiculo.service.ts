@@ -11,11 +11,11 @@ export class VehiculoService {
   constructor(@Inject(VEHICULO_REPOSITORY_TOKEN) private vehiRepo: VehiculoRepository) { 
   }
 
-  crearVehiculo(matricula: string, marca: string, modelo: string, año_fabricacion: string, consumo: number){
+  crearVehiculo(matricula: string, marca: string, modelo: string, año_fabricacion: string, consumo: number, tipoCombustible: string){
     if(matricula == '' || matricula == null){
       throw new NullLicenseException();
     }
-    return this.vehiRepo.crearVehiculo(matricula, marca, modelo, año_fabricacion, consumo);
+    return this.vehiRepo.crearVehiculo(matricula, marca, modelo, año_fabricacion, consumo, tipoCombustible);
   }
 
   consultarVehiculo(){

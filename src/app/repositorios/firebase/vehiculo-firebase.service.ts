@@ -15,10 +15,10 @@ export class VehiculoFirebaseService implements VehiculoRepository{
   constructor() { 
   }
 
-    async crearVehiculo(matricula: string, marca: string, modelo: string, año_fabricacion: string, consumo: number): Promise<Vehiculo> {
+    async crearVehiculo(matricula: string, marca: string, modelo: string, año_fabricacion: string, consumo: number, tipoCombustible: string): Promise<Vehiculo> {
         const uid = getAuth().currentUser?.uid;
         const PATHVEHICULO = `vehiculo/${uid}/listaVehiculos`;
-        const vehRegister: Vehiculo = new Vehiculo(matricula, marca, modelo, año_fabricacion, consumo);
+        const vehRegister: Vehiculo = new Vehiculo(matricula, marca, modelo, año_fabricacion, consumo, tipoCombustible);
 
         await this.firestore.createVehiculo(vehRegister, PATHVEHICULO);
         return vehRegister;
