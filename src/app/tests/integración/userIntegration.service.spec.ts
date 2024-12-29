@@ -32,7 +32,7 @@ describe('UserIntegrationService', () => {
     userRepo = TestBed.inject(USER_REPOSITORY_TOKEN);
   });
   
-  /*
+  
   it('HU1E01. User registration in the system (Valid Scenario)', async () => {
     const mockUser: User = new User("Manuel", "García", "manu033@gmail.com", "Manu-33");
     spyOn(userRepo, 'createUser').and.resolveTo(mockUser);
@@ -94,7 +94,7 @@ describe('UserIntegrationService', () => {
       throw new WrongPasswordException();
     }
   });
-  */
+  
 
   
   //HISTORIA 3

@@ -11,6 +11,7 @@ import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { firebaseConfig } from '../../app.config';
+import { VehicleNotFoundException } from '../../excepciones/vehicle-not-Found-Exception';
 
 describe('VehiculoIntegrationService', () => {
     let service: UserService;
@@ -107,8 +108,36 @@ describe('VehiculoIntegrationService', () => {
         expect(vehiRepo.consultarVehiculo).toHaveBeenCalled();
 
         //Then: El sistema no muestra ningún dato.
-        expect(vehiculos).toEqual(mockData);
-        
+        expect(vehiculos).toEqual(mockData);  
     });
+
+
+    //HISTORIA 11
+    it('PRUEBA INTEGRACIÓN --> H11-E01. Eliminar vehículo existente del sistema (Escenario Válido): ', async () => {
+        spyOn(vehiRepo, 'eliminarVehiculo').and.resolveTo();
+
+        const vehiculo = new Vehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1);
+
+        const result = await vehiculoService.eliminarVehiculo(vehiculo.getMatricula());
+        expect(vehiRepo.eliminarVehiculo).toHaveBeenCalledWith(vehiculo.getMatricula());
+        expect(result).toBeUndefined();
+    });
+
+    it('PRUEBA INTEGRACIÓN --> H11-E02. Eliminar vehículo utilizando una matrícula no registrada en la lista de vehículos (Escenario Inválido):  ', async () => {
+        // Simulamos que el método `get` devuelve una cadena vacía para indicar que no se encuentra el vehículo
+        spyOn(vehiRepo, 'get').and.returnValue(Promise.resolve('')); // o Promise.resolve(null), dependiendo de la implementación
+
+        const vehiculoNoExiste = new Vehiculo("3423 WCX", "Fiat", "Punto", "2016", 8.1);
+
+        try {
+            // Intentamos eliminar un vehículo que no existe en la base de datos
+            await vehiculoService.eliminarVehiculo(vehiculoNoExiste.getMatricula());
+        } catch (error) {
+            // Verificamos que el error lanzado sea de tipo `VehicleNotFoundException`
+            expect(error).toBeInstanceOf(VehicleNotFoundException);
+        }
+    });
+
+    
 
 });
