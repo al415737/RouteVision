@@ -40,7 +40,7 @@ import { NotExistingObjectException } from '../../excepciones/notExistingObjectE
 
   it('HU9E01. Vehículo registrado en el sistema (Escenario Válido)', async () => {
     //GIVEN: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] con listaVehículos-Ana2002 = [ ].
-    servicioUser.loginUser("test@test.com", "test123");
+    await servicioUser.loginUser("test@test.com", "test123");
 
     //WHEN: El usuario intenta dar de alta un vehículo → [Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1].
     const resul = await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, 'Precio Gasoleo A');
@@ -54,7 +54,7 @@ import { NotExistingObjectException } from '../../excepciones/notExistingObjectE
   it('HU9E05. Registro de vehículo sin matricula (Escenario Inválido)', async () => {
     try {
       //Given: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] con listaVehículos-Ana2002= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1}].
-      servicioUser.loginUser("test@test.com", "test123");
+      await servicioUser.loginUser("test@test.com", "test123");
       await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, 'Precio Gasoleo A'); 
 
       try {
@@ -132,27 +132,27 @@ import { NotExistingObjectException } from '../../excepciones/notExistingObjectE
 
   it('HU12E01. Actualización correcta de un vehículo (Escenario válido):', async () => {
     //GIVEN: El usuario [“Test”, “test@test.com“,“test123”] con la sesión de su cuenta activa y la lista actual de vehículos = [{"1234 BBB", "Peugeot", "407", "2007", 8.1, 'Precio Gasoleo A'}].
-    servicioUser.loginUser("test@test.com", "test123");
+    await servicioUser.loginUser("test@test.com", "test123");
     await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, 'Precio Gasoleo A');
 
     //WHEN: El usuario quiere actualizar los datos del vehículo “1234 BBB” con la marca = “Peugeot”, modelo = “407”, tipo de combustible = “Precio Gasoleo B”, año de fabricación = “2010” y consumo del vehículo cada 100 km = “7.1”.
-    const resul = await serviceV.actualizarVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, 'Precio Gasoleo A');
+    const resul = await serviceV.actualizarVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, 'Precio Gasoleo A', false);
 
     //THEN: Se actualiza la lista actual de vehículos = {{"1234 BBB", "Peugeot", "407", "2007", 7.1, 'Precio Gasoleo B'}.
     expect(resul).toBeInstanceOf(Vehiculo);
-    serviceV.eliminarVehiculo("1234 BBB"); 
+    await serviceV.eliminarVehiculo("1234 BBB"); 
     await servicioUser.logoutUser();
   });
 
 it('HU12E03. Error al intentar actualizar un vehículo que no existe (Escenario inválido):', async () => {
     //GIVEN: El usuario [“Test”, “test@test.com“,“test123”] con la sesión de su cuenta activa y la lista actual de vehículos = [{"1234 BBB", "Peugeot", "407", "2007", 8.1, 'Precio Gasoleo A'}].
-    servicioUser.loginUser("test@test.com", "test123");
+    await servicioUser.loginUser("test@test.com", "test123");
     await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, 'Precio Gasoleo A');
 
     //WHEN: El usuario quiere actualizar los datos del vehículo “1234 BBB” con la marca = “Peugeot”, modelo = “407”, tipo de combustible = “Precio Gasoleo B”, año de fabricación = “2010” y consumo del vehículo cada 100 km = “7.1”.
     //THEN: Se actualiza la lista actual de vehículos = {{"1234 BBB", "Peugeot", "407", "2007", 7.1, 'Precio Gasoleo B'}.
-    await expectAsync(serviceV.actualizarVehiculo("1234 CCC", "Peugeot", "407", "2007", 8.1, 'Precio Gasoleo A')).toBeRejectedWith(new NotExistingObjectException());
-    serviceV.eliminarVehiculo("1234 BBB"); 
+    await expectAsync(serviceV.actualizarVehiculo("1234 CCC", "Peugeot", "407", "2007", 8.1, 'Precio Gasoleo A', false)).toBeRejectedWith(new NotExistingObjectException());
+    await serviceV.eliminarVehiculo("1234 BBB"); 
     await servicioUser.logoutUser();
   });
 });

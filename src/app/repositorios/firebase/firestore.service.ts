@@ -72,9 +72,10 @@ export class FirestoreService {
     const plainObject = { ...vehiculo };
     try {
       await updateDoc(listaVehiculosRef, plainObject);
-      console.log('Vehículo actualizado correctamente');
+      return vehiculo;
     } catch (error) {
       console.error('Error al actualizar vehículo:', error);
+      return vehiculo;
     }
   }
 
