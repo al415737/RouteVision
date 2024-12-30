@@ -152,7 +152,7 @@ describe('RutasService', () => {
     const vehiculo = await servicioVehiculo.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, 'Precio Gasoleo A');
     // const vehiculoNoExiste = await serviceVehiculo.crearVehiculo("3423 WCX", "Fiat", "Punto", "2016", 8.1); //este vehículo NO EXISTE EN LA BBDD DEL USUARIO
     const ruta = new Route('ruta01','Valencia', 'Castellón de la Plana/Castelló de la Plana', 'porDefecto', 'driving-car', 90, 90, false);
-    const vehiculoNoExiste = new CocheDiesel("3423 WCX", "Fiat", "Punto", "2016", 8.1,'Precio Gasoleo A', false);
+    const vehiculoNoExiste = new CocheDiesel("3423 WCX", "Fiat", "Punto", "2016", 8.1,'Precio Gasoleo A');
 
     await expectAsync(servicioRutas.obtenerCosteRuta(vehiculoNoExiste, ruta)).toBeRejectedWith(new NotExistingObjectException());
     servicioVehiculo.eliminarVehiculo(vehiculo.getMatricula());

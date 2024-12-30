@@ -70,7 +70,7 @@ describe('UserIntegrationService', () => {
     // WHEN: El usuario Pepito quiere iniciar sesión con sus datos.  user: “pepito23”, contraseña:  “Pepito123?_ “.
     //  THEN: El sistema carga los datos de Pepito. ListaVehículos=[{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}] y listaLugaresInterés=[{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049], idLugar = “000”}].
     
-    const result: [Vehiculo[], Place[]] = [[new CocheGasolina("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasolina 95 E5", true)], [new Place("001", "Castellón de la Plana", [39.98, -0.049], true)]];
+    const result: [Vehiculo[], Place[]] = [[new CocheGasolina("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasolina 95 E5")], [new Place("001", "Castellón de la Plana", [39.98, -0.049], true)]];
     spyOn(userRepo, 'loginUser').and.resolveTo(result);
 
     const resultService = await service.loginUser("test@test.com", "test123");
@@ -84,7 +84,7 @@ describe('UserIntegrationService', () => {
     // WHEN: El usuario Pepito introduce como contraseña: “pepito123_”
     // THEN: El sistema no inicia la sesión de Pepito porque la contraseña introducida no coincide con la que se encuentra en la base de datos para ese usuario. Lanza la excepción WrongPasswordException().
     
-    const result: [Vehiculo[], Place[]] = [[new CocheGasolina("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasolina 95 E5", true)], [new Place("001", "Castellón de la Plana", [39.98, -0.049], true)]];
+    const result: [Vehiculo[], Place[]] = [[new CocheGasolina("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasolina 95 E5")], [new Place("001", "Castellón de la Plana", [39.98, -0.049], true)]];
     spyOn(userRepo, 'loginUser').and.resolveTo(result);
 
     try {
@@ -158,4 +158,17 @@ describe('UserIntegrationService', () => {
         expect(error).toBeInstanceOf(UserNotFoundException);
       }
   });
+
+  it('HU20-E01. Usuario marca como favorito su coche (Escenario Válido)', async() => {
+      //Given: El usuario [“Pepito2002”, “pepito@gmail.com“,“ppt-24”] tiene iniciada su cuenta y la base de datos está disponible. Lista de vehículos: [ Matrícula: “8291 DTS” , AñoFabricación: 2002, Marca: “Seat”, Modelo: “León”, Consumo: 5.1L/100km ]. 
+      //When: El usuario quiere marcar como favorito su vehículo → [ Matrícula: “8291 DTS” , AñoFabricación: 2002, Marca: “Seat”, Modelo: “León”, Consumo: 5.1L/100km ].
+      //Then: El sistema marca como favorito al vehículo, es decir, este vehículo se añade a una lista de listaVehículosFavoritos → [ Matrícula: “8291 DTS” , AñoFabricación: 2002, Marca: “Seat”, Modelo: “León”, Consumo: 5.1L/100km ]. 
+  });
+
+  it('HU20-E03. Intento de marcar como favorito pero no tiene elementos registrados (Escenario Inválido)', async() => {
+      //Given: El usuario [“Pepito2002”, “pepito@gmail.com“,“ppt-24”] ha iniciado sesión, la base de datos está disponible, pero no tiene ningún elemento registrado. Lista de vehículos = [ ].
+      //When: El usuario quiere marcar como favorito a su vehículo.
+      //Then: El sistema no puede marcar como favorito nada y lanza la excepción NoElementsException().
+  });
+
 });

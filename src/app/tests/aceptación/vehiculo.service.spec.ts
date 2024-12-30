@@ -122,7 +122,7 @@ import { CocheDiesel } from '../../modelos/vehiculos/cocheDiesel';
   it('H11-E02. Eliminar vehículo utilizando una matrícula no registrada en la lista de vehículos (Escenario Inválido): ', async () => {
     await servicioUser.loginUser("test@test.com", "test123"); 
     const vehiculo = await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasolina 95 E5");
-    const vehiculoNoExiste = new CocheGasolina("3423 WCX", "Fiat", "Punto", "2016", 8.1, "Precio Gasolina 95 E5", false);
+    const vehiculoNoExiste = new CocheGasolina("3423 WCX", "Fiat", "Punto", "2016", 8.1, "Precio Gasolina 95 E5");
     //habrá que añadir atributos cuando se tenga el factory
 
     await expectAsync(serviceV.eliminarVehiculo(vehiculoNoExiste.getMatricula()))
@@ -135,7 +135,7 @@ import { CocheDiesel } from '../../modelos/vehiculos/cocheDiesel';
     //GIVEN: El usuario [“Test”, “test@test.com“,“test123”] con la sesión de su cuenta activa y la lista actual de vehículos = [{"1234 BBB", "Peugeot", "407", "2007", 8.1, 'Precio Gasoleo A'}].
     await servicioUser.loginUser("test@test.com", "test123");
     await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, 'Precio Gasoleo A');
-    const comparacion = new CocheDiesel("1234 BBB", "Peugeot", "407", "2007", 7.1, 'Precio Gasoleo B', false);
+    const comparacion = new CocheDiesel("1234 BBB", "Peugeot", "407", "2007", 7.1, 'Precio Gasoleo B');
 
     //WHEN: El usuario quiere actualizar los datos del vehículo “1234 BBB” con la marca = “Peugeot”, modelo = “407”, tipo de combustible = “Precio Gasoleo B”, año de fabricación = “2010” y consumo del vehículo cada 100 km = “7.1”.
     const resul = await serviceV.actualizarVehiculo("1234 BBB", "Peugeot", "407", "2007", 7.1, 'Precio Gasoleo B', false);

@@ -88,9 +88,9 @@ describe('RouteIntegrationService', () => {
       
       spyOn(routeRepo, 'obtenerCosteRuta').and.resolveTo(mockFuelCostRoute);
       
-      const result = await routeRepo.obtenerCosteRuta(new CocheDiesel("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasoleo A", false), new Route('ruta01', 'Valencia', 'Castellón de la Plana/Castelló de la Plana', 'porDefecto', 'driving-car', 90, 90, false));
+      const result = await routeRepo.obtenerCosteRuta(new CocheDiesel("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasoleo A"), new Route('ruta01', 'Valencia', 'Castellón de la Plana/Castelló de la Plana', 'porDefecto', 'driving-car', 90, 90, false));
       
-      expect(routeRepo.obtenerCosteRuta).toHaveBeenCalledWith(new CocheDiesel("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasoleo A", false), new Route('ruta01', 'Valencia', 'Castellón de la Plana/Castelló de la Plana', 'porDefecto', 'driving-car', 90, 90, false));
+      expect(routeRepo.obtenerCosteRuta).toHaveBeenCalledWith(new CocheDiesel("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasoleo A"), new Route('ruta01', 'Valencia', 'Castellón de la Plana/Castelló de la Plana', 'porDefecto', 'driving-car', 90, 90, false));
       expect(result).toEqual(mockFuelCostRoute);
     });
   
@@ -99,7 +99,7 @@ describe('RouteIntegrationService', () => {
   
       spyOn(routeRepo, 'obtenerCosteRuta').and.resolveTo(mockFuelCostRoute);
   
-      const vehiculoNoExiste = new CocheGasolina("3423 WCX", "Fiat", "Punto", "2016", 8.1, "Precio Gasolina 95 E5", false);
+      const vehiculoNoExiste = new CocheGasolina("3423 WCX", "Fiat", "Punto", "2016", 8.1, "Precio Gasolina 95 E5");
       const rutaValida = new Route('ruta01', 'Valencia', 'Castellón de la Plana/Castelló de la Plana', 'porDefecto', 'driving-car', 90, 90, false);
   
       try {

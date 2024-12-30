@@ -8,4 +8,5 @@ export interface VehiculoRepository {
     consultarVehiculo(): Promise<any>;
     actualizarVehiculo(vehiculo:Vehiculo): Promise<any>;
     eliminarVehiculo(matricula: string): Promise<void>;
+    marcarFavorito(vehiculo: Vehiculo): Promise<any>;
 }

@@ -99,7 +99,6 @@ export class FirestoreService {
             data['año_fabricacion'],
             data['consumo'],
             data['tipo'],
-            data['favorito']
           );
       } else if(data['tipo'] == 'Precio Gasoleo A' || data['tipo'] == 'Precio Gasoleo B'){
         return new CocheDiesel(
@@ -109,7 +108,6 @@ export class FirestoreService {
           data['año_fabricacion'],
           data['consumo'],
           data['tipo'],
-          data['favorito']
         );
       } else {
         return new CocheElectrico(
@@ -119,7 +117,6 @@ export class FirestoreService {
           data['año_fabricacion'],
           data['consumo'],
           data['tipo'],
-          data['favorito']
         );
       }
      }); 

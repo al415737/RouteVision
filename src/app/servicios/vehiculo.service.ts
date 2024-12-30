@@ -23,11 +23,11 @@ export class VehiculoService {
     let vehiculo: Vehiculo;
 
     if(tipo == 'Precio Gasolina 95 E5' || tipo == 'Precio Gasolina 98 E5'){
-        vehiculo = new CocheGasolina(matricula, marca, modelo, año_fabricacion, consumo, tipo, false);
+        vehiculo = new CocheGasolina(matricula, marca, modelo, año_fabricacion, consumo, tipo);
     } else if(tipo == 'Precio Gasoleo A' || tipo == 'Precio Gasoleo B'){
-        vehiculo = new CocheDiesel(matricula, marca, modelo, año_fabricacion, consumo, tipo, false);
+        vehiculo = new CocheDiesel(matricula, marca, modelo, año_fabricacion, consumo, tipo);
     } else {
-        vehiculo = new CocheElectrico(matricula, marca, modelo, año_fabricacion, consumo, tipo, false);
+        vehiculo = new CocheElectrico(matricula, marca, modelo, año_fabricacion, consumo, tipo);
     }
 
     return this.vehiRepo.crearVehiculo(vehiculo);
@@ -41,11 +41,11 @@ export class VehiculoService {
     let vehiculo: Vehiculo;
     
     if(tipo == 'Precio Gasolina 95 E5' || tipo == 'Precio Gasolina 98 E5'){
-      vehiculo = new CocheGasolina(matricula, marca, modelo, año_fabricacion, consumo, tipo, favorito);
+      vehiculo = new CocheGasolina(matricula, marca, modelo, año_fabricacion, consumo, tipo);
     } else if(tipo == 'Precio Gasoleo A' || tipo == 'Precio Gasoleo B'){
-        vehiculo = new CocheDiesel(matricula, marca, modelo, año_fabricacion, consumo, tipo, favorito);
+        vehiculo = new CocheDiesel(matricula, marca, modelo, año_fabricacion, consumo, tipo);
     } else {
-        vehiculo = new CocheElectrico(matricula, marca, modelo, año_fabricacion, consumo, tipo, favorito);
+        vehiculo = new CocheElectrico(matricula, marca, modelo, año_fabricacion, consumo, tipo);
     }
 
     return this.vehiRepo.actualizarVehiculo(vehiculo);
@@ -58,4 +58,9 @@ export class VehiculoService {
   async eliminarVehiculo(matricula: string):Promise<void>{
     await this.vehiRepo.eliminarVehiculo(matricula);
   }
+
+  async marcarFavorito(vehiculo: Vehiculo){
+      await this.vehiRepo.marcarFavorito(vehiculo);
+  }
+
 }

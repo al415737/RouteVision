@@ -87,4 +87,9 @@ export class RouteService {
   async getRoutes(): Promise<Route[]> {
     return this.routeRepository.getRoutes();
   }
+
+  marcarFavorito(ruta: Route){
+
+  }
+
 }
