@@ -166,12 +166,15 @@ describe('UserService', () => {
       await service.createUser("Pepito", "Ramirez", "pepitoramirez@gmail.com", "pepito", "pepito123");
       await service.createUser("Alba", "Consuelos", "albaconsuelos@gmail.com", "alba", "alba123");
       await service.createUser("Dani", "Torres", "danitorres@gmail.com", "dani", "dani123");
+      await service.logoutUser();
 
-      //When: El usuario Random quiere eliminar su cuenta del sistema.
-      
-
-
-      //Then: El sistema lanza una excepción UserNotFoundException().
+      try {
+          //When: El usuario Random quiere eliminar su cuenta del sistema.
+          service.deleteUser("pepagimena@gmail.com");
+      } catch(error){
+           //Then: El sistema lanza una excepción UserNotFoundException().
+           expect(error).toBeInstanceOf(UserNotFoundException);
+      }
     
   });
 });
