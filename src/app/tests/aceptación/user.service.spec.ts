@@ -47,7 +47,7 @@ describe('UserService', () => {
     placeService = TestBed.inject(PlaceService);
   });
   
-  /*
+  
   it('HU1E01. User registration in the system (Valid Scenario)', async () => {
     // GIVEN: El usuario Manu-33 no está registrado en el sistema y se tiene conexión con la base de datos → ListaUsuarios = [ ].
     // WHEN: Manuel intenta registrarse →[Nombre=”Manuel”, Apellido=”García”, User=”Manu33”, Email=”manu33@gmail.com”, Contraseña=”Manu-33”].
