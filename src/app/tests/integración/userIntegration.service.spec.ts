@@ -8,10 +8,11 @@ import { firebaseConfig } from '../../app.config';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { UserFirebaseService } from '../../repositorios/firebase/user-firebase.service';
-import { Vehiculo } from '../../modelos/vehiculo';
+import { Vehiculo } from '../../modelos/vehiculos/vehiculo';
 import { Place } from '../../modelos/place';
 import { WrongPasswordException } from '../../excepciones/wrong-password-exception';
 import { UserNotFoundException } from '../../excepciones/user-not-found-exception';
+import { CocheGasolina } from '../../modelos/vehiculos/cocheGasolina';
 
 describe('UserIntegrationService', () => {
   let service: UserService;
@@ -32,7 +33,7 @@ describe('UserIntegrationService', () => {
     userRepo = TestBed.inject(USER_REPOSITORY_TOKEN);
   });
   
-  /*
+  
   it('HU1E01. User registration in the system (Valid Scenario)', async () => {
     const mockUser: User = new User("Manuel", "García", "manu033@gmail.com", "Manu-33");
     spyOn(userRepo, 'createUser').and.resolveTo(mockUser);
@@ -69,7 +70,7 @@ describe('UserIntegrationService', () => {
     // WHEN: El usuario Pepito quiere iniciar sesión con sus datos.  user: “pepito23”, contraseña:  “Pepito123?_ “.
     //  THEN: El sistema carga los datos de Pepito. ListaVehículos=[{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}] y listaLugaresInterés=[{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049], idLugar = “000”}].
     
-    const result: [Vehiculo[], Place[]] = [[new Vehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1)], [new Place("001", "Castellón de la Plana", [39.98, -0.049])]];
+    const result: [Vehiculo[], Place[]] = [[new CocheGasolina("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasolina 95 E5")], [new Place("001", "Castellón de la Plana", [39.98, -0.049])]];
     spyOn(userRepo, 'loginUser').and.resolveTo(result);
 
     const resultService = await service.loginUser("test@test.com", "test123");
@@ -83,7 +84,7 @@ describe('UserIntegrationService', () => {
     // WHEN: El usuario Pepito introduce como contraseña: “pepito123_”
     // THEN: El sistema no inicia la sesión de Pepito porque la contraseña introducida no coincide con la que se encuentra en la base de datos para ese usuario. Lanza la excepción WrongPasswordException().
     
-    const result: [Vehiculo[], Place[]] = [[new Vehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1)], [new Place("001", "Castellón de la Plana", [39.98, -0.049])]];
+    const result: [Vehiculo[], Place[]] = [[new CocheGasolina("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasolina 95 E5")], [new Place("001", "Castellón de la Plana", [39.98, -0.049])]];
     spyOn(userRepo, 'loginUser').and.resolveTo(result);
 
     try {
@@ -94,8 +95,6 @@ describe('UserIntegrationService', () => {
       throw new WrongPasswordException();
     }
   });
-  */
-
   
   //HISTORIA 3
   it('PRUEBA INTEGRACIÓN --> HU3-E01. Cierre de sesión de una cuenta de un usuario registrado (Escenario Válido): ', async () => {
@@ -117,4 +116,46 @@ describe('UserIntegrationService', () => {
     }
   });
 
+  it('HU4-E01. Eliminar una cuenta de un usuario registrado (Escenario Válido)', async () => {
+    //Given: Lista actual de usuarios = {Pepa, Pepito, Alba, Dani}.
+    const mockData: User[] = [
+                new User("Pepito", "Ramirez", "pepitoramirez@gmail.com", "pepito"),
+                new User("Alba", "Consuelos", "albaconsuelos@gmail.com", "alba"),
+                new User("Dani", "Torres", "danitorres@gmail.com", "dani"),
+    ];
+
+    spyOn(userRepo, 'deleteUser').and.resolveTo();
+    spyOn(userRepo, 'consultarUsuarios').and.resolveTo(mockData);
+
+    //When: El usuario Pepa quiere eliminar su cuenta del sistema.
+    await service.deleteUser('pepagimena@gmail.com');
+
+    //Then: Lista actual de usuarios {Pepito, Alba, Dani}
+    const usuarios = await service.consultarUsuarios();
+    expect(usuarios).toEqual(mockData);
+  
+  });
+
+  
+  it('HU4-E02. Eliminar una cuenta de un usuario no registrado (Escenario Inválido)', async () => {
+      //Given: Lista actual de usuarios = {Pepito, Alba, Dani}.
+      const mockData: User[] = [
+                new User("Pepito", "Ramirez", "pepitoramirez@gmail.com", "pepito"),
+                new User("Alba", "Consuelos", "albaconsuelos@gmail.com", "alba"),
+                new User("Dani", "Torres", "danitorres@gmail.com", "dani"),
+      ];
+
+      spyOn(userRepo, 'deleteUser').and.resolveTo();
+      spyOn(userRepo, 'logoutUser').and.resolveTo();
+
+      //When: El usuario Random quiere eliminar su cuenta del sistema.
+      await service.deleteUser('pepagimena@gmail.com');
+
+      //Then: El sistema lanza una excepción UserNotFoundException().
+      try {
+        await service.logoutUser();
+      } catch (error) {
+        expect(error).toBeInstanceOf(UserNotFoundException);
+      }
+  });
 });

@@ -40,8 +40,8 @@ export class PlaceService {
     return this.placeRepositorio.getPlaces();
     }
 
-  deletePlace(idPlace: string){
-    return this.placeRepositorio.deletePlace(idPlace);
+  async deletePlace(idPlace: string): Promise<boolean> {
+    return await this.placeRepositorio.deletePlace(idPlace);
   }
 
 }

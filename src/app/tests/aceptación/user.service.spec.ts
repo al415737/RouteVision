@@ -11,7 +11,7 @@ import { getAuth, provideAuth } from '@angular/fire/auth';
 import { VehiculoService } from '../../servicios/vehiculo.service';
 import { PlaceService } from '../../servicios/place.service';
 import { WrongPasswordException } from '../../excepciones/wrong-password-exception';
-import { Vehiculo } from '../../modelos/vehiculo';
+import { Vehiculo } from '../../modelos/vehiculos/vehiculo';
 import { Place } from '../../modelos/place';
 import { PLACE_REPOSITORY_TOKEN } from '../../repositorios/interfaces/place-repository';
 import { PlaceFirebaseService } from '../../repositorios/firebase/place-firebase.service';
@@ -47,7 +47,7 @@ describe('UserService', () => {
     placeService = TestBed.inject(PlaceService);
   });
   
-  /*
+  
   it('HU1E01. User registration in the system (Valid Scenario)', async () => {
     // GIVEN: El usuario Manu-33 no está registrado en el sistema y se tiene conexión con la base de datos → ListaUsuarios = [ ].
     // WHEN: Manuel intenta registrarse →[Nombre=”Manuel”, Apellido=”García”, User=”Manu33”, Email=”manu33@gmail.com”, Contraseña=”Manu-33”].
@@ -75,7 +75,7 @@ describe('UserService', () => {
     //  THEN: El sistema carga los datos de Pepito. ListaVehículos=[{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}] y listaLugaresInterés=[{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049], idLugar = “000”}].
    
     await service.loginUser("test@test.com", "test123");
-    await vehicleService.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1);
+    await vehicleService.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasolina 95 E5");
     const lugar = await placeService.createPlaceC([39.98, -0.049]);
     await service.logoutUser();
 
@@ -116,7 +116,6 @@ describe('UserService', () => {
     ).toBeRejectedWith(new WrongPasswordException());
     service.logoutUser();
   });
-  */
 
   it('HU3-E01. Cierre de sesión de una cuenta de un usuario registrado (Escenario Válido): ', async () => {
     await service.loginUser("test@test.com", "test123");
@@ -135,6 +134,51 @@ describe('UserService', () => {
       expect(error).toBeInstanceOf(UserNotFoundException);
     }
   });
+ 
+  it('HU4-E01. Eliminar una cuenta de un usuario registrado (Escenario Válido)', async () => {
+    //Given: Lista actual de usuarios = {Pepa, Pepito, Alba, Dani}.
+    await service.createUser("Pepito", "Ramirez", "pepitoramirez@gmail.com", "pepito", "pepito123");
+    await service.createUser("Alba", "Consuelos", "albaconsuelos@gmail.com", "alba", "alba123");
+    await service.createUser("Dani", "Torres", "danitorres@gmail.com", "dani", "dani123");
+    await service.createUser("Pepa", "Gimena", "pepagimena@gmail.com", "pepa", "pepa123");
+
+    //When: El usuario Pepa quiere eliminar su cuenta del sistema.
+    await service.deleteUser('pepagimena@gmail.com');
+
+
+    //Then: Lista actual de usuarios {Pepito, Alba, Dani}
+    const usuariosEnSistema = await service.consultarUsuarios();
+
+    const userPepa = usuariosEnSistema.find(usuario => usuario.getEmail() === 'pepagimena@gmail.com');
+    expect(userPepa).toBeUndefined();
+
+    await service.deleteUser('pepitoramirez@gmail.com');
+    await service.deleteUser('albaconsuelos@gmail.com');
+    await service.deleteUser('danitorres@gmail.com');
+});
+
+  it('HU4-E02. Eliminar una cuenta de un usuario no registrado (Escenario Inválido)', async () => {
+      //Given: Lista actual de usuarios = {Pepito, Alba, Dani}.
+      await service.createUser("Pepito", "Ramirez", "pepitoramirez@gmail.com", "pepito", "pepito123");
+      await service.createUser("Alba", "Consuelos", "albaconsuelos@gmail.com", "alba", "alba123");
+      await service.createUser("Dani", "Torres", "danitorres@gmail.com", "dani", "dani123");
+      await service.logoutUser();
+
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      try {
+          //When: El usuario Random quiere cerrar sesión y eliminar su cuenta del sistema.
+          await service.logoutUser();
+      } catch(error){
+           //Then: El sistema lanza una excepción UserNotFoundException().
+           expect(error).toBeInstanceOf(UserNotFoundException);
+      } finally {
+           await service.deleteUser("pepitoramirez@gmail.com");
+           await service.deleteUser("albaconsuelos@gmail.com");
+           await service.deleteUser("danitorres@gmail.com");
+      }
+  });
+  
 });
 
 

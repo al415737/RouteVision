@@ -19,11 +19,15 @@ export class UserService {
     return this.userRepo.createUser(nombre, apellidos, email, user, password);
   }
 
-  deleteUser(email: string) {
+  consultarUsuarios(){
+    return this.userRepo.consultarUsuarios();
+  }
+
+  async deleteUser(email: string):Promise<void> {
     if (!email.trim())
       throw new ObligatoryFieldsException();
 
-    this.userRepo.deleteUser(email);
+    await this.userRepo.deleteUser(email);
   }
 
   loginUser(email: string, password: string) {

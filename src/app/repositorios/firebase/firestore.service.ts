@@ -4,12 +4,15 @@ import { deleteDoc, doc, DocumentReference, getDocs, query, setDoc, where } from
 import { User } from '../../modelos/user';
 import { AuthService } from './auth.service';
 import { MailExistingException } from '../../excepciones/mail-existing-exception';
-import { Vehiculo } from '../../modelos/vehiculo';
+import { Vehiculo } from '../../modelos/vehiculos/vehiculo';
 import { getAuth } from '@angular/fire/auth';
 import { Place } from '../../modelos/place';
 import { AuthStateService } from '../../utils/auth-state.service';
 import { ServerNotOperativeException } from '../../excepciones/server-not-operative-exception';
 import { Route } from '../../modelos/route';
+import { CocheGasolina } from '../../modelos/vehiculos/cocheGasolina';
+import { CocheDiesel } from '../../modelos/vehiculos/cocheDiesel';
+import { CocheElectrico } from '../../modelos/vehiculos/cocheElectrico';
 
 @Injectable({
   providedIn: 'root'
@@ -47,7 +50,7 @@ export class FirestoreService {
     return firstDocument.id;
   }
 
-  async deleteUser(id: string, PATH: string) {
+  async deleteUser(id: string, PATH: string): Promise<void> {
     const docRef = doc(this._firestore, PATH, id);
     await deleteDoc(docRef);
     await this._auth.delete();      
@@ -60,7 +63,7 @@ export class FirestoreService {
       return addDoc(_collection, objetoPlano);
   }
 
-  async eliminarVehiculo(path: string, id: string){
+  async eliminarVehiculo(path: string, id: string):Promise<void>{
       const docRef = doc(this._firestore, path, id);
       await deleteDoc(docRef);
   }
@@ -72,14 +75,51 @@ export class FirestoreService {
 
     return documentos.docs.map(doc => { 
       const data = doc.data();
-      return new Vehiculo(
-        data['matricula'], 
-        data['marca'],
-        data['modelo'],
-        data['año_fabricacion'],
-        data['consumo']
-      );
+      if(data['tipo'] == 'Precio Gasolina 95 E5' || data['tipo'] == 'Precio Gasolina 98 E5'){
+          return new CocheGasolina(
+            data['matricula'],
+            data['marca'],
+            data['modelo'],
+            data['año_fabricacion'],
+            data['consumo'],
+            data['tipo']
+          );
+      } else if(data['tipo'] == 'Precio Gasoleo A' || data['tipo'] == 'Precio Gasoleo B'){
+        return new CocheDiesel(
+          data['matricula'],
+          data['marca'],
+          data['modelo'],
+          data['año_fabricacion'],
+          data['consumo'],
+          data['tipo']
+        );
+      } else {
+        return new CocheElectrico(
+          data['matricula'],
+          data['marca'],
+          data['modelo'],
+          data['año_fabricacion'],
+          data['consumo'],
+          data['tipo']
+        );
+      }
      }); 
+  }
+
+  async consultarUsuarios(path: string){
+      const _collection = collection(this._firestore, path);
+
+      const documentos = await getDocs(_collection);
+
+      return documentos.docs.map (doc => {
+        const data = doc.data();
+        return new User(
+          data['nombre'],
+          data['apellidos'],
+          data['email'],
+          data['user']
+        );
+      });
   }
   
   async getAutoIdReference(collectionPath: string): Promise<DocumentReference> {

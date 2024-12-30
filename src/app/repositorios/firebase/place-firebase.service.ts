@@ -7,6 +7,7 @@ import { OpenRouteService } from '../../APIs/Geocoding/openRoute.service';
 import { getAuth } from 'firebase/auth';
 import { firstValueFrom } from 'rxjs';
 import { AuthStateService } from '../../utils/auth-state.service';
+import { NotExistingObjectException } from '../../excepciones/notExistingObjectException';
 
 @Injectable({
   providedIn: 'root'
@@ -38,11 +39,16 @@ export class PlaceFirebaseService implements PlaceRepository{
     return placeRegisterC;
     }
 
-    async deletePlace(idPlace: string) {
+    async deletePlace(idPlace: string): Promise<boolean> {
         const uid = this._authState.currentUser?.uid;
-        const PATHPLACE = `Lugar/${uid}/listaLugaresInterés`
+        const PATHPLACE = `Lugar/${uid}/listaLugaresInterés`;
+        const exist: string = await this.firestore.get('idPlace', idPlace, PATHPLACE);
+
+        if (exist == '')
+            throw new NotExistingObjectException();
 
         await this.firestore.deletePlace(PATHPLACE, idPlace);
+        return true;
     }
 
 

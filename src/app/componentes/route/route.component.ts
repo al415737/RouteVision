@@ -9,6 +9,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { RouteService } from '../../servicios/route.service';
 import { Route } from '../../modelos/route';
+import { DeleteComponent } from './delete/delete.component';
 
 @Component({
   selector: 'app-route',
@@ -19,6 +20,7 @@ import { Route } from '../../modelos/route';
 })
 export default class RouteComponent {
   private _routeService: RouteService = inject(RouteService);
+  private servicioPlace: PlaceService = inject(PlaceService);
   readonly dialog = inject(MatDialog);
   rutas: Route[] = [];
   currentPage = 0;
@@ -43,12 +45,11 @@ export default class RouteComponent {
     }
   }
 
-  onDelete(route: Place) {
-    /*this.dialog.open(DeleteComponent, {
-      data: {id: place.getIdPlace(), nombre:place.getToponimo()},
+  onDelete(route: Route) {
+    this.dialog.open(DeleteComponent, {
+      data: {id: route.getNombre()},
     }).afterClosed().subscribe(() => {
       this.updateDataSource();
-    });*/
-      
+    }) ;
   }
 }

@@ -1,9 +1,10 @@
 import { inject, Injectable } from '@angular/core';
 import { VehiculoRepository } from '../interfaces/vehiculo-repository';
-import { Vehiculo } from '../../modelos/vehiculo';
+import { Vehiculo } from '../../modelos/vehiculos/vehiculo';
 import { FirestoreService } from './firestore.service';
 import { getAuth } from 'firebase/auth';
 import { NullLicenseException } from '../../excepciones/null-license-exception';
+import { VehicleNotFoundException } from '../../excepciones/vehicle-not-Found-Exception';
 
 @Injectable({
   providedIn: 'root'
@@ -15,13 +16,12 @@ export class VehiculoFirebaseService implements VehiculoRepository{
   constructor() { 
   }
 
-    async crearVehiculo(matricula: string, marca: string, modelo: string, año_fabricacion: string, consumo: number): Promise<Vehiculo> {
+    async crearVehiculo(vehiculo: Vehiculo): Promise<Vehiculo> {
         const uid = getAuth().currentUser?.uid;
         const PATHVEHICULO = `vehiculo/${uid}/listaVehiculos`;
-        const vehRegister: Vehiculo = new Vehiculo(matricula, marca, modelo, año_fabricacion, consumo);
 
-        await this.firestore.createVehiculo(vehRegister, PATHVEHICULO);
-        return vehRegister;
+        await this.firestore.createVehiculo(vehiculo, PATHVEHICULO);
+        return vehiculo;
     }
 
     async consultarVehiculo() {
@@ -30,10 +30,15 @@ export class VehiculoFirebaseService implements VehiculoRepository{
         return await this.firestore.consultarVehiculo(PATHVEHICULO);
     }
 
-    async eliminarVehiculo(matricula: string) {
+    async eliminarVehiculo(matricula: string):Promise<void> {
         const uid = getAuth().currentUser?.uid;
         const PATHVEHICULO = `vehiculo/${uid}/listaVehiculos`;
         const id = await this.firestore.get('matricula', matricula, PATHVEHICULO); 
+
+        if (!id) {
+          throw new VehicleNotFoundException(); // Lanza una excepción si no se encuentra el vehículo
+        }
+
         await this.firestore.eliminarVehiculo(PATHVEHICULO, id);
     }
 
