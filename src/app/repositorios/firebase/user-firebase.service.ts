@@ -18,7 +18,7 @@ export class UserFirebaseService implements UserRepository{
 
   constructor(private _firestore: FirestoreService, private _auth: AuthService) { }
 
-  async consultarUsuarios(): Promise<any> {
+  async consultarUsuarios(): Promise<User[]> {
       return await this._firestore.consultarUsuarios(PATH);
   }
 

@@ -137,31 +137,27 @@ describe('UserService', () => {
   */
 
   it('HU4-E01. Eliminar una cuenta de un usuario registrado (Escenario Válido)', async () => {
-      //Given: Lista actual de usuarios = {Pepa, Pepito, Alba, Dani}.
-      await service.createUser("Pepito", "Ramirez", "pepitoramirez@gmail.com", "pepito", "pepito123");
-      await service.createUser("Alba", "Consuelos", "albaconsuelos@gmail.com", "alba", "alba123");
-      await service.createUser("Dani", "Torres", "danitorres@gmail.com", "dani", "dani123");
-      const usuarioPepa = await service.createUser("Pepa", "Gimena", "pepagimena@gmail.com", "pepa", "pepa123");
+    //Given: Lista actual de usuarios = {Pepa, Pepito, Alba, Dani}.
+    await service.createUser("Pepito", "Ramirez", "pepitoramirez@gmail.com", "pepito", "pepito123");
+    await service.createUser("Alba", "Consuelos", "albaconsuelos@gmail.com", "alba", "alba123");
+    await service.createUser("Dani", "Torres", "danitorres@gmail.com", "dani", "dani123");
+    await service.createUser("Pepa", "Gimena", "pepagimena@gmail.com", "pepa", "pepa123");
 
-      //When: El usuario Pepa quiere eliminar su cuenta del sistema.
-      service.deleteUser("pepagimena@gmail.com");
+    //When: El usuario Pepa quiere eliminar su cuenta del sistema.
+    await service.deleteUser('pepagimena@gmail.com');
 
-      //Then: Lista actual de usuarios {Pepito, Alba, Dani}
-      const usuariosEnSistema = await service.consultarUsuarios();
-      let esta = false;
-      usuariosEnSistema.forEach((usuario: any) => {
-        if(usuario.getEmail() == 'pepagimena@gmail.com'){
-            esta = true;
-        }
-        expect(usuario).toBeInstanceOf(User);
-      });
+    await new Promise(resolve => setTimeout(resolve, 500));
 
-      expect(esta).toEqual(false);
-      service.deleteUser("pepitoramirez@gmail.com");
-      service.deleteUser("albaconsuelos@gmail.com");
-      service.deleteUser("danitorres@gmail.com");
-      
-  });
+    //Then: Lista actual de usuarios {Pepito, Alba, Dani}
+    const usuariosEnSistema = await service.consultarUsuarios();
+
+    const userPepa = usuariosEnSistema.find(usuario => usuario.getEmail() === 'pepagimena@gmail.com');
+    expect(userPepa).toBeUndefined();
+
+    await service.deleteUser('pepitoramirez@gmail.com');
+    await service.deleteUser('albaconsuelos@gmail.com');
+    await service.deleteUser('danitorres@gmail.com');
+});
 
   /*
   it('HU4-E02. Eliminar una cuenta de un usuario no registrado (Escenario Inválido)', async () => {
