@@ -75,7 +75,7 @@ describe('UserService', () => {
     //  THEN: El sistema carga los datos de Pepito. ListaVehículos=[{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}] y listaLugaresInterés=[{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049], idLugar = “000”}].
    
     await service.loginUser("test@test.com", "test123");
-    await vehicleService.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1);
+    await vehicleService.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasolina 95 E5");
     const lugar = await placeService.createPlaceC([39.98, -0.049]);
     await service.logoutUser();
 
@@ -134,7 +134,6 @@ describe('UserService', () => {
       expect(error).toBeInstanceOf(UserNotFoundException);
     }
   });
-  */
  
   it('HU4-E01. Eliminar una cuenta de un usuario registrado (Escenario Válido)', async () => {
     //Given: Lista actual de usuarios = {Pepa, Pepito, Alba, Dani}.
@@ -146,7 +145,6 @@ describe('UserService', () => {
     //When: El usuario Pepa quiere eliminar su cuenta del sistema.
     await service.deleteUser('pepagimena@gmail.com');
 
-    await new Promise(resolve => setTimeout(resolve, 500));
 
     //Then: Lista actual de usuarios {Pepito, Alba, Dani}
     const usuariosEnSistema = await service.consultarUsuarios();

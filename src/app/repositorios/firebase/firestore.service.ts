@@ -50,7 +50,7 @@ export class FirestoreService {
     return firstDocument.id;
   }
 
-  async deleteUser(id: string, PATH: string) {
+  async deleteUser(id: string, PATH: string): Promise<void> {
     const docRef = doc(this._firestore, PATH, id);
     await deleteDoc(docRef);
     await this._auth.delete();      
@@ -63,7 +63,7 @@ export class FirestoreService {
       return addDoc(_collection, objetoPlano);
   }
 
-  async eliminarVehiculo(path: string, id: string){
+  async eliminarVehiculo(path: string, id: string):Promise<void>{
       const docRef = doc(this._firestore, path, id);
       await deleteDoc(docRef);
   }

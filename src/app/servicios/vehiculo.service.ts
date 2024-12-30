@@ -37,7 +37,7 @@ export class VehiculoService {
     return this.vehiRepo.consultarVehiculo();
   }
 
-  eliminarVehiculo(matricula: string){
-    return this.vehiRepo.eliminarVehiculo(matricula);
+  async eliminarVehiculo(matricula: string):Promise<void>{
+    await this.vehiRepo.eliminarVehiculo(matricula);
   }
 }

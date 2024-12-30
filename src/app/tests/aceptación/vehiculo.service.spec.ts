@@ -15,6 +15,7 @@ import { UserService } from '../../servicios/user.service';
 import { USER_REPOSITORY_TOKEN } from '../../repositorios/interfaces/user-repository';
 import { UserFirebaseService } from '../../repositorios/firebase/user-firebase.service';
 import { VehicleNotFoundException } from '../../excepciones/vehicle-not-Found-Exception';
+import { CocheGasolina } from '../../modelos/vehiculos/cocheGasolina';
 
   describe('VehiculoService', () => {
   let serviceV: VehiculoService;
@@ -41,7 +42,7 @@ import { VehicleNotFoundException } from '../../excepciones/vehicle-not-Found-Ex
     servicioUser.loginUser("test@test.com", "test123");
 
     //WHEN: El usuario intenta dar de alta un vehículo → [Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1].
-    const resul = await service.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, 'Precio Gasoleo A');
+    const resul = await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, 'Precio Gasoleo A');
 
     //THEN: El sistema registra el vehículo en la parte de la base de datos dirigida a Ana2002 →  listaVehículos-Ana2002= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1}].      
     expect(resul).toBeInstanceOf(Vehiculo);
@@ -52,18 +53,17 @@ import { VehicleNotFoundException } from '../../excepciones/vehicle-not-Found-Ex
     try {
       //Given: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] con listaVehículos-Ana2002= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1}].
       servicioUser.loginUser("test@test.com", "test123");
-
-      const resul = await service.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, 'Precio Gasoleo A'); 
+      await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, 'Precio Gasoleo A'); 
 
       try {
         //When: El usuario intenta dar de alta un vehículo → [Matrícula=” ”, Marca=”Seat”, Modelo=”Ibiza”, Año Fabricación=”2003”, Consumo=4.3].
-        await service.crearVehiculo("", "Seat", "Ibiza", "2003", 4.3, "Precio Gasolina 98 E5");
+        await serviceV.crearVehiculo("", "Seat", "Ibiza", "2003", 4.3, "Precio Gasolina 98 E5");
       } catch(error){
           //Then: El sistema no registra el vehículo y lanza una excepción NullLicenseException() →  listaVehículos-Ana2002= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1}].
           expect(error).toBeInstanceOf(NullLicenseException);
       }
     } finally {
-        await serviceV.eliminarVehiculo("1234 BBB");
+        serviceV.eliminarVehiculo("1234 BBB");
     }
   });
 
@@ -72,7 +72,7 @@ import { VehicleNotFoundException } from '../../excepciones/vehicle-not-Found-Ex
     //Given: El usuario Ana con la sesión iniciada y la listaVehículos = [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1}].
     await servicioUser.loginUser("test@test.com", "test123"); 
 
-    await service.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasolina 95 E5");
+    await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasolina 95 E5");
     
     //When: El usuario pide mostrar sus vehículos.
     const vehiculos = await serviceV.consultarVehiculo(); 
@@ -99,14 +99,14 @@ import { VehicleNotFoundException } from '../../excepciones/vehicle-not-Found-Ex
   //HISTORIA 11
   it('H11-E01. Eliminar vehículo existente del sistema (Escenario Válido): ', async () => {
     await servicioUser.loginUser("test@test.com", "test123"); 
-    const vehiculoV = await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1);
+    const vehiculoV = await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasolina 95 E5");
     //habrá que añadir atributos cuando se tenga el factory
     
-    let listaVehiculos = await serviceV.consultarVehiculo();  //cojo la lista de vehículos
+    //let listaVehiculos = await serviceV.consultarVehiculo();  //cojo la lista de vehículos
 
     await serviceV.eliminarVehiculo(vehiculoV.getMatricula());
 
-    listaVehiculos = await serviceV.consultarVehiculo();  //cojo la lista de vehículos
+    let listaVehiculos = await serviceV.consultarVehiculo();  //cojo la lista de vehículos
     const vehiculoEncontrado = listaVehiculos.find((vehiculo: { matricula: string; }) => vehiculo.matricula === vehiculoV.getMatricula());
 
     expect(vehiculoEncontrado).toBeUndefined(); //find devuelve undefined
@@ -114,8 +114,8 @@ import { VehicleNotFoundException } from '../../excepciones/vehicle-not-Found-Ex
 
   it('H11-E02. Eliminar vehículo utilizando una matrícula no registrada en la lista de vehículos (Escenario Inválido): ', async () => {
     await servicioUser.loginUser("test@test.com", "test123"); 
-    const vehiculo = await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1);
-    const vehiculoNoExiste = new Vehiculo("3423 WCX", "Fiat", "Punto", "2016", 8.1);
+    const vehiculo = await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasolina 95 E5");
+    const vehiculoNoExiste = new CocheGasolina("3423 WCX", "Fiat", "Punto", "2016", 8.1, "Precio Gasolina 95 E5");
     //habrá que añadir atributos cuando se tenga el factory
 
     await expectAsync(serviceV.eliminarVehiculo(vehiculoNoExiste.getMatricula()))
