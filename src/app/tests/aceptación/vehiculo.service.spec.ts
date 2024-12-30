@@ -136,9 +136,9 @@ import { NotExistingObjectException } from '../../excepciones/notExistingObjectE
     await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, 'Precio Gasoleo A');
 
     //WHEN: El usuario quiere actualizar los datos del vehículo “1234 BBB” con la marca = “Peugeot”, modelo = “407”, tipo de combustible = “Precio Gasoleo B”, año de fabricación = “2010” y consumo del vehículo cada 100 km = “7.1”.
-    const resul = await serviceV.actualizarVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, 'Precio Gasoleo A', false);
+    const resul = await serviceV.actualizarVehiculo("1234 BBB", "Peugeot", "407", "2007", 7.1, 'Precio Gasoleo B', false);
 
-    //THEN: Se actualiza la lista actual de vehículos = {{"1234 BBB", "Peugeot", "407", "2007", 7.1, 'Precio Gasoleo B'}.
+    //THEN: Se actualiza los datos del vehículo = {["1234 BBB", "Peugeot", "407", "2007", 7.1, 'Precio Gasoleo B'].
     expect(resul).toBeInstanceOf(Vehiculo);
     await serviceV.eliminarVehiculo("1234 BBB"); 
     await servicioUser.logoutUser();
