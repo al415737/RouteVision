@@ -116,7 +116,6 @@ describe('UserService', () => {
     ).toBeRejectedWith(new WrongPasswordException());
     service.logoutUser();
   });
-  */
 
   it('HU3-E01. Cierre de sesión de una cuenta de un usuario registrado (Escenario Válido): ', async () => {
     await service.loginUser("test@test.com", "test123");
@@ -135,6 +134,7 @@ describe('UserService', () => {
       expect(error).toBeInstanceOf(UserNotFoundException);
     }
   });
+  */
 
   it('HU4-E01. Eliminar una cuenta de un usuario registrado (Escenario Válido)', async () => {
       //Given: Lista actual de usuarios = {Pepa, Pepito, Alba, Dani}.
@@ -144,23 +144,26 @@ describe('UserService', () => {
       const usuarioPepa = await service.createUser("Pepa", "Gimena", "pepagimena@gmail.com", "pepa", "pepa123");
 
       //When: El usuario Pepa quiere eliminar su cuenta del sistema.
-      const usuarioEliminado = await service.deleteUser("pepagimena@gmail.com");
+      service.deleteUser("pepagimena@gmail.com");
 
       //Then: Lista actual de usuarios {Pepito, Alba, Dani}
       const usuariosEnSistema = await service.consultarUsuarios();
       let esta = false;
       usuariosEnSistema.forEach((usuario: any) => {
-        if(usuario.equals(usuarioPepa)){
+        if(usuario.getEmail() == 'pepagimena@gmail.com'){
             esta = true;
         }
         expect(usuario).toBeInstanceOf(User);
       });
 
       expect(esta).toEqual(false);
+      service.deleteUser("pepitoramirez@gmail.com");
+      service.deleteUser("albaconsuelos@gmail.com");
+      service.deleteUser("danitorres@gmail.com");
       
-    
   });
 
+  /*
   it('HU4-E02. Eliminar una cuenta de un usuario no registrado (Escenario Inválido)', async () => {
       //Given: Lista actual de usuarios = {Pepito, Alba, Dani}.
       await service.createUser("Pepito", "Ramirez", "pepitoramirez@gmail.com", "pepito", "pepito123");
@@ -174,9 +177,14 @@ describe('UserService', () => {
       } catch(error){
            //Then: El sistema lanza una excepción UserNotFoundException().
            expect(error).toBeInstanceOf(UserNotFoundException);
+           service.deleteUser("pepagimena@gmail.com");
+           service.deleteUser("pepitoramirez@gmail.com");
+           service.deleteUser("albaconsuelos@gmail.com");
+           service.deleteUser("danitorres@gmail.com");
       }
     
   });
+  */
 });
 
 

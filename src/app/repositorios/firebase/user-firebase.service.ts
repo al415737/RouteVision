@@ -6,6 +6,7 @@ import { Place } from '../../modelos/place';
 import { Vehiculo } from '../../modelos/vehiculos/vehiculo';
 import { AuthService } from './auth.service';
 import { getAuth, UserCredential } from 'firebase/auth';
+import { UserNotFoundException } from '../../excepciones/user-not-found-exception';
 
 
 const PATH = 'user';
@@ -30,6 +31,9 @@ export class UserFirebaseService implements UserRepository{
 
   async deleteUser(email: string): Promise<void> {
     const id = await this._firestore.get('email', email, 'user');
+    if(id == ''){
+        throw new UserNotFoundException();
+    }
     await this._firestore.deleteUser(id, 'user');
   }
 

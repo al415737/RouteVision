@@ -24,10 +24,6 @@ export class UserService {
   }
 
   deleteUser(email: string) {
-    if(!this._auth.currentUser){
-        throw new UserNotFoundException();
-    }
-
     if (!email.trim())
       throw new ObligatoryFieldsException();
 
