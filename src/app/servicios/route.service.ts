@@ -80,8 +80,8 @@ export class RouteService {
     return this.routeRepository.createRoute(nombre, start, end, movilidad, preferencia, km, duracion);
   }
 
-  async deleteRoute(nombre: string): Promise<void> {
-    this.routeRepository.deleteRoute(nombre);
+  async deleteRoute(nombre: string): Promise<boolean> {
+    return this.routeRepository.deleteRoute(nombre);
   }
 
   async getRoutes(): Promise<Route[]> {
