@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { addDoc, collection, Firestore } from '@angular/fire/firestore';
-import { deleteDoc, doc, DocumentReference, getDocs, query, setDoc, where } from 'firebase/firestore';
+import { deleteDoc, doc, DocumentReference, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
 import { User } from '../../modelos/user';
 import { AuthService } from './auth.service';
 import { MailExistingException } from '../../excepciones/mail-existing-exception';
@@ -61,6 +61,21 @@ export class FirestoreService {
     
       const objetoPlano = { ...vehiculo};
       return addDoc(_collection, objetoPlano);
+  }
+
+  async actualizarVehiculo(vehiculo:Vehiculo, id:string){
+    const listaVehiculosRef = doc(
+      this._firestore, 
+      `vehiculo/${this._authState.currentUser?.uid}/listaVehiculos/${id}`
+    );
+  
+    const plainObject = { ...vehiculo };
+    try {
+      await updateDoc(listaVehiculosRef, plainObject);
+      console.log('Vehículo actualizado correctamente');
+    } catch (error) {
+      console.error('Error al actualizar vehículo:', error);
+    }
   }
 
   async eliminarVehiculo(path: string, id: string):Promise<void>{
