@@ -105,6 +105,22 @@ export class FirestoreService {
       }
      }); 
   }
+
+  async consultarUsuarios(path: string){
+      const _collection = collection(this._firestore, path);
+
+      const documentos = await getDocs(_collection);
+
+      return documentos.docs.map (doc => {
+        const data = doc.data();
+        return new User(
+          data['nombre'],
+          data['apellidos'],
+          data['email'],
+          data['user']
+        );
+      });
+  }
   
   async getAutoIdReference(collectionPath: string): Promise<DocumentReference> {
     // Crea una referencia con un ID único automáticamente

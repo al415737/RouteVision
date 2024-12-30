@@ -19,12 +19,16 @@ import { from } from 'rxjs';
 export default class ConsultarComponent {
     //Datos de ejemplo
     vehiculos = new MatTableDataSource<any>(); //Configuración inicial vacía
-     displayedColumns: string[] = ['matricula', 'marca', 'modelo', 'anyo_fabricacion', 'consumo', 'delete'];
-     currentPage = 0;
+    displayedColumns: string[] = ['matricula', 'marca', 'modelo', 'anyo_fabricacion', 'consumo', 'tipo', 'delete'];
+    currentPage = 0;
 
     constructor(private servicioVehiculo: VehiculoService){}
 
     ngOnInit(): void{
+        this.obtenerVehiculos();
+    }
+
+    obtenerVehiculos(): void{
       from(this.servicioVehiculo.consultarVehiculo()).subscribe({
         next: (data) => {
           this.vehiculos.data = data;   //Cargar los datos obtenidos en la tabla.
@@ -32,7 +36,11 @@ export default class ConsultarComponent {
       });
     }
 
-    eliminarVehiculo(id: number){
-        
+    eliminarVehiculo(matricula: string){
+      if(confirm('¿Estás seguro de que deseas eliminar este vehículo?')){
+          this.servicioVehiculo.eliminarVehiculo(matricula);
+          alert('Vehículo eliminado correctamente');
+          this.obtenerVehiculos();
+      }
     }
 }

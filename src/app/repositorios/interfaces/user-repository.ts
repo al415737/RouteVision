@@ -7,6 +7,7 @@ export const USER_REPOSITORY_TOKEN = new InjectionToken<UserRepository>('UserRep
 
 export interface UserRepository {
     createUser(nombre: string, apellidos: string, email: string, user: string, password: string): Promise<User>;
+    consultarUsuarios(): Promise<User[]>;
     deleteUser(email: string): Promise<void>;
     loginUser(email: string, password: string): Promise<[Vehiculo[], Place[]]>;
     logoutUser(): Promise<void>;

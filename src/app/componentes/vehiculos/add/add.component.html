@@ -26,7 +26,15 @@
       <input id="anyo_fabricacion" type="string" [(ngModel)]="anyo_fabricacion" placeholder="Introduce el año de fabricación" required />
       
       <label for="consumo">Consumo (L/100km):</label>
-      <input id="consumo" type="number" [(ngModel)]="consumo" placeholder="Introduce el consumo" required />
+      <input id="consumo" type="number" [(ngModel)]="consumo" placeholder="Introduce el consumo" required step="0.01" min="0"/>
+
+      <label for="tipo">Tipo de Combustible:</label>
+      <select id="tipo" [(ngModel)]="tipo" required>
+        <option value="Gasolina 95 E5">Gasolina 95 E5</option>
+        <option value="Gasolina 98 E5">Gasolina 98 E5</option>
+        <option value="Gasoleo A">Gasoleo A</option>
+        <option value="Gasoleo B">Gasoleo B</option>
+      </select>
 
       <button (click)="guardarVehiculo()" class="btn-success">Añadir Vehículo</button>
       <button class="btn-secondary back-button" routerLink="/vehiculos">Volver</button>
