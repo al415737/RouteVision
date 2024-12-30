@@ -33,7 +33,7 @@ export class PlaceFirebaseService implements PlaceRepository{
     const idPlace = docRef.id;
 
 
-    const placeRegisterC: Place = new Place(idPlace, lugar, coordenadas);
+    const placeRegisterC: Place = new Place(idPlace, lugar, coordenadas, false);
 
     await this.firestore.createPlaceC(placeRegisterC, PATHPLACE);
     return placeRegisterC;
@@ -73,7 +73,7 @@ export class PlaceFirebaseService implements PlaceRepository{
         const idPlace = docRef.id;
 
 
-        const placeRegisterT: Place = new Place(idPlace, toponimo, this.coordenadas);
+        const placeRegisterT: Place = new Place(idPlace, toponimo, this.coordenadas, false);
 
         await this.firestore.createPlaceT(placeRegisterT, PATHPLACE);
         return placeRegisterT;

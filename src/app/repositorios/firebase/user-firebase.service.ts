@@ -22,8 +22,8 @@ export class UserFirebaseService implements UserRepository{
       return await this._firestore.consultarUsuarios(PATH);
   }
 
-  async createUser(nombre: string, apellidos: string, email: string, user: string, password: string): Promise<User>{
-    const userRegister: User = new User(nombre, apellidos, email, user);
+  async createUser(nombre: string, apellidos: string, email: string, user: string, password: string, preferncia1: string, preferncia2: string): Promise<User>{
+    const userRegister: User = new User(nombre, apellidos, email, user, preferncia1, preferncia2);
     
     await this._firestore.createUser(userRegister, password);
     return userRegister;

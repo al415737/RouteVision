@@ -115,7 +115,7 @@ import { CocheGasolina } from '../../modelos/vehiculos/cocheGasolina';
   it('H11-E02. Eliminar vehículo utilizando una matrícula no registrada en la lista de vehículos (Escenario Inválido): ', async () => {
     await servicioUser.loginUser("test@test.com", "test123"); 
     const vehiculo = await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasolina 95 E5");
-    const vehiculoNoExiste = new CocheGasolina("3423 WCX", "Fiat", "Punto", "2016", 8.1, "Precio Gasolina 95 E5");
+    const vehiculoNoExiste = new CocheGasolina("3423 WCX", "Fiat", "Punto", "2016", 8.1, "Precio Gasolina 95 E5", false);
     //habrá que añadir atributos cuando se tenga el factory
 
     await expectAsync(serviceV.eliminarVehiculo(vehiculoNoExiste.getMatricula()))

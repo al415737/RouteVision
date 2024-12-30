@@ -8,8 +8,9 @@ export class Route {
     private movilidad: string;
     private kilometros: number;
     private duration: number;
+    private favorito: boolean;
 
-    constructor (nombre: string, origen: string, destino: string, option: string, movilidad: string, kilometros: number, duration: number) {
+    constructor (nombre: string, origen: string, destino: string, option: string, movilidad: string, kilometros: number, duration: number, fav: boolean) {
         this.nombre = nombre;
         this.origen = origen;
         this.destino = destino;
@@ -17,6 +18,7 @@ export class Route {
         this.movilidad = movilidad;
         this.kilometros = kilometros;
         this.duration = duration;
+        this.favorito = fav;
     }
 
     getNombre() {

@@ -35,7 +35,7 @@ describe('UserIntegrationService', () => {
   
   
   it('HU1E01. User registration in the system (Valid Scenario)', async () => {
-    const mockUser: User = new User("Manuel", "García", "manu033@gmail.com", "Manu-33");
+    const mockUser: User = new User("Manuel", "García", "manu033@gmail.com", "Manu-33",'','');
     spyOn(userRepo, 'createUser').and.resolveTo(mockUser);
 
     // GIVEN: El usuario Manu-33 no está registrado en el sistema y se tiene conexión con la base de datos → ListaUsuarios = [ ].
@@ -43,13 +43,13 @@ describe('UserIntegrationService', () => {
     // THEN: El sistema registra a Manuel  y se almacena en la base de datos → ListaUsuarios=[{Nombre=”Manuel”, Apellido=”García”, User=”Manu33”, Email=”manu33@gmail.com”, Contraseña=”Manu-33”}]. 
     
     const result = await service.createUser("Manuel", "García", "manu033@gmail.com", "Manu-33", "Manu-33");
-    expect(userRepo.createUser).toHaveBeenCalledWith("Manuel", "García", "manu033@gmail.com", "Manu-33", "Manu-33");
+    expect(userRepo.createUser).toHaveBeenCalledWith("Manuel", "García", "manu033@gmail.com", "Manu-33", "Manu-33",'','');
     expect(result).toEqual(mockUser);
   });
 
   
   it('HU1E05. User registration with email already registered in the system with another account (Invalid Scenario)', async () => {
-    const mockUser: User = new User("Manuel", "García", "manu034@gmail.com", "Manu-34");
+    const mockUser: User = new User("Manuel", "García", "manu034@gmail.com", "Manu-34",'','');
     spyOn(userRepo, 'createUser').and.resolveTo(mockUser);
     
     // GIVEN: El usuario JorgeGarcía no está registrado en el sistema y se tiene conexión con la base de datos. ListaUsuarios=[{Nombre=”Manuel”, Apellido=”García”, User=”Manu33”, Email=”manu33@gmail.com”, Contraseña=”Manu-33”}].
@@ -58,7 +58,7 @@ describe('UserIntegrationService', () => {
     
     try {
       service.createUser("Jorge", "García", "manu034@gmail.com", "JorgeGarcía", "JorgeGarcía-02");
-      expect(userRepo.createUser).toHaveBeenCalledWith("Jorge", "García", "manu034@gmail.com", "JorgeGarcía", "JorgeGarcía-02");
+      expect(userRepo.createUser).toHaveBeenCalledWith("Jorge", "García", "manu034@gmail.com", "JorgeGarcía", "JorgeGarcía-02",'','');
     } catch (error) {
       expect(error).toBeInstanceOf(MailExistingException);
     }
@@ -70,7 +70,7 @@ describe('UserIntegrationService', () => {
     // WHEN: El usuario Pepito quiere iniciar sesión con sus datos.  user: “pepito23”, contraseña:  “Pepito123?_ “.
     //  THEN: El sistema carga los datos de Pepito. ListaVehículos=[{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}] y listaLugaresInterés=[{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049], idLugar = “000”}].
     
-    const result: [Vehiculo[], Place[]] = [[new CocheGasolina("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasolina 95 E5")], [new Place("001", "Castellón de la Plana", [39.98, -0.049])]];
+    const result: [Vehiculo[], Place[]] = [[new CocheGasolina("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasolina 95 E5", true)], [new Place("001", "Castellón de la Plana", [39.98, -0.049], true)]];
     spyOn(userRepo, 'loginUser').and.resolveTo(result);
 
     const resultService = await service.loginUser("test@test.com", "test123");
@@ -84,7 +84,7 @@ describe('UserIntegrationService', () => {
     // WHEN: El usuario Pepito introduce como contraseña: “pepito123_”
     // THEN: El sistema no inicia la sesión de Pepito porque la contraseña introducida no coincide con la que se encuentra en la base de datos para ese usuario. Lanza la excepción WrongPasswordException().
     
-    const result: [Vehiculo[], Place[]] = [[new CocheGasolina("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasolina 95 E5")], [new Place("001", "Castellón de la Plana", [39.98, -0.049])]];
+    const result: [Vehiculo[], Place[]] = [[new CocheGasolina("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasolina 95 E5", true)], [new Place("001", "Castellón de la Plana", [39.98, -0.049], true)]];
     spyOn(userRepo, 'loginUser').and.resolveTo(result);
 
     try {
@@ -119,9 +119,9 @@ describe('UserIntegrationService', () => {
   it('HU4-E01. Eliminar una cuenta de un usuario registrado (Escenario Válido)', async () => {
     //Given: Lista actual de usuarios = {Pepa, Pepito, Alba, Dani}.
     const mockData: User[] = [
-                new User("Pepito", "Ramirez", "pepitoramirez@gmail.com", "pepito"),
-                new User("Alba", "Consuelos", "albaconsuelos@gmail.com", "alba"),
-                new User("Dani", "Torres", "danitorres@gmail.com", "dani"),
+                new User("Pepito", "Ramirez", "pepitoramirez@gmail.com", "pepito",'',''),
+                new User("Alba", "Consuelos", "albaconsuelos@gmail.com", "alba",'',''),
+                new User("Dani", "Torres", "danitorres@gmail.com", "dani",'',''),
     ];
 
     spyOn(userRepo, 'deleteUser').and.resolveTo();
@@ -140,9 +140,9 @@ describe('UserIntegrationService', () => {
   it('HU4-E02. Eliminar una cuenta de un usuario no registrado (Escenario Inválido)', async () => {
       //Given: Lista actual de usuarios = {Pepito, Alba, Dani}.
       const mockData: User[] = [
-                new User("Pepito", "Ramirez", "pepitoramirez@gmail.com", "pepito"),
-                new User("Alba", "Consuelos", "albaconsuelos@gmail.com", "alba"),
-                new User("Dani", "Torres", "danitorres@gmail.com", "dani"),
+                new User("Pepito", "Ramirez", "pepitoramirez@gmail.com", "pepito",'',''),
+                new User("Alba", "Consuelos", "albaconsuelos@gmail.com", "alba",'',''),
+                new User("Dani", "Torres", "danitorres@gmail.com", "dani",'',''),
       ];
 
       spyOn(userRepo, 'deleteUser').and.resolveTo();

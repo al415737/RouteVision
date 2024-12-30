@@ -82,7 +82,8 @@ export class FirestoreService {
             data['modelo'],
             data['año_fabricacion'],
             data['consumo'],
-            data['tipo']
+            data['tipo'],
+            data['favorito']
           );
       } else if(data['tipo'] == 'Precio Gasoleo A' || data['tipo'] == 'Precio Gasoleo B'){
         return new CocheDiesel(
@@ -91,7 +92,8 @@ export class FirestoreService {
           data['modelo'],
           data['año_fabricacion'],
           data['consumo'],
-          data['tipo']
+          data['tipo'],
+          data['favorito']
         );
       } else {
         return new CocheElectrico(
@@ -100,7 +102,8 @@ export class FirestoreService {
           data['modelo'],
           data['año_fabricacion'],
           data['consumo'],
-          data['tipo']
+          data['tipo'],
+          data['favorito']
         );
       }
      }); 
@@ -117,7 +120,9 @@ export class FirestoreService {
           data['nombre'],
           data['apellidos'],
           data['email'],
-          data['user']
+          data['user'],
+          data['preferencia1'],
+          data['preferencia2']
         );
       });
   }
@@ -176,6 +181,7 @@ export class FirestoreService {
           data['idPlace'], 
           data['toponimo'],
           data['coordenadas'],
+          data['favorito'],
         );
       }); 
     } catch (error) {
@@ -256,7 +262,8 @@ export class FirestoreService {
           data['option'],
           data['movilidad'],
           data['kilometros'],
-          data['duration']
+          data['duration'],
+          data['favorito']
         );
       });
     } catch (error) {

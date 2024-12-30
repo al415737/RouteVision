@@ -49,7 +49,7 @@ describe('VehiculoIntegrationService', () => {
 
     it('HU9E01. Vehículo registrado en el sistema (Escenario Válido)', async () => {
         //GIVEN: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] con listaVehículos-Ana2002 = [ ].
-        const mockData = new CocheDiesel("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasoleo A");
+        const mockData = new CocheDiesel("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasoleo A", false);
         spyOn(vehiRepo, 'crearVehiculo').and.resolveTo(mockData);
 
         spyOn(vehiRepo, 'eliminarVehiculo').and.resolveTo();
@@ -66,7 +66,7 @@ describe('VehiculoIntegrationService', () => {
     });
 
     it('HU9E05. Registro de vehículo sin matricula (Escenario Inválido)', async () => {
-        const mockData = new CocheDiesel("", "Peugeot", "407", "2007", 8.1, "Precio Gasoleo A");
+        const mockData = new CocheDiesel("", "Peugeot", "407", "2007", 8.1, "Precio Gasoleo A", false);
         spyOn(vehiRepo, 'crearVehiculo').and.resolveTo(mockData);
         
         spyOn(vehiRepo, 'eliminarVehiculo').and.resolveTo();
@@ -86,7 +86,7 @@ describe('VehiculoIntegrationService', () => {
     it('HU10E01. Consulta de vehículos dados de alta (Escenario Válido)', async () => {
         //Given: El usuario Ana con la sesión iniciada y la listaVehículos = [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1}].
         const mockData: Vehiculo[] = [
-            new CocheDiesel("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasoleo A"),
+            new CocheDiesel("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasoleo A", false),
         ];
         spyOn(vehiRepo, 'consultarVehiculo').and.resolveTo(Promise.resolve(mockData));
 
@@ -118,7 +118,7 @@ describe('VehiculoIntegrationService', () => {
     it('PRUEBA INTEGRACIÓN --> H11-E01. Eliminar vehículo existente del sistema (Escenario Válido): ', async () => {
         spyOn(vehiRepo, 'eliminarVehiculo').and.resolveTo();
 
-        const vehiculo = new CocheGasolina("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasolina 95 E5");
+        const vehiculo = new CocheGasolina("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasolina 95 E5", false);
 
         const result = await vehiculoService.eliminarVehiculo(vehiculo.getMatricula());
         expect(vehiRepo.eliminarVehiculo).toHaveBeenCalledWith(vehiculo.getMatricula());
@@ -128,7 +128,7 @@ describe('VehiculoIntegrationService', () => {
     it('PRUEBA INTEGRACIÓN --> H11-E02. Eliminar vehículo utilizando una matrícula no registrada en la lista de vehículos (Escenario Inválido):  ', async () => {
         spyOn(vehiRepo, 'eliminarVehiculo').and.resolveTo();
 
-        const vehiculoNoExiste = new CocheGasolina("3423 WCX", "Fiat", "Punto", "2016", 8.1, "Precio Gasolina 95 E5");
+        const vehiculoNoExiste = new CocheGasolina("3423 WCX", "Fiat", "Punto", "2016", 8.1, "Precio Gasolina 95 E5", false);
 
         try{
             vehiculoService.eliminarVehiculo(vehiculoNoExiste.getMatricula());

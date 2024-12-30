@@ -23,11 +23,11 @@ export class VehiculoService {
     let vehiculo: Vehiculo;
 
     if(tipo == 'Precio Gasolina 95 E5' || tipo == 'Precio Gasolina 98 E5'){
-        vehiculo = new CocheGasolina(matricula, marca, modelo, año_fabricacion, consumo, tipo);
+        vehiculo = new CocheGasolina(matricula, marca, modelo, año_fabricacion, consumo, tipo, false);
     } else if(tipo == 'Precio Gasoleo A' || tipo == 'Precio Gasoleo B'){
-        vehiculo = new CocheDiesel(matricula, marca, modelo, año_fabricacion, consumo, tipo);
+        vehiculo = new CocheDiesel(matricula, marca, modelo, año_fabricacion, consumo, tipo, false);
     } else {
-        vehiculo = new CocheElectrico(matricula, marca, modelo, año_fabricacion, consumo, tipo);
+        vehiculo = new CocheElectrico(matricula, marca, modelo, año_fabricacion, consumo, tipo, false);
     }
 
     return this.vehiRepo.crearVehiculo(vehiculo);

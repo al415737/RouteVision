@@ -77,7 +77,7 @@ export class RouteService {
     if (!nombre.trim() && !movilidad.trim() && !preferencia.trim() && km > 0 && duracion > 0)
       throw new ObligatoryFieldsException();
 
-    return this.routeRepository.createRoute(nombre, start, end, movilidad, preferencia, km, duracion);
+    return this.routeRepository.createRoute(nombre, start, end, movilidad, preferencia, km, duracion, false);
   }
 
   async deleteRoute(nombre: string): Promise<boolean> {
