@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { HeaderComponent } from "./header/header.component";
-import { PrecioLuzService } from '../../APIs/PrecioLuz/precio-luz.service';
+import { PrecioLuzService } from '../../APIs/PrecioLuz/precioLuz.service';
 
 @Component({
   selector: 'app-home',

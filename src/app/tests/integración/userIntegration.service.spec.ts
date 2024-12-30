@@ -8,7 +8,7 @@ import { firebaseConfig } from '../../app.config';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { UserFirebaseService } from '../../repositorios/firebase/user-firebase.service';
-import { Vehiculo } from '../../modelos/vehiculo';
+import { Vehiculo } from '../../modelos/vehiculos/vehiculo';
 import { Place } from '../../modelos/place';
 import { WrongPasswordException } from '../../excepciones/wrong-password-exception';
 import { UserNotFoundException } from '../../excepciones/user-not-found-exception';
@@ -95,8 +95,6 @@ describe('UserIntegrationService', () => {
     }
   });
   
-
-  
   //HISTORIA 3
   it('PRUEBA INTEGRACIÓN --> HU3-E01. Cierre de sesión de una cuenta de un usuario registrado (Escenario Válido): ', async () => {
     spyOn(userRepo, 'logoutUser').and.resolveTo();
@@ -116,5 +114,48 @@ describe('UserIntegrationService', () => {
      expect(error).toBeInstanceOf(UserNotFoundException);
     }
   });
+  */
 
+  it('HU4-E01. Eliminar una cuenta de un usuario registrado (Escenario Válido)', async () => {
+    //Given: Lista actual de usuarios = {Pepa, Pepito, Alba, Dani}.
+    const mockData: User[] = [
+                new User("Pepito", "Ramirez", "pepitoramirez@gmail.com", "pepito"),
+                new User("Alba", "Consuelos", "albaconsuelos@gmail.com", "alba"),
+                new User("Dani", "Torres", "danitorres@gmail.com", "dani"),
+    ];
+
+    spyOn(userRepo, 'deleteUser').and.resolveTo();
+    spyOn(userRepo, 'consultarUsuarios').and.resolveTo(mockData);
+
+    //When: El usuario Pepa quiere eliminar su cuenta del sistema.
+    await service.deleteUser('pepagimena@gmail.com');
+
+    //Then: Lista actual de usuarios {Pepito, Alba, Dani}
+    const usuarios = await service.consultarUsuarios();
+    expect(usuarios).toEqual(mockData);
+  
+  });
+
+  
+  it('HU4-E02. Eliminar una cuenta de un usuario no registrado (Escenario Inválido)', async () => {
+      //Given: Lista actual de usuarios = {Pepito, Alba, Dani}.
+      const mockData: User[] = [
+                new User("Pepito", "Ramirez", "pepitoramirez@gmail.com", "pepito"),
+                new User("Alba", "Consuelos", "albaconsuelos@gmail.com", "alba"),
+                new User("Dani", "Torres", "danitorres@gmail.com", "dani"),
+      ];
+
+      spyOn(userRepo, 'deleteUser').and.resolveTo();
+      spyOn(userRepo, 'logoutUser').and.resolveTo();
+
+      //When: El usuario Random quiere eliminar su cuenta del sistema.
+      await service.deleteUser('pepagimena@gmail.com');
+
+      //Then: El sistema lanza una excepción UserNotFoundException().
+      try {
+        await service.logoutUser();
+      } catch (error) {
+        expect(error).toBeInstanceOf(UserNotFoundException);
+      }
+  });
 });
