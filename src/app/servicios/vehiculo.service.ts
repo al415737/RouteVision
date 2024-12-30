@@ -33,6 +33,12 @@ export class VehiculoService {
     return this.vehiRepo.crearVehiculo(vehiculo);
   }
 
+  actualizarVehiculo(matricula: string, marca: string, modelo: string, año_fabricacion: string, consumo: number, tipo: string){
+    
+
+    return 
+  }
+
   consultarVehiculo(){
     return this.vehiRepo.consultarVehiculo();
   }
