@@ -218,7 +218,6 @@ describe('RouteIntegrationService', () => {
     try {
       await routeRepo.getRoutes();
       expect(routeRepo.getRoutes).toHaveBeenCalledWith();
-      throw new ServerNotOperativeException();
     } catch (error) {
         expect(error).toBeInstanceOf(ServerNotOperativeException);
     }   
@@ -243,7 +242,6 @@ describe('RouteIntegrationService', () => {
     try {
       await routeRepo.deleteRoute('ruta1');
       expect(routeRepo.deleteRoute).toHaveBeenCalledWith('ruta1');
-      throw new ServerNotOperativeException();
     } catch (error) {
         expect(error).toBeInstanceOf(ServerNotOperativeException);
     }   

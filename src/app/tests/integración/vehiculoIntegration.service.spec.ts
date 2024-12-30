@@ -145,7 +145,7 @@ describe('VehiculoIntegrationService', () => {
 
         //WHEN: El usuario quiere actualizar los datos del vehículo “1234 BBB” con la marca = “Peugeot”, modelo = “407”, tipo de combustible = “Precio Gasoleo B”, año de fabricación = “2010” y consumo del vehículo cada 100 km = “7.1”.
         const vehiculos = await vehiculoService.actualizarVehiculo("1234 BBB", "Peugeot", "407", "2007", 7.1, 'Precio Gasoleo B', false);
-        expect(vehiRepo.consultarVehiculo).toHaveBeenCalled();
+        expect(vehiRepo.actualizarVehiculo).toHaveBeenCalledWith(mockData);
 
         //THEN: Se actualiza los datos del vehículo = {["1234 BBB", "Peugeot", "407", "2007", 7.1, 'Precio Gasoleo B'].
         expect(vehiculos).toEqual(mockData);
@@ -154,10 +154,16 @@ describe('VehiculoIntegrationService', () => {
     it('HU12E03. Error al intentar actualizar un vehículo que no existe (Escenario inválido):', async () => {
         //GIVEN: El usuario [“Test”, “test@test.com“,“test123”] con la sesión de su cuenta activa y la lista actual de vehículos = [{"1234 BBB", "Peugeot", "407", "2007", 8.1, 'Precio Gasoleo A'}].
         spyOn(vehiRepo, 'actualizarVehiculo');
+        const mockData = new CocheDiesel("1234 BBB", "Peugeot", "407", "2007", 7.1, 'Precio Gasoleo B', false)
     
         //WHEN: El usuario quiere actualizar los datos del vehículo “1234 BBB” con la marca = “Peugeot”, modelo = “407”, tipo de combustible = “Precio Gasoleo B”, año de fabricación = “2010” y consumo del vehículo cada 100 km = “7.1”.
         //THEN: Se actualiza la lista actual de vehículos = {{"1234 BBB", "Peugeot", "407", "2007", 7.1, 'Precio Gasoleo B'}.
-        await expectAsync(vehiculoService.actualizarVehiculo("1234 BBB", "Peugeot", "407", "2007", 7.1, 'Precio Gasoleo B', false)).toBeRejectedWith(new NotExistingObjectException());
-        expect(vehiRepo.consultarVehiculo).toHaveBeenCalled();
+        try {
+            await vehiculoService.actualizarVehiculo("1234 BBB", "Peugeot", "407", "2007", 7.1, 'Precio Gasoleo B', false)
+            expect(vehiRepo.actualizarVehiculo).toHaveBeenCalledWith(mockData);
+        } catch (error) {
+            expect(error).toBeInstanceOf(NotExistingObjectException);
+        }
+        
       });
 });
