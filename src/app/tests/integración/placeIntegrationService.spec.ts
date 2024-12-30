@@ -15,6 +15,7 @@ import { InvalidPlaceException } from '../../excepciones/invalid-place-exception
 import { ServerNotOperativeException } from '../../excepciones/server-not-operative-exception';
 import { OpenRouteService } from '../../APIs/Geocoding/openRoute.service';
 import { AuthStateService } from '../../utils/auth-state.service';
+import { NotExistingObjectException } from '../../excepciones/notExistingObjectException';
 
 describe('PlaceIntegrationService', () => {
 
@@ -114,5 +115,23 @@ describe('PlaceIntegrationService', () => {
       expect(error).toBeInstanceOf(ServerNotOperativeException);
     }
     expect(authStateService.currentUser).toBeNull();
+  });
+
+  it('HU8E01. Eliminación de un lugar de interés de la lista de lugares de interés del usuario (Escenario Válido):', async() => {
+    const mockPlace: Place = new Place('001', "Castellón de la Plana", [39.98, -0.049]);
+    spyOn(placeRepositorio, 'deletePlace').and.resolveTo(true);
+    const result = await servicePlace.deletePlace(mockPlace.idPlace);
+    expect(placeRepositorio.deletePlace).toHaveBeenCalledWith(mockPlace.idPlace);
+    expect(result).toEqual(true);
+  });
+  
+  it('HU8E02. Eliminación de un lugar de interés que no está en la lista de lugares de interés del usuario (Escenario Inválido):', async() => {
+    spyOn(placeRepositorio, 'deletePlace').and.resolveTo(true);
+    try {
+      const result = await servicePlace.deletePlace('025');
+      expect(placeRepositorio.deletePlace).toHaveBeenCalledWith('025');
+    } catch (error) {
+      throw new NotExistingObjectException(); 
+    }
   });
 })

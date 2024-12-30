@@ -17,6 +17,7 @@ import { InvalidCoordenatesException } from '../../excepciones/invalid-coordenat
 import { Place } from '../../modelos/place';
 import { ServerNotOperativeException } from '../../excepciones/server-not-operative-exception';
 import { MapComponent } from '../../componentes/map/map.component';
+import { NotExistingObjectException } from '../../excepciones/notExistingObjectException';
 
 
 describe('PlaceService', () => {
@@ -149,4 +150,18 @@ describe('PlaceService', () => {
       servicePlace.deletePlace(lugar2.idPlace);
       await serviceUser.logoutUser();
   });
+
+  it('HU8E01. Eliminación de un lugar de interés de la lista de lugares de interés del usuario (Escenario Válido):', async() => {
+    await serviceUser.loginUser("test@test.com","test123");
+    const lugar = await servicePlace.createPlaceC([39.98, -0.049]);
+    const result = await servicePlace.deletePlace(lugar.idPlace);
+    expect(result).toEqual(true);
+    await serviceUser.logoutUser();
+   });
+
+   it('HU8E02. Eliminación de un lugar de interés que no está en la lista de lugares de interés del usuario (Escenario Inválido):', async() => {
+    await serviceUser.loginUser("test@test.com","test123");
+    await expectAsync(servicePlace.deletePlace('025')).toBeRejectedWith(new NotExistingObjectException());
+    await serviceUser.logoutUser();
+   });
 });
