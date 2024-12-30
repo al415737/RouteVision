@@ -17,6 +17,7 @@ import { UserFirebaseService } from '../../repositorios/firebase/user-firebase.s
 import { VehicleNotFoundException } from '../../excepciones/vehicle-not-Found-Exception';
 import { CocheGasolina } from '../../modelos/vehiculos/cocheGasolina';
 import { NotExistingObjectException } from '../../excepciones/notExistingObjectException';
+import { CocheDiesel } from '../../modelos/vehiculos/cocheDiesel';
 
   describe('VehiculoService', () => {
   let serviceV: VehiculoService;
@@ -134,12 +135,14 @@ import { NotExistingObjectException } from '../../excepciones/notExistingObjectE
     //GIVEN: El usuario [“Test”, “test@test.com“,“test123”] con la sesión de su cuenta activa y la lista actual de vehículos = [{"1234 BBB", "Peugeot", "407", "2007", 8.1, 'Precio Gasoleo A'}].
     await servicioUser.loginUser("test@test.com", "test123");
     await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, 'Precio Gasoleo A');
+    const comparacion = new CocheDiesel("1234 BBB", "Peugeot", "407", "2007", 7.1, 'Precio Gasoleo B', false);
 
     //WHEN: El usuario quiere actualizar los datos del vehículo “1234 BBB” con la marca = “Peugeot”, modelo = “407”, tipo de combustible = “Precio Gasoleo B”, año de fabricación = “2010” y consumo del vehículo cada 100 km = “7.1”.
     const resul = await serviceV.actualizarVehiculo("1234 BBB", "Peugeot", "407", "2007", 7.1, 'Precio Gasoleo B', false);
 
     //THEN: Se actualiza los datos del vehículo = {["1234 BBB", "Peugeot", "407", "2007", 7.1, 'Precio Gasoleo B'].
     expect(resul).toBeInstanceOf(Vehiculo);
+    expect(resul).toEqual(comparacion);
     await serviceV.eliminarVehiculo("1234 BBB"); 
     await servicioUser.logoutUser();
   });
