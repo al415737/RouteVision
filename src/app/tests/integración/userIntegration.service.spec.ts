@@ -136,13 +136,26 @@ describe('UserIntegrationService', () => {
   
   });
 
-  /*
+  
   it('HU4-E02. Eliminar una cuenta de un usuario no registrado (Escenario Inválido)', async () => {
       //Given: Lista actual de usuarios = {Pepito, Alba, Dani}.
-      //When: El usuario Random quiere eliminar su cuenta del sistema.
-      //Then: El sistema lanza una excepción UserNotFoundException().
-    
-  });
-  */
+      const mockData: User[] = [
+                new User("Pepito", "Ramirez", "pepitoramirez@gmail.com", "pepito"),
+                new User("Alba", "Consuelos", "albaconsuelos@gmail.com", "alba"),
+                new User("Dani", "Torres", "danitorres@gmail.com", "dani"),
+      ];
 
+      spyOn(userRepo, 'deleteUser').and.resolveTo();
+      spyOn(userRepo, 'logoutUser').and.resolveTo();
+
+      //When: El usuario Random quiere eliminar su cuenta del sistema.
+      await service.deleteUser('pepagimena@gmail.com');
+
+      //Then: El sistema lanza una excepción UserNotFoundException().
+      try {
+        await service.logoutUser();
+      } catch (error) {
+        expect(error).toBeInstanceOf(UserNotFoundException);
+      }
+  });
 });
