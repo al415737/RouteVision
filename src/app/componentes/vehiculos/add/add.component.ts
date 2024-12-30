@@ -3,6 +3,7 @@ import { HeaderComponent } from '../../home/header/header.component';
 import { FormsModule } from '@angular/forms';
 import { VehiculoService } from '../../../servicios/vehiculo.service';
 import { Vehiculo } from '../../../modelos/vehiculos/vehiculo';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-add',
@@ -13,15 +14,22 @@ import { Vehiculo } from '../../../modelos/vehiculos/vehiculo';
 })
 export default class AddComponent {
 
+  constructor(private router: Router){}
+
   private servicioVehiculo = inject(VehiculoService);
   matricula: string = '';
   marca: string = '';
   modelo: string = '';
   anyo_fabricacion: string = '';
-  consumo: number = 0;
+  consumo: number = 0.0;
   tipo: string = '';
 
   guardarVehiculo(){
+    if(this.consumo <= 0){
+        alert('El consumo debe ser mayor que 0');
+        return;
+    }
+
     this.servicioVehiculo.crearVehiculo(
       this.matricula, 
       this.marca, this.modelo, 
@@ -29,5 +37,7 @@ export default class AddComponent {
       this.consumo,
       this.tipo
     );
+
+    this.router.navigateByUrl('/vehiculos/');
   }
 }
