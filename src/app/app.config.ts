@@ -36,8 +36,7 @@ export const appConfig: ApplicationConfig = {
      },
      {
       provide: VEHICULO_REPOSITORY_TOKEN, useClass: VehiculoFirebaseService
-     }, 
-    { provide: PLACE_REPOSITORY_TOKEN, useClass: PlaceFirebaseService },
+     },
     { provide: ROUTE_REPOSITORY_TOKEN, useClass: RouteFirebaseService },
     { provide: PLACE_REPOSITORY_TOKEN, useClass: PlaceFirebaseService }, provideAnimationsAsync(), provideAnimationsAsync()
   ]

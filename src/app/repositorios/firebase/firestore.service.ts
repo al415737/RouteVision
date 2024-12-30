@@ -10,6 +10,9 @@ import { Place } from '../../modelos/place';
 import { AuthStateService } from '../../utils/auth-state.service';
 import { ServerNotOperativeException } from '../../excepciones/server-not-operative-exception';
 import { Route } from '../../modelos/route';
+import { CocheGasolina } from '../../modelos/vehiculos/cocheGasolina';
+import { CocheDiesel } from '../../modelos/vehiculos/cocheDiesel';
+import { CocheElectrico } from '../../modelos/vehiculos/cocheElectrico';
 
 @Injectable({
   providedIn: 'root'
@@ -72,14 +75,34 @@ export class FirestoreService {
 
     return documentos.docs.map(doc => { 
       const data = doc.data();
-      return new Vehiculo(
-        data['matricula'], 
-        data['marca'],
-        data['modelo'],
-        data['año_fabricacion'],
-        data['consumo'],
-        data['tipo']
-      );
+      if(data['tipo'] == 'Precio Gasolina 95 E5' || data['tipo'] == 'Precio Gasolina 98 E5'){
+          return new CocheGasolina(
+            data['matricula'],
+            data['marca'],
+            data['modelo'],
+            data['año_fabricacion'],
+            data['consumo'],
+            data['tipo']
+          );
+      } else if(data['tipo'] == 'Precio Gasoleo A' || data['tipo'] == 'Precio Gasoleo B'){
+        return new CocheDiesel(
+          data['matricula'],
+          data['marca'],
+          data['modelo'],
+          data['año_fabricacion'],
+          data['consumo'],
+          data['tipo']
+        );
+      } else {
+        return new CocheElectrico(
+          data['matricula'],
+          data['marca'],
+          data['modelo'],
+          data['año_fabricacion'],
+          data['consumo'],
+          data['tipo']
+        );
+      }
      }); 
   }
 

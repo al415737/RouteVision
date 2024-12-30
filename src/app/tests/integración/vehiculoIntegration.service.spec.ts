@@ -11,6 +11,8 @@ import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { firebaseConfig } from '../../app.config';
+import { CocheGasolina } from '../../modelos/vehiculos/cocheGasolina';
+import { CocheDiesel } from '../../modelos/vehiculos/cocheDiesel';
 
 describe('VehiculoIntegrationService', () => {
     let service: UserService;
@@ -46,16 +48,16 @@ describe('VehiculoIntegrationService', () => {
 
     it('HU9E01. Vehículo registrado en el sistema (Escenario Válido)', async () => {
         //GIVEN: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] con listaVehículos-Ana2002 = [ ].
-        const mockData: Vehiculo = new Vehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1);
+        const mockData = new CocheDiesel("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasoleo A");
         spyOn(vehiRepo, 'crearVehiculo').and.resolveTo(mockData);
 
         spyOn(vehiRepo, 'eliminarVehiculo').and.resolveTo();
 
         //WHEN: El usuario intenta dar de alta un vehículo → [Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1].
-        const vehiculo = await vehiculoService.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1);
+        const vehiculo = await vehiculoService.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasoleo A");
         
         //THEN: El sistema registra el vehículo en la parte de la base de datos dirigida a Ana2002 →  listaVehículos-Ana2002= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1}].
-        expect(vehiRepo.crearVehiculo).toHaveBeenCalledWith("1234 BBB", "Peugeot", "407", "2007", 8.1);
+        expect(vehiRepo.crearVehiculo).toHaveBeenCalledWith(mockData);
         expect(vehiculo).toEqual(mockData); 
 
         const resul = vehiculoService.eliminarVehiculo("1234 BBB");
@@ -63,7 +65,7 @@ describe('VehiculoIntegrationService', () => {
     });
 
     it('HU9E05. Registro de vehículo sin matricula (Escenario Inválido)', async () => {
-        const mockData: Vehiculo = new Vehiculo("", "Peugeot", "407", "2007", 8.1);
+        const mockData = new CocheDiesel("", "Peugeot", "407", "2007", 8.1, "Precio Gasoleo A");
         spyOn(vehiRepo, 'crearVehiculo').and.resolveTo(mockData);
         
         spyOn(vehiRepo, 'eliminarVehiculo').and.resolveTo();
@@ -72,8 +74,8 @@ describe('VehiculoIntegrationService', () => {
 
         try{
             //When: El usuario intenta dar de alta un vehículo → [Matrícula=” ”, Marca=”Seat”, Modelo=”Ibiza”, Año Fabricación=”2003”, Consumo=4.3].
-            vehiculoService.crearVehiculo("", "Peugeot", "407", "2007", 8.1)
-            expect(vehiRepo.crearVehiculo).toHaveBeenCalledWith("", "Peugeot", "407", "2007", 8.1);
+            vehiculoService.crearVehiculo("", "Peugeot", "407", "2007", 8.1,"Precio Gasoleo A")
+            expect(vehiRepo.crearVehiculo).toHaveBeenCalledWith(mockData);
             //Then: El sistema no registra el vehículo y lanza una excepción NullLicenseException() →  listaVehículos-Ana2002= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1}].
         }catch(error){
             expect(error).toBeInstanceOf(NullLicenseException);
@@ -83,7 +85,7 @@ describe('VehiculoIntegrationService', () => {
     it('HU10E01. Consulta de vehículos dados de alta (Escenario Válido)', async () => {
         //Given: El usuario Ana con la sesión iniciada y la listaVehículos = [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1}].
         const mockData: Vehiculo[] = [
-            new Vehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1),
+            new CocheDiesel("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasoleo A"),
         ];
         spyOn(vehiRepo, 'consultarVehiculo').and.resolveTo(Promise.resolve(mockData));
 
