@@ -135,7 +135,7 @@ describe('UserService', () => {
     }
   });
   */
-
+ 
   it('HU4-E01. Eliminar una cuenta de un usuario registrado (Escenario Válido)', async () => {
     //Given: Lista actual de usuarios = {Pepa, Pepito, Alba, Dani}.
     await service.createUser("Pepito", "Ramirez", "pepitoramirez@gmail.com", "pepito", "pepito123");
@@ -159,7 +159,6 @@ describe('UserService', () => {
     await service.deleteUser('danitorres@gmail.com');
 });
 
-  /*
   it('HU4-E02. Eliminar una cuenta de un usuario no registrado (Escenario Inválido)', async () => {
       //Given: Lista actual de usuarios = {Pepito, Alba, Dani}.
       await service.createUser("Pepito", "Ramirez", "pepitoramirez@gmail.com", "pepito", "pepito123");
@@ -167,20 +166,21 @@ describe('UserService', () => {
       await service.createUser("Dani", "Torres", "danitorres@gmail.com", "dani", "dani123");
       await service.logoutUser();
 
+      await new Promise(resolve => setTimeout(resolve, 500));
+
       try {
-          //When: El usuario Random quiere eliminar su cuenta del sistema.
-          service.deleteUser("pepagimena@gmail.com");
+          //When: El usuario Random quiere cerrar sesión y eliminar su cuenta del sistema.
+          await service.logoutUser();
       } catch(error){
            //Then: El sistema lanza una excepción UserNotFoundException().
            expect(error).toBeInstanceOf(UserNotFoundException);
-           service.deleteUser("pepagimena@gmail.com");
-           service.deleteUser("pepitoramirez@gmail.com");
-           service.deleteUser("albaconsuelos@gmail.com");
-           service.deleteUser("danitorres@gmail.com");
+      } finally {
+           await service.deleteUser("pepitoramirez@gmail.com");
+           await service.deleteUser("albaconsuelos@gmail.com");
+           await service.deleteUser("danitorres@gmail.com");
       }
-    
   });
-  */
+  
 });
 
 

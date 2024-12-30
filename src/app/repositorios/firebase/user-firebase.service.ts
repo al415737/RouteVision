@@ -31,9 +31,6 @@ export class UserFirebaseService implements UserRepository{
 
   async deleteUser(email: string): Promise<void> {
     const id = await this._firestore.get('email', email, 'user');
-    if(id == ''){
-        throw new UserNotFoundException();
-    }
     await this._firestore.deleteUser(id, 'user');
   }
 
