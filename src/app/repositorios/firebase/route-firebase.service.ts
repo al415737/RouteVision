@@ -2,8 +2,8 @@ import { inject, Injectable } from '@angular/core';
 import { Route } from '../../modelos/route';
 import { RouteRepository } from '../interfaces/route-repository';
 import { FirestoreService } from './firestore.service';
-import { Vehiculo } from '../../modelos/vehiculo';
-import { ProxyCarburanteService } from '../../utils/proxy-carburante.service';
+import { Vehiculo } from '../../modelos/vehiculos/vehiculo';
+import { ProxysCalculoCombustibleService } from '../../utils/proxys-calculo-combustible.service';
 import { OpenRouteService } from '../../APIs/Geocoding/openRoute.service';
 import { firstValueFrom } from 'rxjs';
 import { Place } from '../../modelos/place';
@@ -11,6 +11,7 @@ import { NotExistingObjectException } from '../../excepciones/notExistingObjectE
 import { AuthStateService } from '../../utils/auth-state.service';
 import { getAuth } from 'firebase/auth';
 import { ServerNotOperativeException } from '../../excepciones/server-not-operative-exception';
+import { PlaceNotFoundException } from '../../excepciones/place-not-found-exception';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +21,7 @@ export class RouteFirebaseService implements RouteRepository{
   
   servicioAPI: OpenRouteService = inject(OpenRouteService);
 
-  constructor(private _firestore: FirestoreService, private proxy: ProxyCarburanteService,  private _geocoding: OpenRouteService, private _authState: AuthStateService) {}
+  constructor(private _firestore: FirestoreService, private proxy: ProxysCalculoCombustibleService,  private _geocoding: OpenRouteService, private _authState: AuthStateService) {}
   
   consultarRutaEspecifica(ruta: Route): Promise<boolean> {
     const uid = getAuth().currentUser?.uid;
@@ -28,53 +29,44 @@ export class RouteFirebaseService implements RouteRepository{
     return this._firestore.ifExist("nombre", ruta.getNombre(), PATHROUTE);  //Comprobar si la ruta específica existe
   }
   
-  async calcularRuta(origen: string, destino: string, metodoMov: string) {
-      const origenCoord = await new Promise<string> ((resolve) => {
-        this._geocoding.searchToponimo(origen).subscribe({
-          next: (response: any) => {
-              const coordenadas = response.features[0].geometry.coordinates;
-              resolve(`${coordenadas[0]},${coordenadas[1]}`);
-          }
-        });
-      });
+  async calcularRuta(origen: Place, destino: Place, metodoMov: string) {
+    if(!this._firestore.ifExistPlace(origen) || !this._firestore.ifExistPlace(destino)){ 
+      throw new PlaceNotFoundException();
+    }
 
-      const destinoCoord = await new Promise<string> ((resolve) => {
-        this._geocoding.searchToponimo(destino).subscribe({
-          next: (response: any) => {
-              const coordenadas = response.features[0].geometry.coordinates;
-              resolve(`${coordenadas[0]},${coordenadas[1]}`);
-          }
-        });
-      });
-
-      return firstValueFrom(this._geocoding.getRuta(origenCoord, destinoCoord, metodoMov));
+      return firstValueFrom(this._geocoding.getRuta(origen.getCoordenadas().join(','), destino.getCoordenadas().join(','), metodoMov));
   }
 
   
   async obtenerCosteRuta(vehiculo: Vehiculo, ruta: Route,): Promise<number> {
     const existVehiculo = this._firestore.ifExistVehicle(vehiculo);
-
-    // Si el vehículo no es del usuario logueado
+    
     if (!existVehiculo) return -1;
 
-    const listaMunicipios = await this.proxy.getMunicipios();
+    let costeRuta: number;
 
-    const municipio = listaMunicipios.find((Municipio: any) => Municipio.Municipio === ruta.getOrigen());
-    const idMunicipio = municipio.IDMunicipio;
+    if(vehiculo.getTipo() == 'Eléctrico'){
+      costeRuta=0;
+      //llamar a api luz
+      //llamar a obtenerCoste
 
-    const estacionesEnMunicipio = await this.proxy.getEstacionesEnMunicipio(idMunicipio);
+    } else {
+      const listaMunicipios = await this.proxy.getMunicipios();
 
-    const precioStr = estacionesEnMunicipio.ListaEESSPrecio[0]["Precio Gasolina 95 E5"];
+      const municipio = listaMunicipios.find((Municipio: any) => Municipio.Municipio === ruta.getOrigen());
+      const idMunicipio = municipio.IDMunicipio;
+  
+      const estacionesEnMunicipio = await this.proxy.getEstacionesEnMunicipio(idMunicipio);
 
-    let precioNum = parseFloat(precioStr.replace(',', '.'));
+      costeRuta = vehiculo.obtenerCoste(ruta.getKm(), estacionesEnMunicipio.ListaEESSPrecio[0]);
+    }
 
-    let costeRuta = parseFloat((ruta.getKm() / 100 * vehiculo.getConsumo() * precioNum).toFixed(2)); 
     console.log('El coste de la ruta es: ' + costeRuta + '€');
     return costeRuta;
   }
 
-  async costeRutaPieBicicleta(ruta: Route){
-    const rutaAPI: any = await this.calcularRuta(ruta.getOrigen(), ruta.getDestino(), ruta.getMovilidad());
+  async costeRutaPieBicicleta(ruta: Route, origen: Place, destino: Place){
+    const rutaAPI: any = await this.calcularRuta(origen, destino, ruta.getMovilidad());
     const duracion = (rutaAPI.features[0].properties.summary.duration) / 3600;
     let coste = 0;
 

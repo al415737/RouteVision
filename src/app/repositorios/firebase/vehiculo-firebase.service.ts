@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { VehiculoRepository } from '../interfaces/vehiculo-repository';
-import { Vehiculo } from '../../modelos/vehiculo';
+import { Vehiculo } from '../../modelos/vehiculos/vehiculo';
 import { FirestoreService } from './firestore.service';
 import { getAuth } from 'firebase/auth';
 import { NullLicenseException } from '../../excepciones/null-license-exception';
@@ -15,13 +15,12 @@ export class VehiculoFirebaseService implements VehiculoRepository{
   constructor() { 
   }
 
-    async crearVehiculo(matricula: string, marca: string, modelo: string, año_fabricacion: string, consumo: number): Promise<Vehiculo> {
+    async crearVehiculo(vehiculo: Vehiculo): Promise<Vehiculo> {
         const uid = getAuth().currentUser?.uid;
         const PATHVEHICULO = `vehiculo/${uid}/listaVehiculos`;
-        const vehRegister: Vehiculo = new Vehiculo(matricula, marca, modelo, año_fabricacion, consumo);
 
-        await this.firestore.createVehiculo(vehRegister, PATHVEHICULO);
-        return vehRegister;
+        await this.firestore.createVehiculo(vehiculo, PATHVEHICULO);
+        return vehiculo;
     }
 
     async consultarVehiculo() {

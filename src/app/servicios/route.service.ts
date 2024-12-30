@@ -7,11 +7,12 @@ import { VehicleNotFoundException } from '../excepciones/vehicle-not-Found-Excep
 import { inject, Inject, Injectable } from '@angular/core';
 import { AuthStateService } from '../utils/auth-state.service';
 import { VEHICULO_REPOSITORY_TOKEN, VehiculoRepository } from '../repositorios/interfaces/vehiculo-repository';
-import { Vehiculo } from '../modelos/vehiculo';
+import { Vehiculo } from '../modelos/vehiculos/vehiculo';
 import { Route } from '../modelos/route';
 import { NotExistingObjectException } from '../excepciones/notExistingObjectException';
 import { NoRouteFoundException } from '../excepciones/no-route-found-exception';
 import { InvalidCalculoCosteException } from '../excepciones/invalid-calculo-coste-exception';
+import { IncorrectMethodException } from '../excepciones/incorrect-method-exception';
 
 
 @Injectable({
@@ -21,13 +22,9 @@ export class RouteService {
 
   constructor(@Inject(ROUTE_REPOSITORY_TOKEN) private routeRepository: RouteRepository, @Inject(VEHICULO_REPOSITORY_TOKEN) private servicioVehículo: VehiculoRepository) { }
 
-  calcularRuta(origen: string, destino: string, metodoMov: string) {
-      if(origen == '' || origen == null || destino == '' || destino == null || metodoMov == '' || metodoMov == null){
-          throw new InvalidCalculateRoute();
-      }
-
+  calcularRuta(origen: Place, destino: Place, metodoMov: string) {
       if(metodoMov != 'driving-car' && metodoMov != 'cycling' && metodoMov != 'foot-walking' && metodoMov != 'foot-hiking'){
-          throw new VehicleNotFoundException();
+          throw new IncorrectMethodException();
       }
 
       return this.routeRepository.calcularRuta(origen, destino, metodoMov);
@@ -56,7 +53,7 @@ export class RouteService {
     return this.routeRepository.getRouteFSE(start, end, movilidad, preferencia);
   }
 
-  costeRutaPieBicicleta(ruta: Route){
+  costeRutaPieBicicleta(ruta: Route, origen: Place, destino: Place){
     if(ruta.getMovilidad() != 'cycling-regular' && ruta.getMovilidad() != 'foot-walking'){
         throw new InvalidCalculoCosteException();
     }
@@ -65,7 +62,7 @@ export class RouteService {
         throw new NoRouteFoundException();
     }
 
-    return this.routeRepository.costeRutaPieBicicleta(ruta);
+    return this.routeRepository.costeRutaPieBicicleta(ruta, origen, destino);
   }
 
   consultarRutaEspecifica(ruta: Route){

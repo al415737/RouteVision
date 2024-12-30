@@ -1,5 +1,5 @@
 import { Place } from "./place";
-import { Vehiculo } from "./vehiculo";
+import { Vehiculo } from "./vehiculos/vehiculo";
 
 export class User {
     private nombre: string;

@@ -3,7 +3,7 @@ import { UserRepository } from '../interfaces/user-repository';
 import { User } from '../../modelos/user';
 import { FirestoreService } from './firestore.service';
 import { Place } from '../../modelos/place';
-import { Vehiculo } from '../../modelos/vehiculo';
+import { Vehiculo } from '../../modelos/vehiculos/vehiculo';
 import { AuthService } from './auth.service';
 import { UserCredential } from 'firebase/auth';
 

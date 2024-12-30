@@ -1,15 +1,18 @@
 import { Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { PrecioCarburantes } from '../APIs/PrecioCarburantes/precioCarburantes.service';
+import { PrecioLuzService } from '../APIs/PrecioLuz/precioLuz.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class ProxyCarburanteService {
+
+export class ProxysCalculoCombustibleService {
   private cacheMunicipios: any | null = null;
   private cacheEstaciones = new Map<number, any>();
+  private cacheLuz: any | null = null;
 
-  constructor(private precioCarburante: PrecioCarburantes) {}
+  constructor(private precioCarburante: PrecioCarburantes, private precioLuz: PrecioLuzService) {}
 
   async getMunicipios(): Promise<any> {
     if (this.cacheMunicipios == null) {
@@ -24,5 +27,12 @@ export class ProxyCarburanteService {
       this.cacheEstaciones.set(idMunicipio, estaciones);
     }
     return this.cacheEstaciones.get(idMunicipio);
+  }
+
+  async getPreciosLuz(): Promise<any>{
+    if (this.cacheLuz == null) {
+      this.cacheLuz = await firstValueFrom(this.precioLuz.getPrecios());
+    }
+    return this.cacheLuz;
   }
 }

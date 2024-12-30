@@ -1,7 +1,7 @@
 
 import { TestBed } from '@angular/core/testing';
 import { VehiculoService } from '../../servicios/vehiculo.service';
-import { Vehiculo } from '../../modelos/vehiculo';
+import { Vehiculo } from '../../modelos/vehiculos/vehiculo';
 import { NullLicenseException } from '../../excepciones/null-license-exception';
 import { provideFirebaseApp } from '@angular/fire/app';
 import { initializeApp } from 'firebase/app';
@@ -39,7 +39,7 @@ import { UserFirebaseService } from '../../repositorios/firebase/user-firebase.s
     servicioUser.loginUser("test@test.com", "test123");
 
     //WHEN: El usuario intenta dar de alta un vehículo → [Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1].
-    const resul = await service.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1);
+    const resul = await service.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, 'Precio Gasoleo A');
 
     //THEN: El sistema registra el vehículo en la parte de la base de datos dirigida a Ana2002 →  listaVehículos-Ana2002= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1}].      
     expect(resul).toBeInstanceOf(Vehiculo);
@@ -50,11 +50,11 @@ import { UserFirebaseService } from '../../repositorios/firebase/user-firebase.s
     try {
       //Given: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] con listaVehículos-Ana2002= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1}].
       servicioUser.loginUser("test@test.com", "test123");
-      const resul = await service.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1); 
+      const resul = await service.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, 'Precio Gasoleo A'); 
 
       try {
         //When: El usuario intenta dar de alta un vehículo → [Matrícula=” ”, Marca=”Seat”, Modelo=”Ibiza”, Año Fabricación=”2003”, Consumo=4.3].
-        await service.crearVehiculo("", "Seat", "Ibiza", "2003", 4.3);
+        await service.crearVehiculo("", "Seat", "Ibiza", "2003", 4.3, "Precio Gasolina 98 E5");
       } catch(error){
           //Then: El sistema no registra el vehículo y lanza una excepción NullLicenseException() →  listaVehículos-Ana2002= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1}].
           expect(error).toBeInstanceOf(NullLicenseException);
@@ -68,7 +68,7 @@ import { UserFirebaseService } from '../../repositorios/firebase/user-firebase.s
   
     //Given: El usuario Ana con la sesión iniciada y la listaVehículos = [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1}].
     await servicioUser.loginUser("test@test.com", "test123"); 
-    await service.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1);
+    await service.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasolina 95 E5");
     
     //When: El usuario pide mostrar sus vehículos.
     const vehiculos = await service.consultarVehiculo(); 

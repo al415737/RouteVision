@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { HeaderComponent } from '../../home/header/header.component';
 import { FormsModule } from '@angular/forms';
 import { VehiculoService } from '../../../servicios/vehiculo.service';
-import { Vehiculo } from '../../../modelos/vehiculo';
+import { Vehiculo } from '../../../modelos/vehiculos/vehiculo';
 
 @Component({
   selector: 'app-add',
@@ -19,13 +19,15 @@ export default class AddComponent {
   modelo: string = '';
   anyo_fabricacion: string = '';
   consumo: number = 0;
+  tipo: string = '';
 
   guardarVehiculo(){
     this.servicioVehiculo.crearVehiculo(
       this.matricula, 
       this.marca, this.modelo, 
       this.anyo_fabricacion,
-      this.consumo
+      this.consumo,
+      this.tipo
     );
   }
 }

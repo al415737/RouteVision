@@ -12,17 +12,23 @@ import { Place } from '../../modelos/place';
 import { VehicleNotFoundException } from '../../excepciones/vehicle-not-Found-Exception';
 import { NotExistingObjectException } from '../../excepciones/notExistingObjectException';
 import { Route } from '../../modelos/route';
-import { Vehiculo } from '../../modelos/vehiculo';
+import { Vehiculo } from '../../modelos/vehiculos/vehiculo';
 import { VEHICULO_REPOSITORY_TOKEN } from '../../repositorios/interfaces/vehiculo-repository';
 import { VehiculoFirebaseService } from '../../repositorios/firebase/vehiculo-firebase.service';
 import { ServerNotOperativeException } from '../../excepciones/server-not-operative-exception';
 import { AuthStateService } from '../../utils/auth-state.service';
 import { NoRouteFoundException } from '../../excepciones/no-route-found-exception';
+import { PlaceService } from '../../servicios/place.service';
+import { CocheDiesel } from '../../modelos/vehiculos/cocheDiesel';
+import { CocheGasolina } from '../../modelos/vehiculos/cocheGasolina';
+import { PLACE_REPOSITORY_TOKEN } from '../../repositorios/interfaces/place-repository';
+import { PlaceFirebaseService } from '../../repositorios/firebase/place-firebase.service';
 
 describe('RouteIntegrationService', () => {
   let service: RouteService;
   let routeRepo: RouteRepository;
   let authStateService: AuthStateService;
+  let servicioPlace: PlaceService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -34,11 +40,13 @@ describe('RouteIntegrationService', () => {
         RouteService,  
         { provide: ROUTE_REPOSITORY_TOKEN, useClass: RouteFirebaseService },  
         { provide: VEHICULO_REPOSITORY_TOKEN, useClass: VehiculoFirebaseService },       
+        { provide: PLACE_REPOSITORY_TOKEN, useClass: PlaceFirebaseService },
       ]
     });
     service = TestBed.inject(RouteService);
     routeRepo = TestBed.inject(ROUTE_REPOSITORY_TOKEN);
     authStateService = TestBed.inject(AuthStateService);
+    servicioPlace = TestBed.inject(PlaceService);
   });
 
   it('HU13E01. Cálculo de ruta entre dos puntos de interés (Escenario Válido)', async () => {
@@ -46,12 +54,14 @@ describe('RouteIntegrationService', () => {
                       // vehículos = [“Coche1”, “Moto1”] .
           const mockData = { trayectoria: [ "0.363239, 39.464781", "-0.161966, 39.803153", "-0.076461, 39.979548", "-0.037829, 39.988886" ], distancia: 75688, duracion: 3610 };
           spyOn(routeRepo, 'calcularRuta').and.resolveTo(mockData);
+          const lugar1 = await servicioPlace.createPlaceT("Valencia");
+          const lugar2 = await servicioPlace.createPlaceT("Castellón");
   
           //When: El usuario solicita el calculo con “Valencia-Castellón” y vehículo “Coche1”.
-          const ruta = await routeRepo.calcularRuta("Valencia", "Castellón de la Plana", "driving-car");
+          const ruta = await routeRepo.calcularRuta(lugar1, lugar2, "driving-car");
       
           //Then: El sistema muestra Trayecto=[Valencia, Paterna, Puzol, Sagunto, Moncófar, Villareal, Castellon], distancia=84km, duración=1h.
-          expect(routeRepo.calcularRuta).toHaveBeenCalledWith("Valencia", "Castellón de la Plana", "driving-car");
+          expect(routeRepo.calcularRuta).toHaveBeenCalledWith(lugar1, lugar2, "driving-car");
           expect(ruta).toEqual(mockData);
   
       });
@@ -59,11 +69,13 @@ describe('RouteIntegrationService', () => {
       it('HU13E03. Método de movilidad no válido (Escenario Inválido)', async () => {
           // Given: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] autenticado, lugares = [“Valencia”, “Castellón”, “Alicante”], vehículos = [“Coche1”, “Moto1”, “Bicicleta1”].
           spyOn(routeRepo, 'calcularRuta').and.resolveTo(VehicleNotFoundException);
-  
+          const lugar1 = await servicioPlace.createPlaceT("Valencia");
+          const lugar2 = await servicioPlace.createPlaceT("Castellón");
+
           try{
               // When: El usuario solicita el calculo con “Valencia-Castellón” y vehículo “Coche2”.
-              routeRepo.calcularRuta("Valencia", "Castellón de la Plana", "Coche2");
-              expect(routeRepo.calcularRuta).toHaveBeenCalledWith("Valencia", "Castellón de la Plana", "Coche2");
+              await routeRepo.calcularRuta(lugar1, lugar2, "Coche2");
+              expect(routeRepo.calcularRuta).toHaveBeenCalledWith(lugar1, lugar2, "Coche2");
           } catch(error){
                   //Then: El sistema lanza la excepción VehicleNotFoundException().
                   expect(error).toBeInstanceOf(VehicleNotFoundException);
@@ -76,9 +88,9 @@ describe('RouteIntegrationService', () => {
       
       spyOn(routeRepo, 'obtenerCosteRuta').and.resolveTo(mockFuelCostRoute);
       
-      const result = await routeRepo.obtenerCosteRuta(new Vehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1), new Route('ruta01', 'Valencia', 'Castellón de la Plana/Castelló de la Plana', 'porDefecto', 'driving-car', 90, 90));
+      const result = await routeRepo.obtenerCosteRuta(new CocheDiesel("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasoleo A"), new Route('ruta01', 'Valencia', 'Castellón de la Plana/Castelló de la Plana', 'porDefecto', 'driving-car', 90, 90));
       
-      expect(routeRepo.obtenerCosteRuta).toHaveBeenCalledWith(new Vehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1), new Route('ruta01', 'Valencia', 'Castellón de la Plana/Castelló de la Plana', 'porDefecto', 'driving-car', 90, 90));
+      expect(routeRepo.obtenerCosteRuta).toHaveBeenCalledWith(new CocheDiesel("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasoleo A"), new Route('ruta01', 'Valencia', 'Castellón de la Plana/Castelló de la Plana', 'porDefecto', 'driving-car', 90, 90));
       expect(result).toEqual(mockFuelCostRoute);
     });
   
@@ -87,7 +99,7 @@ describe('RouteIntegrationService', () => {
   
       spyOn(routeRepo, 'obtenerCosteRuta').and.resolveTo(mockFuelCostRoute);
   
-      const vehiculoNoExiste = new Vehiculo("3423 WCX", "Fiat", "Punto", "2016", 8.1);
+      const vehiculoNoExiste = new CocheGasolina("3423 WCX", "Fiat", "Punto", "2016", 8.1, "Precio Gasolina 95 E5");
       const rutaValida = new Route('ruta01', 'Valencia', 'Castellón de la Plana/Castelló de la Plana', 'porDefecto', 'driving-car', 90, 90);
   
       try {
@@ -129,25 +141,29 @@ describe('RouteIntegrationService', () => {
     //Given: El usuario [“Pepito2002”, “pepito@gmail.com“,“ppt-24”] tiene su sesión iniciada y la base de datos está disponible. Lista rutas: [ {nombre: Valencia-Castellón, Origen:Valencia, Destino:Castellón de la Plana, Opción: economica, Movilidad: cycling-regular, kilómetros = 76, duracion = 15806}]
     const mockData = '2195.28';
     spyOn(routeRepo, 'costeRutaPieBicicleta').and.resolveTo(mockData);
+    const origen = await servicioPlace.createPlaceT("València, España");
+    const destino = await servicioPlace.createPlaceT("Castellón de la Plana");
     const ruta = new Route("Valencia-Castellón", "Valencia", "Castellón de la Plana", "economica", "cycling-regular", 76, 15806);
 
     //When: Se calcula el coste de la ruta Valencia-Castellón con la opción bicicleta
-    const coste = await service.costeRutaPieBicicleta(ruta);
+    const coste = await service.costeRutaPieBicicleta(ruta, origen, destino);
 
     //Then: El sistema calcula el tiempo que se tarda en realizar la ruta prevista que son 4 horas. El coste es de 500 calorías (1 hora) * 4,39 horas = 2195.28 calorías
-    expect(routeRepo.costeRutaPieBicicleta).toHaveBeenCalledWith(ruta);
+    expect(routeRepo.costeRutaPieBicicleta).toHaveBeenCalledWith(ruta, origen, destino);
     expect(coste).toEqual(mockData);
   }); 
 
   it('HU15E03. Intento de cálculo de gasto calórico pero no hay rutas dadas de alta (Escenario Inválido)', async () => {
       //Given: El usuario [“Pepito2002”, “pepito@gmail.com“,“crm-24”] ha iniciado sesión y la base de datos está disponible. Lista rutas = []  
       spyOn(routeRepo, 'costeRutaPieBicicleta').and.resolveTo(NoRouteFoundException);
+      const origen = await servicioPlace.createPlaceT("València, España");
+      const destino = await servicioPlace.createPlaceT("Castellón de la Plana");
       const ruta = new Route("Valencia-Castellón", "Valencia", "Castellón de la Plana", "economica", "cycling-regular", 76, 3600);
   
       try {
           //When: El usuario Pepito quiere realizar la ruta entre Valencia y Castellón en bicicleta.
-          await service.costeRutaPieBicicleta(ruta);  
-          expect(routeRepo.costeRutaPieBicicleta).toHaveBeenCalledWith(ruta);
+          await service.costeRutaPieBicicleta(ruta, origen, destino);  
+          expect(routeRepo.costeRutaPieBicicleta).toHaveBeenCalledWith(ruta, origen, destino);
       } catch(error){
           //Then: El sistema no puede calcular el gasto calórico y lanza la excepción  NoRouteFoundException()
           expect(error).toBeInstanceOf(NoRouteFoundException);
