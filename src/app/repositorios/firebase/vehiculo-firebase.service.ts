@@ -3,13 +3,15 @@ import { VehiculoRepository } from '../interfaces/vehiculo-repository';
 import { Vehiculo } from '../../modelos/vehiculos/vehiculo';
 import { FirestoreService } from './firestore.service';
 import { getAuth } from 'firebase/auth';
-import { NullLicenseException } from '../../excepciones/null-license-exception';
 import { VehicleNotFoundException } from '../../excepciones/vehicle-not-Found-Exception';
+import { NotExistingObjectException } from '../../excepciones/notExistingObjectException';
+import { AuthStateService } from '../../utils/auth-state.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class VehiculoFirebaseService implements VehiculoRepository{
+  private _authState: AuthStateService = inject(AuthStateService);
 
     firestore: FirestoreService = inject(FirestoreService);
 
@@ -28,6 +30,14 @@ export class VehiculoFirebaseService implements VehiculoRepository{
         const uid = getAuth().currentUser?.uid;
         const PATHVEHICULO = `vehiculo/${uid}/listaVehiculos`;
         return await this.firestore.consultarVehiculo(PATHVEHICULO);
+    }
+
+    async actualizarVehiculo(vehiculo: Vehiculo): Promise<any> {
+      const id = await this.firestore.get('matricula', vehiculo.getMatricula(), `vehiculo/${this._authState.currentUser?.uid}/listaVehiculos`);
+      if (id == '') {
+        throw new NotExistingObjectException();
+      }
+      return await this.firestore.actualizarVehiculo(vehiculo, id);
     }
 
     async eliminarVehiculo(matricula: string):Promise<void> {

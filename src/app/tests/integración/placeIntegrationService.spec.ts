@@ -110,7 +110,6 @@ describe('PlaceIntegrationService', () => {
     try{
       servicePlace.getPlaces();
       expect(placeRepositorio.getPlaces).toHaveBeenCalledWith();
-      throw new ServerNotOperativeException();
     } catch(error) {
       expect(error).toBeInstanceOf(ServerNotOperativeException);
     }
@@ -128,7 +127,7 @@ describe('PlaceIntegrationService', () => {
   it('HU8E02. Eliminación de un lugar de interés que no está en la lista de lugares de interés del usuario (Escenario Inválido):', async() => {
     spyOn(placeRepositorio, 'deletePlace').and.resolveTo(true);
     try {
-      const result = await servicePlace.deletePlace('025');
+      await servicePlace.deletePlace('025');
       expect(placeRepositorio.deletePlace).toHaveBeenCalledWith('025');
     } catch (error) {
       throw new NotExistingObjectException(); 

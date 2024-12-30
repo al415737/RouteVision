@@ -33,6 +33,24 @@ export class VehiculoService {
     return this.vehiRepo.crearVehiculo(vehiculo);
   }
 
+  actualizarVehiculo(matricula: string, marca: string, modelo: string, año_fabricacion: string, consumo: number, tipo: string, favorito:boolean){
+    if(matricula == '' || matricula == null){
+      throw new NullLicenseException();
+    }
+
+    let vehiculo: Vehiculo;
+    
+    if(tipo == 'Precio Gasolina 95 E5' || tipo == 'Precio Gasolina 98 E5'){
+      vehiculo = new CocheGasolina(matricula, marca, modelo, año_fabricacion, consumo, tipo, favorito);
+    } else if(tipo == 'Precio Gasoleo A' || tipo == 'Precio Gasoleo B'){
+        vehiculo = new CocheDiesel(matricula, marca, modelo, año_fabricacion, consumo, tipo, favorito);
+    } else {
+        vehiculo = new CocheElectrico(matricula, marca, modelo, año_fabricacion, consumo, tipo, favorito);
+    }
+
+    return this.vehiRepo.actualizarVehiculo(vehiculo);
+  }
+
   consultarVehiculo(){
     return this.vehiRepo.consultarVehiculo();
   }

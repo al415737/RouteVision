@@ -14,6 +14,7 @@ import { firebaseConfig } from '../../app.config';
 import { CocheGasolina } from '../../modelos/vehiculos/cocheGasolina';
 import { CocheDiesel } from '../../modelos/vehiculos/cocheDiesel';
 import { VehicleNotFoundException } from '../../excepciones/vehicle-not-Found-Exception';
+import { NotExistingObjectException } from '../../excepciones/notExistingObjectException';
 
 describe('VehiculoIntegrationService', () => {
     let service: UserService;
@@ -113,7 +114,6 @@ describe('VehiculoIntegrationService', () => {
         expect(vehiculos).toEqual(mockData);  
     });
 
-
     //HISTORIA 11
     it('PRUEBA INTEGRACIÓN --> H11-E01. Eliminar vehículo existente del sistema (Escenario Válido): ', async () => {
         spyOn(vehiRepo, 'eliminarVehiculo').and.resolveTo();
@@ -137,4 +137,33 @@ describe('VehiculoIntegrationService', () => {
             expect(error).toBeInstanceOf(VehicleNotFoundException);
         }
     });
+
+    it('HU12E01. Actualización correcta de un vehículo (Escenario válido):', async () => {
+        //GIVEN: El usuario [“Test”, “test@test.com“,“test123”] con la sesión de su cuenta activa y la lista actual de vehículos = [{"1234 BBB", "Peugeot", "407", "2007", 8.1, 'Precio Gasoleo A'}].
+        const mockData: Vehiculo = new CocheDiesel("1234 BBB", "Peugeot", "407", "2007", 7.1, 'Precio Gasoleo B', false);
+        spyOn(vehiRepo, 'actualizarVehiculo').and.resolveTo(mockData);
+
+        //WHEN: El usuario quiere actualizar los datos del vehículo “1234 BBB” con la marca = “Peugeot”, modelo = “407”, tipo de combustible = “Precio Gasoleo B”, año de fabricación = “2010” y consumo del vehículo cada 100 km = “7.1”.
+        const vehiculos = await vehiculoService.actualizarVehiculo("1234 BBB", "Peugeot", "407", "2007", 7.1, 'Precio Gasoleo B', false);
+        expect(vehiRepo.actualizarVehiculo).toHaveBeenCalledWith(mockData);
+
+        //THEN: Se actualiza los datos del vehículo = {["1234 BBB", "Peugeot", "407", "2007", 7.1, 'Precio Gasoleo B'].
+        expect(vehiculos).toEqual(mockData);
+    });
+
+    it('HU12E03. Error al intentar actualizar un vehículo que no existe (Escenario inválido):', async () => {
+        //GIVEN: El usuario [“Test”, “test@test.com“,“test123”] con la sesión de su cuenta activa y la lista actual de vehículos = [{"1234 BBB", "Peugeot", "407", "2007", 8.1, 'Precio Gasoleo A'}].
+        spyOn(vehiRepo, 'actualizarVehiculo');
+        const mockData = new CocheDiesel("1234 BBB", "Peugeot", "407", "2007", 7.1, 'Precio Gasoleo B', false)
+    
+        //WHEN: El usuario quiere actualizar los datos del vehículo “1234 BBB” con la marca = “Peugeot”, modelo = “407”, tipo de combustible = “Precio Gasoleo B”, año de fabricación = “2010” y consumo del vehículo cada 100 km = “7.1”.
+        //THEN: Se actualiza la lista actual de vehículos = {{"1234 BBB", "Peugeot", "407", "2007", 7.1, 'Precio Gasoleo B'}.
+        try {
+            await vehiculoService.actualizarVehiculo("1234 BBB", "Peugeot", "407", "2007", 7.1, 'Precio Gasoleo B', false)
+            expect(vehiRepo.actualizarVehiculo).toHaveBeenCalledWith(mockData);
+        } catch (error) {
+            expect(error).toBeInstanceOf(NotExistingObjectException);
+        }
+        
+      });
 });
