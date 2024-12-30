@@ -5,7 +5,7 @@ import { FirestoreService } from './firestore.service';
 import { Place } from '../../modelos/place';
 import { Vehiculo } from '../../modelos/vehiculos/vehiculo';
 import { AuthService } from './auth.service';
-import { UserCredential } from 'firebase/auth';
+import { getAuth, UserCredential } from 'firebase/auth';
 
 
 const PATH = 'user';
@@ -16,6 +16,10 @@ const PATH = 'user';
 export class UserFirebaseService implements UserRepository{
 
   constructor(private _firestore: FirestoreService, private _auth: AuthService) { }
+
+  async consultarUsuarios(): Promise<any> {
+      return await this._firestore.consultarUsuarios(PATH);
+  }
 
   async createUser(nombre: string, apellidos: string, email: string, user: string, password: string): Promise<User>{
     const userRegister: User = new User(nombre, apellidos, email, user);

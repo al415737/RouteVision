@@ -19,6 +19,10 @@ export class UserService {
     return this.userRepo.createUser(nombre, apellidos, email, user, password);
   }
 
+  consultarUsuarios(){
+    return this.userRepo.consultarUsuarios();
+  }
+
   deleteUser(email: string) {
     if (!email.trim())
       throw new ObligatoryFieldsException();
