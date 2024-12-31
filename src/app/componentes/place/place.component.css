@@ -2,6 +2,11 @@
     background: linear-gradient(180deg, #011640, #030F26);
 }
 
+h1 {
+  text-align: center;
+  margin-top: 20px;
+}
+
 .delete-button {
     background-color: transparent;
     color: #ff4081;
@@ -17,16 +22,15 @@
   }
 
   .add-button {
-    background-color: #577EF2;
+    background-color: #025E73;
     color: white;
     border: none;
     padding: 10px 20px;
-    border-radius: 5px;
+    margin: 20px auto;
+    display: block;
     font-size: 16px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-    display: flex;
-    align-items: center;
+    border-radius: 5px;
   }
   
   .add-button:hover {
@@ -36,5 +40,21 @@
   .add-icon {
     font-size: 20px;
     margin-right: 8px;
+  }
+
+  #table-container {
+    margin: 20px auto;
+    width: 90%;
+    max-width: 1400px;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  th, td {
+    text-align: left;
+    padding: 10px;
   }
   

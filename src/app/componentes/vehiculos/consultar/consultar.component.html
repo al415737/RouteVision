@@ -43,9 +43,9 @@
       </ng-container>
 
       <!-- Columna para el año de fabricación del vehículo -->
-      <ng-container matColumnDef="anyo_fabricacion">
+      <ng-container matColumnDef="ano_fabricacion">
         <th mat-header-cell *matHeaderCellDef [style.color]="'white'"> Año_fabricacion </th>
-        <td mat-cell *matCellDef="let vehiculo"> {{ vehiculo.anyo_fabricacion }} </td>
+        <td mat-cell *matCellDef="let vehiculo"> {{ vehiculo.ano_fabricacion }} </td>
       </ng-container>
 
       <!-- Columna para el consumo del vehículo -->
@@ -64,7 +64,7 @@
       <ng-container matColumnDef="delete">
         <th mat-header-cell *matHeaderCellDef [style.color]="'white'">Borrar</th>
         <td mat-cell *matCellDef="let vehiculo" [style.color]="'white'">
-          <button mat-icon-button color="warn" class="delete-button" (click)="eliminarVehiculo(vehiculo.matricula)">
+          <button mat-icon-button color="warn" class="delete-button" (click)="eliminarVehiculo(vehiculo)">
             <mat-icon>delete</mat-icon>
           </button>
         </td>

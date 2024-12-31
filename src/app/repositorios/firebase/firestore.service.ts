@@ -22,6 +22,7 @@ export class FirestoreService {
 
   private constructor(private _firestore: Firestore, private _auth: AuthService) { }
 
+  //CREAR ELEMENTOS
   async createUser(user: User, password: string) {
     try {
       const userCredential = await this._auth.create(user.getEmail(), password);
@@ -30,10 +31,61 @@ export class FirestoreService {
     
       const _collection = collection(this._firestore, 'user');
 
-    await addDoc(_collection, plainObject);
+      await addDoc(_collection, plainObject);
     } catch (error) {
       throw new MailExistingException();
     }
+  }
+
+  async createVehiculo(vehiculo: Vehiculo, path: string) {
+    const _collection = collection(this._firestore, path); 
+  
+    const objetoPlano = { ...vehiculo};
+    return addDoc(_collection, objetoPlano);
+  }
+
+  async createPlaceC(place: Place, path: string) {
+    const _collection = collection(this._firestore, path);
+
+    
+    const docRef = doc(_collection, place.idPlace); // Crea una referencia con un ID único
+    const idPlace = docRef.id;
+    
+    const objetoPlano = { ...place, idPlace };   //se sobreescribe el idPlace de la clase
+
+    return setDoc(docRef, objetoPlano);
+  }
+
+  async createPlaceT(place: Place, path: string) {
+    const _collection = collection(this._firestore, path);
+    
+    const docRef = doc(_collection, place.idPlace); // Crea una referencia con un ID único
+    const idPlace = docRef.id;
+    
+    const objetoPlano = { ...place, idPlace};   //se sobreescribe el idPlace de la clase -- hemos quitado uid
+    return setDoc(docRef, objetoPlano);
+  }
+
+  async createRoute(route: Route, path: string) {
+    const _collection = collection(this._firestore, path);
+
+    
+    const docRef = doc(_collection, route.getNombre()); // Crea una referencia con un ID único
+    const nombre = docRef.id;
+    
+    const objetoPlano = { ...route, nombre }; 
+
+    return setDoc(docRef, objetoPlano);
+  }
+  //CREAR ELEMENTOS
+
+
+  //BUSCAR/COMPROBAR ELEMENTOS
+  async getAutoIdReference(collectionPath: string): Promise<DocumentReference> {
+    // Crea una referencia con un ID único automáticamente
+    const _collection = collection(this._firestore, collectionPath); // Obtener la colección
+    const docRef = doc(_collection); // Crear una referencia sin ID especificado
+    return docRef; // Retorna la referencia con ID único
   }
 
   async get(campo: string, valor: string, PATH: string) {
@@ -48,40 +100,6 @@ export class FirestoreService {
     const firstDocument = querySnapshot.docs[0];
 
     return firstDocument.id;
-  }
-
-  async deleteUser(id: string, PATH: string): Promise<void> {
-    const docRef = doc(this._firestore, PATH, id);
-    await deleteDoc(docRef);
-    await this._auth.delete();      
-  }
-
-  async createVehiculo(vehiculo: Vehiculo, path: string) {
-      const _collection = collection(this._firestore, path); 
-    
-      const objetoPlano = { ...vehiculo};
-      return addDoc(_collection, objetoPlano);
-  }
-
-  async actualizarVehiculo(vehiculo:Vehiculo, id:string){
-    const listaVehiculosRef = doc(
-      this._firestore, 
-      `vehiculo/${this._authState.currentUser?.uid}/listaVehiculos/${id}`
-    );
-  
-    const plainObject = { ...vehiculo };
-    try {
-      await updateDoc(listaVehiculosRef, plainObject);
-      return vehiculo;
-    } catch (error) {
-      console.error('Error al actualizar vehículo:', error);
-      return vehiculo;
-    }
-  }
-
-  async eliminarVehiculo(path: string, id: string):Promise<void>{
-      const docRef = doc(this._firestore, path, id);
-      await deleteDoc(docRef);
   }
 
   async consultarVehiculo(path: string){
@@ -116,7 +134,7 @@ export class FirestoreService {
           data['matricula'],
           data['marca'],
           data['modelo'],
-          data['año_fabricacion'],
+          data['ano_fabricacion'],
           data['consumo'],
           data['tipo'],
           data['favorito']
@@ -126,58 +144,21 @@ export class FirestoreService {
   }
 
   async consultarUsuarios(path: string){
-      const _collection = collection(this._firestore, path);
-
-      const documentos = await getDocs(_collection);
-
-      return documentos.docs.map (doc => {
-        const data = doc.data();
-        return new User(
-          data['nombre'],
-          data['apellidos'],
-          data['email'],
-          data['user'],
-          data['preferencia1'],
-          data['preferencia2']
-        );
-      });
-  }
-  
-  async getAutoIdReference(collectionPath: string): Promise<DocumentReference> {
-    // Crea una referencia con un ID único automáticamente
-    const _collection = collection(this._firestore, collectionPath); // Obtener la colección
-    const docRef = doc(_collection); // Crear una referencia sin ID especificado
-    return docRef; // Retorna la referencia con ID único
-  }
-
-  async createPlaceC(place: Place, path: string) {
     const _collection = collection(this._firestore, path);
 
-    
-    const docRef = doc(_collection, place.idPlace); // Crea una referencia con un ID único
-    const idPlace = docRef.id;
-    
-    const objetoPlano = { ...place, idPlace };   //se sobreescribe el idPlace de la clase
+    const documentos = await getDocs(_collection);
 
-    return setDoc(docRef, objetoPlano);
-  }
-
-  async deletePlace(path: string, idPlace: string){
-    const docRef: DocumentReference = doc(this._firestore, path, idPlace);
-    await deleteDoc(docRef);
-  }
-
-  async createPlaceT(place: Place, path: string) {
-    const _collection = collection(this._firestore, path);
-
-    const usuario = getAuth().currentUser;
-    //const uid = usuario?.uid;
-    
-    const docRef = doc(_collection, place.idPlace); // Crea una referencia con un ID único
-    const idPlace = docRef.id;
-    
-    const objetoPlano = { ...place, idPlace};   //se sobreescribe el idPlace de la clase -- hemos quitado uid
-    return setDoc(docRef, objetoPlano);
+    return documentos.docs.map (doc => {
+      const data = doc.data();
+      return new User(
+        data['nombre'],
+        data['apellidos'],
+        data['email'],
+        data['user'],
+        data['preferencia1'],
+        data['preferencia2']
+      );
+    });
   }
 
   async getPlaces(): Promise<Place[]> {
@@ -242,23 +223,6 @@ export class FirestoreService {
 
       return true;
   }
-  
-  async createRoute(route: Route, path: string) {
-    const _collection = collection(this._firestore, path);
-
-    
-    const docRef = doc(_collection, route.getNombre()); // Crea una referencia con un ID único
-    const nombre = docRef.id;
-    
-    const objetoPlano = { ...route, nombre }; 
-
-    return setDoc(docRef, objetoPlano);
-  }
-
-  async deleteRoute(path: string, nombre: string){
-    const docRef: DocumentReference = doc(this._firestore, path, nombre);
-    await deleteDoc(docRef);
-  }
 
   async getRoutes(): Promise<Route[]> {
     try {
@@ -287,4 +251,46 @@ export class FirestoreService {
     }
     
   }
+  //BUSCAR/COMPROBAR ELEMENTOS
+
+  //EDITAR ELEMENTOS
+  async actualizarVehiculo(vehiculo:Vehiculo, id:string){
+    const listaVehiculosRef = doc(
+      this._firestore, 
+      `vehiculo/${this._authState.currentUser?.uid}/listaVehiculos/${id}`
+    );
+  
+    const plainObject = { ...vehiculo };
+    try {
+      await updateDoc(listaVehiculosRef, plainObject);
+      return vehiculo;
+    } catch (error) {
+      console.error('Error al actualizar vehículo:', error);
+      return vehiculo;
+    }
+  }
+  //EDITAR ELEMENTOS
+
+  //BORRAR ELEMENTOS
+  async deleteUser(id: string, PATH: string): Promise<void> {
+    const docRef = doc(this._firestore, PATH, id);
+    await deleteDoc(docRef);
+    await this._auth.delete();      
+  }
+
+  async eliminarVehiculo(path: string, id: string):Promise<void>{
+    const docRef = doc(this._firestore, path, id);
+    await deleteDoc(docRef);
+  }
+
+  async deletePlace(path: string, idPlace: string){
+    const docRef: DocumentReference = doc(this._firestore, path, idPlace);
+    await deleteDoc(docRef);
+  }
+
+  async deleteRoute(path: string, nombre: string){
+    const docRef: DocumentReference = doc(this._firestore, path, nombre);
+    await deleteDoc(docRef);
+  }
+  //BORRAR ELEMENTOS
 }
