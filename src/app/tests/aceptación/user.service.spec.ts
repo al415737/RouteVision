@@ -136,10 +136,9 @@ describe('UserService', () => {
   });
  
   it('HU4-E01. Eliminar una cuenta de un usuario registrado (Escenario Válido)', async () => {
-    //Given: Lista actual de usuarios = {Pepa, Pepito, Alba, Dani}.
+    //Given: Lista actual de usuarios = {Pepa, Pepito}.
     await service.createUser("Pepito", "Ramirez", "pepitoramirez@gmail.com", "pepito", "pepito123");
-    await service.createUser("Alba", "Consuelos", "albaconsuelos@gmail.com", "alba", "alba123");
-    await service.createUser("Dani", "Torres", "danitorres@gmail.com", "dani", "dani123");
+    await service.logoutUser();
     await service.createUser("Pepa", "Gimena", "pepagimena@gmail.com", "pepa", "pepa123");
 
     //When: El usuario Pepa quiere eliminar su cuenta del sistema.
@@ -152,16 +151,15 @@ describe('UserService', () => {
     const userPepa = usuariosEnSistema.find(usuario => usuario.getEmail() === 'pepagimena@gmail.com');
     expect(userPepa).toBeUndefined();
 
+    await service.loginUser("pepitoramirez@gmail.com", "pepito123");
     await service.deleteUser('pepitoramirez@gmail.com');
-    await service.deleteUser('albaconsuelos@gmail.com');
-    await service.deleteUser('danitorres@gmail.com');
 });
 
   it('HU4-E02. Eliminar una cuenta de un usuario no registrado (Escenario Inválido)', async () => {
-      //Given: Lista actual de usuarios = {Pepito, Alba, Dani}.
+      //Given: Lista actual de usuarios = {Pepito, Alba}.
       await service.createUser("Pepito", "Ramirez", "pepitoramirez@gmail.com", "pepito", "pepito123");
+      await service.logoutUser();
       await service.createUser("Alba", "Consuelos", "albaconsuelos@gmail.com", "alba", "alba123");
-      await service.createUser("Dani", "Torres", "danitorres@gmail.com", "dani", "dani123");
       await service.logoutUser();
 
       await new Promise(resolve => setTimeout(resolve, 500));
@@ -173,9 +171,10 @@ describe('UserService', () => {
            //Then: El sistema lanza una excepción UserNotFoundException().
            expect(error).toBeInstanceOf(UserNotFoundException);
       } finally {
+           await service.loginUser("pepitoramirez@gmail.com", "pepito123");
            await service.deleteUser("pepitoramirez@gmail.com");
+           await service.loginUser("albaconsuelos@gmail.com", "alba123");
            await service.deleteUser("albaconsuelos@gmail.com");
-           await service.deleteUser("danitorres@gmail.com");
       }
   });
   
