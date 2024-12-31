@@ -26,7 +26,7 @@ describe('UserService', () => {
   let placeService: PlaceService;
 
   beforeEach(() => {
-    jasmine.DEFAULT_TIMEOUT_INTERVAL=10000
+    jasmine.DEFAULT_TIMEOUT_INTERVAL;
     TestBed.configureTestingModule({
       providers: [
         provideHttpClient(), // Configuración moderna para HttpClient
@@ -164,31 +164,30 @@ describe('UserService', () => {
 
     await service.loginUser("pepitoramirez@gmail.com", "pepito123");
     await service.deleteUser('pepitoramirez@gmail.com');
-});
+  });
 
   it('HU4-E02. Eliminar una cuenta de un usuario no registrado (Escenario Inválido)', async () => {
-      //Given: Lista actual de usuarios = {Pepito, Alba}.
-      await service.createUser("Pepito", "Ramirez", "pepitoramirez@gmail.com", "pepito", "pepito123");
-      await service.logoutUser();
-      await service.createUser("Alba", "Consuelos", "albaconsuelos@gmail.com", "alba", "alba123");
-      await service.logoutUser();
+    //Given: Lista actual de usuarios = {Pepito, Alba}.
+    await service.createUser("Pepito", "Ramirez", "pepitoramirez@gmail.com", "pepito", "pepito123");
+    await service.logoutUser();
+    await service.createUser("Alba", "Consuelos", "albaconsuelos@gmail.com", "alba", "alba123");
+    await service.logoutUser();
 
-      await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise(resolve => setTimeout(resolve, 500));
 
-      try {
-          //When: El usuario Random quiere cerrar sesión y eliminar su cuenta del sistema.
-          await service.logoutUser();
-      } catch(error){
-           //Then: El sistema lanza una excepción UserNotFoundException().
-           expect(error).toBeInstanceOf(UserNotFoundException);
-      } finally {
-           await service.loginUser("pepitoramirez@gmail.com", "pepito123");
-           await service.deleteUser("pepitoramirez@gmail.com");
-           await service.loginUser("albaconsuelos@gmail.com", "alba123");
-           await service.deleteUser("albaconsuelos@gmail.com");
-      }
+    try {
+        //When: El usuario Random quiere cerrar sesión y eliminar su cuenta del sistema.
+        await service.logoutUser();
+    } catch(error){
+          //Then: El sistema lanza una excepción UserNotFoundException().
+          expect(error).toBeInstanceOf(UserNotFoundException);
+    } finally {
+          await service.loginUser("pepitoramirez@gmail.com", "pepito123");
+          await service.deleteUser("pepitoramirez@gmail.com");
+          await service.loginUser("albaconsuelos@gmail.com", "alba123");
+          await service.deleteUser("albaconsuelos@gmail.com");
+    }
   });
-  
 });
 
 
