@@ -41,6 +41,10 @@ export abstract class Vehiculo {
         return this.tipo;
     }
 
+    getFavorito(){
+        return this.favorito;
+    }
+
     abstract obtenerCoste(kilometros: number, precio: any): any;
     
 }

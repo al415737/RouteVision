@@ -12,11 +12,11 @@ export default [
     loadComponent: () => import('./vehiculos/add/add.component'),
   },
 
-  /*
+  
   {
-    path: 'eliminar/:id',
-    loadComponent: () => import('./vehiculos/delete/delete.component'),
+    path: 'edit/:matricula',
+    loadComponent: () => import('./vehiculos/edit/edit.component'),
   },
-  */
+  
 
 ] as Routes;

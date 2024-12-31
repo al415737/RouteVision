@@ -4,14 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Formulario de Vehículo</title>
-  <link rel="stylesheet" href="add.component.css">
+  <link rel="stylesheet" href="edit.component.css">
 </head>
 <body>
   <app-header></app-header>
 
   <div class="container">
     <div class="input-container" style="margin-left: 20px;">
-      <h2>Añadir Vehículo</h2>
+      <h2>Editar Vehículo</h2>
       <form [formGroup]="form" (ngSubmit)="submit()">
         <div class="form-group">
             <label for="matricula">Matricula</label>
@@ -64,8 +64,9 @@
             <small class="text-red"> Este campo es requerido.</small>
         }
     </div>
+    <input style="display:none" type="text" id="favorito" name="favorito" formControlName="favorito"/>
     <div class="form-buttons">
-      <button type="submit" class="btn btn-success">Añadir Vehículo</button>
+      <button type="submit" class="btn btn-success">Editar Vehículo</button>
       
     </div>
     </form>

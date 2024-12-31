@@ -7,10 +7,10 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { RouterLink } from '@angular/router';
 import { HeaderComponent } from '../../home/header/header.component';
 import { VehiculoService } from '../../../servicios/vehiculo.service';
-import { from } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { Vehiculo } from '../../../modelos/vehiculos/vehiculo';
 import { DeleteComponent } from '../delete/delete.component';
+import { toast } from 'ngx-sonner';
 
 @Component({
   selector: 'app-consultar',
@@ -23,7 +23,7 @@ export default class ConsultarComponent {
     //Datos de ejemplo
     dataSource = new MatTableDataSource<any>(); //Configuración inicial vacía
     vehiculos: Vehiculo[] = [];
-    displayedColumns: string[] = ['matricula', 'marca', 'modelo', 'ano_fabricacion', 'consumo', 'tipo', 'delete'];
+    displayedColumns: string[] = ['matricula', 'marca', 'modelo', 'ano_fabricacion', 'consumo', 'tipo', 'edit', 'delete'];
     currentPage = 0;
     readonly dialog = inject(MatDialog);
     @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -32,7 +32,6 @@ export default class ConsultarComponent {
 
     async ngOnInit(): Promise<void>{
       this.vehiculos = await this.servicioVehiculo.consultarVehiculo();
-      console.log(this.vehiculos);
       this.obtenerVehiculos();
     }
 
@@ -51,6 +50,7 @@ export default class ConsultarComponent {
       this.dialog.open(DeleteComponent, {
         data: {matricula: vehiculo.getMatricula()},
       }).afterClosed().subscribe(() => {
+          toast.success('Vehiculo borrado correctamente.'); 
           this.obtenerVehiculos();
       });
     }

@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { addDoc, collection, Firestore } from '@angular/fire/firestore';
-import { deleteDoc, doc, DocumentReference, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
+import { deleteDoc, doc, DocumentReference, getDoc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
 import { User } from '../../modelos/user';
 import { AuthService } from './auth.service';
 import { MailExistingException } from '../../excepciones/mail-existing-exception';
@@ -100,6 +100,50 @@ export class FirestoreService {
     const firstDocument = querySnapshot.docs[0];
 
     return firstDocument.id;
+  }
+
+  async getVehiculo(matricula:string){
+    const _collection = collection(this._firestore, `vehiculo/${this._authState.currentUser?.uid}/listaVehiculos/`);
+    // Referencia a la subcolección listaLugares dentro del documento del usuario
+    const id = await this.get('matricula', matricula, `vehiculo/${this._authState.currentUser?.uid}/listaVehiculos/`);
+    const listaLugaresRef = doc(_collection, id);
+    const vehiculo = await getDoc(listaLugaresRef);
+    
+    if (vehiculo.exists()) {
+      const data = vehiculo.data(); // Objeto plano
+      if(data['tipo'] == 'Precio Gasolina 95 E5' || data['tipo'] == 'Precio Gasolina 98 E5'){
+        return new CocheGasolina(
+          data['matricula'],
+          data['marca'],
+          data['modelo'],
+          data['año_fabricacion'],
+          data['consumo'],
+          data['tipo'],
+          data['favorito']
+        );
+      } else if(data['tipo'] == 'Precio Gasoleo A' || data['tipo'] == 'Precio Gasoleo B'){
+        return new CocheDiesel(
+          data['matricula'],
+          data['marca'],
+          data['modelo'],
+          data['año_fabricacion'],
+          data['consumo'],
+          data['tipo'],
+          data['favorito']
+        );
+     } else {
+        return new CocheElectrico(
+          data['matricula'],
+          data['marca'],
+          data['modelo'],
+          data['ano_fabricacion'],
+          data['consumo'],
+          data['tipo'],
+          data['favorito']
+        );
+      }
+    }
+    return null;
   }
 
   async consultarVehiculo(path: string){

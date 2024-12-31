@@ -116,7 +116,7 @@ html, body {
     opacity: 0.7;
   }
   
-  @media (max-width: 1200px) {
+  @media (max-width: 1400px) {
     .container {
       flex-direction: column;
       align-items: center;
@@ -135,11 +135,12 @@ html, body {
 }
 .form-buttons {
   display: flex;
-  justify-content: center;
-  gap: 10px;
+  justify-content: center; /* Centra los botones horizontalmente */
+  gap: 10px; /* Espaciado horizontal entre botones */
+  margin-top: 20px; /* Espacio superior opcional */
 }
 
 .form-buttons button {
-  margin: 10px 0;
-  width: 300px;
+  margin: 10px 0; /* Espacio entre botones */
+  width: 300px; /* Ajusta el ancho a tu preferencia */
 }
