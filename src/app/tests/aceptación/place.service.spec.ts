@@ -162,10 +162,11 @@ describe('PlaceService', () => {
    it('HU8E02. Eliminación de un lugar de interés que no está en la lista de lugares de interés del usuario (Escenario Inválido):', async() => {
     //GIVEN: El usuario [“PlaceTest”, “placetest@test.com“,“test123”] quiere eliminar un lugar de interés que no está en su lista de lugares de interés → lugaresInteres =  [{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049], idLugar = “000”}].
     await serviceUser.loginUser("test@test.com","test123");
-    await servicePlace.createPlaceC([39.98, -0.049]);
+    const lugar = await servicePlace.createPlaceC([39.98, -0.049]);
     //WHEN: Intenta eliminar un lugar de interés → [idLugar = “001”, Topónimo = “Valencia”].
     //THEN: El sistema no elimina el lugar de interés y lanza la excepción PlaceNotFoundInListException().
     await expectAsync(servicePlace.deletePlace('001')).toBeRejectedWith(new NotExistingObjectException());
+    await servicePlace.deletePlace(lugar.idPlace);
     await serviceUser.logoutUser();
    });
 });
