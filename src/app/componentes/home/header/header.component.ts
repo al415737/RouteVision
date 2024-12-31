@@ -1,6 +1,8 @@
 import { Component, inject} from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { UserService } from '../../../servicios/user.service';
+import { DeleteComponent } from '../delete/delete.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-header',
@@ -12,6 +14,7 @@ import { UserService } from '../../../servicios/user.service';
 export class HeaderComponent {
   private _service = inject(UserService);
   private _router = inject(Router);
+  readonly dialog = inject(MatDialog);
   isSettingsOpen: boolean = false;
   
 
@@ -23,4 +26,11 @@ export class HeaderComponent {
     await this._service.logoutUser();
     this._router.navigateByUrl('/default');   
   }
+
+  onDelete() {
+      this.dialog.open(DeleteComponent).afterClosed().subscribe(() => {
+        this._router.navigateByUrl('/default'); 
+      });
+        
+    }
 }

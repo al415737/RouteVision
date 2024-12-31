@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { HeaderComponent } from "./header/header.component";
 import { PrecioLuzService } from '../../APIs/PrecioLuz/precioLuz.service';
+import { AuthStateService } from '../../utils/auth-state.service';
 
 @Component({
   selector: 'app-home',
@@ -12,9 +13,10 @@ import { PrecioLuzService } from '../../APIs/PrecioLuz/precioLuz.service';
 })
 export default class HomeComponent {
   private _luzApi: PrecioLuzService = inject(PrecioLuzService);
+  private authState: AuthStateService = inject(AuthStateService);
   datos:any;
   ngOnInit(): void {
-    this._luzApi.getPrecios().subscribe(
+    /*this._luzApi.getPrecios().subscribe(
       (response) => {
         this.datos = response.included; // Guardar los datos obtenidos
         const pvpc = this.datos.find((item: any) => item.type === "PVPC");
@@ -28,6 +30,6 @@ export default class HomeComponent {
       (error) => {
         console.error('Error al obtener los datos:', error);
       }
-    );
+    );*/
   }
 }

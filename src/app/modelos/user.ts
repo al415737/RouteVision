@@ -17,9 +17,24 @@ export class User {
         this.preferencia1 = pref1;
         this.preferencia2 = pref2;
     }
+    getNombre() {
+        return this.nombre;
+    }
+    getApellidos() {
+        return this.apellidos;
+    }
 
     getEmail() {
         return this.email;
+    }
+    getUser() {
+        return this.user;
+    }
+    getPref1() {
+        return this.preferencia1;
+    }
+    getPref2() {
+        return this.preferencia2;
     }
 
 }

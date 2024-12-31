@@ -88,7 +88,7 @@ export class FirestoreService {
     return docRef; // Retorna la referencia con ID único
   }
 
-  async get(campo: string, valor: string, PATH: string) {
+  async get(campo: string, valor: string | undefined, PATH: string) {
     const _collection = collection(this._firestore, PATH);
 
     const q = query(_collection, where(campo, '==', valor));
@@ -185,6 +185,26 @@ export class FirestoreService {
         );
       }
      }); 
+  }
+
+  async getUsuario(){
+    const _collection = collection(this._firestore, `user/`);
+    const id = await this.get('uid', this._authState.currentUser?.uid, `user/`);
+    const lista = doc(_collection, id);
+    const usuario = await getDoc(lista);
+    
+    if (usuario.exists()) {
+      const data = usuario.data(); // Objeto plano
+        return new User(
+          data['nombre'],
+          data['apellidos'],
+          data['email'],
+          data['user'],
+          data['preferencia1'],
+          data['preferencia2']
+        );
+    }
+    return null;
   }
 
   async consultarUsuarios(path: string){

@@ -17,7 +17,11 @@ export const routes: Routes = [
       path: 'home',
       loadComponent: () => import('./componentes/home/home.component')
     },
-    
+    {
+      canActivateChild: [privateGuard()],
+      path: 'settings',
+      loadComponent: () => import('./componentes/profile/profile.component')
+    }, 
     {
       canActivateChild: [privateGuard()],
       path: 'vehiculos',

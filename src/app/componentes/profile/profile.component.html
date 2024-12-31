@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home</title>
+  <link rel="stylesheet" href="profile.component.css">
+</head>
+<body>
+  <app-header></app-header>
+  <div class="container">
+    <div class="input-container" style="margin-left: 20px;">
+      <h2>Mi perfil</h2>
+
+      <label for="nombre">Nombre:</label>
+      <input id="nombre" type="text" [(ngModel)]="nombre" readonly />
+      
+      <label for="apellidos">Apellidos:</label>
+      <input id="apellidos" type="text" [(ngModel)]="apellidos"readonly />
+      
+      <label for="email">Email:</label>
+      <input id="email" type="text" [(ngModel)]="email"readonly />
+      
+      <label for="user">Nombre Usuario</label>
+      <input id="user" type="string" [(ngModel)]="user" readonly />
+      
+      <label for="pref1">Preferencia 1</label>
+      <select id="pref1" [(ngModel)]="preferencia1">
+        <option style="display:none"></option>
+        <option value="Gasolina 95 E5">Vehiculo</option>
+        <option value="Gasolina 98 E5">Bicicleta</option>
+        <option value="Gasoleo A">A pie</option>
+      </select>
+
+      <label for="pref2">Preferencia 2</label>
+      <select id="pref2" [(ngModel)]="preferencia2">
+        <option style="display:none"></option>
+        <option value="Gasolina 95 E5">Rapida</option>
+        <option value="Gasolina 98 E5">Corta</option>
+        <option value="Gasoleo A">Recomendada</option>
+        <option value="Gasoleo B">Por Defecto</option>
+      </select>
+
+      <button  class="btn-success">Guardar Ajuster</button>
+      <button class="btn-secondary back-button" routerLink="/home">Volver</button>
+    </div>
+  </div>
+</body>
+</html>
