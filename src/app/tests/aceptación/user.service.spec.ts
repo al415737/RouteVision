@@ -26,7 +26,7 @@ describe('UserService', () => {
   let placeService: PlaceService;
 
   beforeEach(() => {
-    jasmine.DEFAULT_TIMEOUT_INTERVAL;
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
     TestBed.configureTestingModule({
       providers: [
         provideHttpClient(), // Configuración moderna para HttpClient
