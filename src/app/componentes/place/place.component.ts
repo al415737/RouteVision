@@ -8,6 +8,7 @@ import { RouterLink } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { DeleteComponent } from './delete/delete.component';
+import { toast } from 'ngx-sonner';
 
 
 @Component({
@@ -47,6 +48,7 @@ export default class PlaceComponent {
     this.dialog.open(DeleteComponent, {
       data: {id: place.getIdPlace(), nombre:place.getToponimo()},
     }).afterClosed().subscribe(() => {
+      toast.success('Lugar eliminado correctamente.');
       this.updateDataSource();
     });
       

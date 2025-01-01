@@ -57,7 +57,8 @@ describe('UserService', () => {
     
     // THEN: El sistema registra a Manuel  y se almacena en la base de datos → ListaUsuarios=[{Nombre=”Manuel”, Apellido=”García”, User=”Manu33”, Email=”manu33@gmail.com”, Contraseña=”Manu-33”, preferencia1=’ ’, preferencia2=’ ‘}].
     expect(result).toBeInstanceOf(User);
-    service.deleteUser("manu033@gmail.com");
+    await service.loginUser("manu033@gmail.com", "Manu-33");
+    await service.deleteUser("manu033@gmail.com");
   });
 
   it('HU1E05. Registro de usuario con email ya registrado en el sistema con otra cuenta (Escenario inválido):', async () => {

@@ -71,6 +71,7 @@ export default class AddComponent {
       }else if (this.selectedOption === 'toponym') {
         this._placeService.createPlaceT(this.resultado.nombre, );
       }
+      toast.success('Lugar añadido correctamente.');
       this._router.navigateByUrl('/lugares');
     }else{
       toast.info('Por favor, seleccione un lugar o coordenadas.');
