@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { addDoc, collection, Firestore } from '@angular/fire/firestore';
-import { deleteDoc, doc, DocumentReference, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
+import { deleteDoc, doc, DocumentReference, getDocs, orderBy, query, setDoc, updateDoc, where } from 'firebase/firestore';
 import { User } from '../../modelos/user';
 import { AuthService } from './auth.service';
 import { MailExistingException } from '../../excepciones/mail-existing-exception';
@@ -86,6 +86,8 @@ export class FirestoreService {
 
   async consultarVehiculo(path: string){
     const _collection = collection(this._firestore, path);
+
+    const q = query(_collection, orderBy('favorito', 'desc'));
 
     const documentos = await getDocs(_collection);
 
@@ -194,7 +196,6 @@ export class FirestoreService {
           data['idPlace'], 
           data['toponimo'],
           data['coordenadas'],
-          data['favorito'],
         );
       }); 
     } catch (error) {
@@ -276,7 +277,6 @@ export class FirestoreService {
           data['movilidad'],
           data['kilometros'],
           data['duration'],
-          data['favorito']
         );
       });
     } catch (error) {
