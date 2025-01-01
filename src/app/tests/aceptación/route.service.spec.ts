@@ -135,13 +135,13 @@ describe('RutasService', () => {
     const costeRuta = await servicioRutas.obtenerCosteRuta(vehiculo, ruta);
     expect(costeRuta).toBeTruthy();
     await servicioVehiculo.eliminarVehiculo(vehiculo.getMatricula());
-    await servicioUsuario.logoutUser();
+    await servicioUsuario.logoutUser();(
   });
 
 
   it('H14E04. Cálculo del coste asociado a la realización de una ruta en coche utilizando una matrícula no registrada en la lista de vehículos (Escenario Inválido): ', async () => {
     //GIVEN: La API está disponible. El usuario [“RouteTest”, “routetest@test.com“,“test123”] con listaVehículos= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”*407”, Año Fabricación=”2007”, Consumo=8,1, “Precio Gasoleo A”}]
-    await servicioUsuario.loginUser("test@test.com", "test123");  
+    await servicioUsuario.loginUser("test@test.com", "test123"); 
     const vehiculo = await servicioVehiculo.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, 'Precio Gasoleo A');
     
     //WHEN: El usuario selecciona el vehículo [Matrícula=”1234 CCC”, Marca=”Peugeot”, Modelo=”*407”, Año Fabricación=”2007”, Consumo=8,1, “Precio Gasoleo A”]  y la ruta [Origen:Valencia, Destino:Castellón]

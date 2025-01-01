@@ -49,6 +49,9 @@ export class RouteFirebaseService implements RouteRepository{
       costeRuta=0;
       //llamar a api luz
       //llamar a obtenerCoste
+      const listaPrecios = await this.proxy.getPreciosLuz();
+      
+
 
     } else {
       const listaMunicipios = await this.proxy.getMunicipios();
