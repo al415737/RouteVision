@@ -138,7 +138,7 @@ describe('RutasService', () => {
 
     const vehiculo = await servicioVehiculo.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, 'Precio Gasoleo A');
     
-    const ruta = new Route('ruta01', 'Valencia', 'Castellón de la Plana/Castelló de la Plana', 'porDefecto', 'driving-car', 90, 90, false);
+    const ruta = new Route('ruta01', 'Valencia', 'Castellón de la Plana/Castelló de la Plana', 'porDefecto', 'driving-car', 90, 90);
     
     const costeRuta = await servicioRutas.obtenerCosteRuta(vehiculo, ruta);
     servicioVehiculo.eliminarVehiculo(vehiculo.getMatricula());
@@ -151,7 +151,7 @@ describe('RutasService', () => {
     
     const vehiculo = await servicioVehiculo.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, 'Precio Gasoleo A');
     // const vehiculoNoExiste = await serviceVehiculo.crearVehiculo("3423 WCX", "Fiat", "Punto", "2016", 8.1); //este vehículo NO EXISTE EN LA BBDD DEL USUARIO
-    const ruta = new Route('ruta01','Valencia', 'Castellón de la Plana/Castelló de la Plana', 'porDefecto', 'driving-car', 90, 90, false);
+    const ruta = new Route('ruta01','Valencia', 'Castellón de la Plana/Castelló de la Plana', 'porDefecto', 'driving-car', 90, 90);
     const vehiculoNoExiste = new CocheDiesel("3423 WCX", "Fiat", "Punto", "2016", 8.1,'Precio Gasoleo A');
 
     await expectAsync(servicioRutas.obtenerCosteRuta(vehiculoNoExiste, ruta)).toBeRejectedWith(new NotExistingObjectException());
@@ -211,7 +211,7 @@ describe('RutasService', () => {
     servicioUsuario.loginUser("test@test.com", "test123");
     const origen = await servicioPlace.createPlaceT("València, España");
     const destino = await servicioPlace.createPlaceT("Castellón de la Plana");
-    const ruta = new Route("Valencia-Castellón", "Valencia", "Castellón de la Plana", "economica", "cycling-regular", 76, 15806, false);
+    const ruta = new Route("Valencia-Castellón", "Valencia", "Castellón de la Plana", "economica", "cycling-regular", 76, 15806);
 
     try {
         //When: El usuario Pepito quiere realizar la ruta entre Valencia y Castellón en bicicleta.
@@ -241,8 +241,8 @@ describe('RutasService', () => {
     const place = await servicioPlace.createPlaceT("Sagunto");
     const place2 = await servicioPlace.createPlaceT("Castellón de la Plana");
 
-    const placeAux: Place = new Place('005', 'Madrid', [], false);
-    const placeAux2: Place = new Place('006', 'Barcelona', [], false);
+    const placeAux: Place = new Place('005', 'Madrid', []);
+    const placeAux2: Place = new Place('006', 'Barcelona', []);
 
     await expectAsync(servicioRutas.createRoute('ruta01', placeAux, placeAux2, "driving-car", "fastest", 90, 60)).toBeRejectedWith(new NotExistingObjectException());
     

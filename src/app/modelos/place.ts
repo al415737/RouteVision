@@ -4,11 +4,11 @@ export class Place {
     private coordenadas: number[];
     private favorito: boolean;
 
-    constructor (idPlace: string, toponimo: string, coordenadas: number[], fav: boolean) {
+    constructor (idPlace: string, toponimo: string, coordenadas: number[]) {
         this.idPlace = idPlace
         this.toponimo = toponimo;
         this.coordenadas = coordenadas;
-        this.favorito = fav;
+        this.favorito = false;
     }
 
     getIdPlace(){
@@ -21,5 +21,9 @@ export class Place {
 
     getCoordenadas(){
         return this.coordenadas;
+    }
+
+    setFavorito(favorito: boolean){
+        this.favorito = true;
     }
 }

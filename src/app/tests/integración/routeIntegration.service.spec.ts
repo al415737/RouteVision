@@ -88,9 +88,9 @@ describe('RouteIntegrationService', () => {
       
       spyOn(routeRepo, 'obtenerCosteRuta').and.resolveTo(mockFuelCostRoute);
       
-      const result = await routeRepo.obtenerCosteRuta(new CocheDiesel("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasoleo A"), new Route('ruta01', 'Valencia', 'Castellón de la Plana/Castelló de la Plana', 'porDefecto', 'driving-car', 90, 90, false));
+      const result = await routeRepo.obtenerCosteRuta(new CocheDiesel("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasoleo A"), new Route('ruta01', 'Valencia', 'Castellón de la Plana/Castelló de la Plana', 'porDefecto', 'driving-car', 90, 90));
       
-      expect(routeRepo.obtenerCosteRuta).toHaveBeenCalledWith(new CocheDiesel("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasoleo A"), new Route('ruta01', 'Valencia', 'Castellón de la Plana/Castelló de la Plana', 'porDefecto', 'driving-car', 90, 90, false));
+      expect(routeRepo.obtenerCosteRuta).toHaveBeenCalledWith(new CocheDiesel("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasoleo A"), new Route('ruta01', 'Valencia', 'Castellón de la Plana/Castelló de la Plana', 'porDefecto', 'driving-car', 90, 90));
       expect(result).toEqual(mockFuelCostRoute);
     });
   
@@ -100,7 +100,7 @@ describe('RouteIntegrationService', () => {
       spyOn(routeRepo, 'obtenerCosteRuta').and.resolveTo(mockFuelCostRoute);
   
       const vehiculoNoExiste = new CocheGasolina("3423 WCX", "Fiat", "Punto", "2016", 8.1, "Precio Gasolina 95 E5");
-      const rutaValida = new Route('ruta01', 'Valencia', 'Castellón de la Plana/Castelló de la Plana', 'porDefecto', 'driving-car', 90, 90, false);
+      const rutaValida = new Route('ruta01', 'Valencia', 'Castellón de la Plana/Castelló de la Plana', 'porDefecto', 'driving-car', 90, 90);
   
       try {
           await routeRepo.obtenerCosteRuta(vehiculoNoExiste, rutaValida);
@@ -113,8 +113,8 @@ describe('RouteIntegrationService', () => {
     const mockRoute: number[] = [52.863, 46.388333333333335];
     spyOn(routeRepo, 'getRouteFSE').and.resolveTo(mockRoute);
 
-    const place: Place = new Place("000", 'Sagunto', [], false);
-    const place2: Place = new Place("001", 'Castellón de la Plana', [], false);
+    const place: Place = new Place("000", 'Sagunto', []);
+    const place2: Place = new Place("001", 'Castellón de la Plana', []);
     const result = await service.getRouteFSE(place, place2, "driving-car", "fastest");
 
     expect(routeRepo.getRouteFSE).toHaveBeenCalledWith(place, place2, "driving-car", "fastest");
@@ -126,8 +126,8 @@ describe('RouteIntegrationService', () => {
     const mockRoute: number[] = [52.863, 46.388333333333335];
     spyOn(routeRepo, 'getRouteFSE').and.resolveTo(mockRoute);
 
-    const place: Place = new Place("000", 'Sagunto', [], false);
-    const place2: Place = new Place("001", 'Castellón de la Plana', [], false);
+    const place: Place = new Place("000", 'Sagunto', []);
+    const place2: Place = new Place("001", 'Castellón de la Plana', []);
 
     try {
         service.getRouteFSE(place, place2, "driving-car", "")
@@ -143,7 +143,7 @@ describe('RouteIntegrationService', () => {
     spyOn(routeRepo, 'costeRutaPieBicicleta').and.resolveTo(mockData);
     const origen = await servicioPlace.createPlaceT("València, España");
     const destino = await servicioPlace.createPlaceT("Castellón de la Plana");
-    const ruta = new Route("Valencia-Castellón", "Valencia", "Castellón de la Plana", "economica", "cycling-regular", 76, 15806, false);
+    const ruta = new Route("Valencia-Castellón", "Valencia", "Castellón de la Plana", "economica", "cycling-regular", 76, 15806);
 
     //When: Se calcula el coste de la ruta Valencia-Castellón con la opción bicicleta
     const coste = await service.costeRutaPieBicicleta(ruta, origen, destino);
@@ -158,7 +158,7 @@ describe('RouteIntegrationService', () => {
       spyOn(routeRepo, 'costeRutaPieBicicleta').and.resolveTo(NoRouteFoundException);
       const origen = await servicioPlace.createPlaceT("València, España");
       const destino = await servicioPlace.createPlaceT("Castellón de la Plana");
-      const ruta = new Route("Valencia-Castellón", "Valencia", "Castellón de la Plana", "economica", "cycling-regular", 76, 3600, false);
+      const ruta = new Route("Valencia-Castellón", "Valencia", "Castellón de la Plana", "economica", "cycling-regular", 76, 3600);
   
       try {
           //When: El usuario Pepito quiere realizar la ruta entre Valencia y Castellón en bicicleta.
@@ -172,9 +172,9 @@ describe('RouteIntegrationService', () => {
 
 
   it('H17E01. Guardar una ruta que no existe en el sistema (Escenario válido)', async () => {
-    const place: Place = new Place("000", 'Sagunto', [], false);
-    const place2: Place = new Place("001", 'Castellón de la Plana', [], false);
-    const mockRoute: Route = new Route("ruta01", place.getToponimo(), place2.getToponimo(), "driving-car", "fastest", 90, 60, false);
+    const place: Place = new Place("000", 'Sagunto', []);
+    const place2: Place = new Place("001", 'Castellón de la Plana', []);
+    const mockRoute: Route = new Route("ruta01", place.getToponimo(), place2.getToponimo(), "driving-car", "fastest", 90, 60);
 
     spyOn(routeRepo, 'createRoute').and.resolveTo(mockRoute);
 
@@ -185,9 +185,9 @@ describe('RouteIntegrationService', () => {
 
 
   it('H17E02. Intento de guardar una ruta con lugares no registrados (Escenario inválido)', async () => {
-    const placeAux: Place = new Place('005', 'Madrid', [], false);
-    const placeAux2: Place = new Place('006', 'Barcelona', [], false);
-    const mockRoute: Route = new Route("ruta01", placeAux.getToponimo(), placeAux2.getToponimo(), "driving-car", "fastest", 90, 60, false);
+    const placeAux: Place = new Place('005', 'Madrid', []);
+    const placeAux2: Place = new Place('006', 'Barcelona', []);
+    const mockRoute: Route = new Route("ruta01", placeAux.getToponimo(), placeAux2.getToponimo(), "driving-car", "fastest", 90, 60);
 
     spyOn(routeRepo, 'createRoute').and.resolveTo(mockRoute);
 
@@ -200,7 +200,7 @@ describe('RouteIntegrationService', () => {
   });
 
   it('H18E01. Consultar rutas guardadas (Escenario Válido):', async () => {
-    const mockRoute: Route[] = [new Route('ruta01', "Sagunto", "Alicante", "driving-car", "fastest", 90, 60, false), new Route('ruta02', "Valencia", "Castellón de la Plana", "driving-car", "shortest", 84, 64, false)];
+    const mockRoute: Route[] = [new Route('ruta01', "Sagunto", "Alicante", "driving-car", "fastest", 90, 60), new Route('ruta02', "Valencia", "Castellón de la Plana", "driving-car", "shortest", 84, 64)];
     spyOn(routeRepo, 'getRoutes').and.resolveTo(mockRoute);
 
     const result = await routeRepo.getRoutes();
@@ -211,7 +211,7 @@ describe('RouteIntegrationService', () => {
   });
 
   it('H18E03. Intento de consulta de rutas guardadas pero el usuario no está registrado (Escenario Inválido):', async () => {
-    const mockRoute: Route[] = [new Route('ruta01', "Sagunto", "Alicante", "driving-car", "fastest", 90, 60, false), new Route('ruta02', "Valencia", "Castellón de la Plana", "driving-car", "shortest", 84, 64, false)];
+    const mockRoute: Route[] = [new Route('ruta01', "Sagunto", "Alicante", "driving-car", "fastest", 90, 60), new Route('ruta02', "Valencia", "Castellón de la Plana", "driving-car", "shortest", 84, 64)];
     spyOn(routeRepo, 'getRoutes').and.resolveTo(mockRoute);
     spyOn(authStateService as any, 'currentUser').and.returnValue(null);
 

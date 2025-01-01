@@ -10,7 +10,7 @@ export class Route {
     private duration: number;
     private favorito: boolean;
 
-    constructor (nombre: string, origen: string, destino: string, option: string, movilidad: string, kilometros: number, duration: number, fav: boolean) {
+    constructor (nombre: string, origen: string, destino: string, option: string, movilidad: string, kilometros: number, duration: number) {
         this.nombre = nombre;
         this.origen = origen;
         this.destino = destino;
@@ -18,7 +18,7 @@ export class Route {
         this.movilidad = movilidad;
         this.kilometros = kilometros;
         this.duration = duration;
-        this.favorito = fav;
+        this.favorito = false;
     }
 
     getNombre() {
@@ -55,5 +55,9 @@ export class Route {
 
     setDuration(duration: number) {
         this.duration = duration;
+    }
+    
+    setFavorito(favorito: boolean){
+        this.favorito = favorito;
     }
 }
