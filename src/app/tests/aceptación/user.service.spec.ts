@@ -192,6 +192,32 @@ describe('UserService', () => {
     }
   });
 
+  it('HU21-E01. Configuración de un vehículo/método de transporte predeterminado (Escenario Válido): ', async () => {
+    await service.loginUser('usertest@test.com', 'test123');
+    await service.editUser(1, 'foot-walking');
+
+    const user: User | null  = await service.getUsuario();
+    let preference: string = '';
+    if (user != null) 
+      preference = user.getPref1();
+
+    expect(preference).toEqual('foot-walking');
+    await service.editUser(1, '');
+    await service.logoutUser();
+  });
+
+  it('HU21-E03. Configuración de un vehículo/metodo de transporte predeterminado con un vehículo inexistente (Escenario Inválido): ', async () => {
+    await service.loginUser('usertest@test.com', 'test123');
+    
+    try {
+      await service.editUser(1, 'foooot');
+    } catch (error) {
+      expect(error).toBeInstanceOf(PrefereneInvalidException);    //CAMBIAR NOMBRE PORFA, PARECE QUE PONGA prefeIRENE
+    }
+
+    await service.logoutUser();
+  });
+
   it('HU22-E01. Establecimiento de la ruta más rápida por defecto (Escenario Válido): ', async () => {
     await service.loginUser('usertest@test.com', 'test123');
     await service.editUser(2, 'fastest');

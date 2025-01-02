@@ -160,6 +160,25 @@ describe('UserIntegrationService', () => {
       }
   });
 
+  it('PRUEBA INTEGRACIÓN --> HU21-E01. Configuración de un vehículo/método de transporte predeterminado (Escenario Válido): ', async () => {
+    const mockUser: User = new User("UserTest", "ADIS", "usertest@test.com", "UserTest", "foot-walking", "");
+    spyOn(userRepo, 'editUser').and.resolveTo();
+    
+    await service.editUser(1, 'foot-walking');
+    expect(userRepo.editUser).toHaveBeenCalledWith(1, 'foot-walking');
+    expect(mockUser.getPref1()).toEqual('foot-walking');
+  });
+
+  it('PRUEBA INTEGRACIÓN --> HU21-E03. Configuración de un vehículo/metodo de transporte predeterminado con un vehículo inexistente (Escenario Inválido): ', async () => {
+    spyOn(userRepo, 'editUser').and.resolveTo();      
+    try {
+      await service.editUser(1, 'foooooot');
+      expect(userRepo.editUser).toHaveBeenCalledWith(1, 'fooooot');
+    } catch (error) {
+      expect(error).toBeInstanceOf(PrefereneInvalidException);    //CAMBIAR NOMBRE :d
+    }
+  });
+
   it('HU22-E01. Establecimiento de la ruta más rápida por defecto (Escenario Válido): ', async () => {
     const mockUser: User = new User("UserTest", "ADIS", "usertest@test.com", "UserTest", "", "fastest");
     spyOn(userRepo, 'editUser').and.resolveTo();

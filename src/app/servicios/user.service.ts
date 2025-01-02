@@ -47,7 +47,7 @@ export class UserService {
   }
 
   async editUser(type: number, value: string) {
-    if (type < 0 || type > 2)
+    if (type <= 0 || type > 2)
       throw new PrefereneInvalidException();
 
     if (value != '' && value != 'fastest' && value != 'shortest' && value != 'recommended' && value != 'porDefecto' && value != 'driving-car' && value != 'foot-walking' && value != 'cycling')
