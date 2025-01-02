@@ -180,8 +180,8 @@ describe('UserService', () => {
            await service.deleteUser("danitorres@gmail.com");
       }
   });
+  */
   
-
   it('HU20-E01. Usuario marca como favorito su coche (Escenario Válido)', async() => {
     //Given: El usuario [“Pepito2002”, “pepito@gmail.com“,“ppt-24”] tiene iniciada su cuenta y la base de datos está disponible. Lista de vehículos: [ {“8291 DTS” , 2002, “Seat”, “León”, 5.1L/100km, 'Precio Gasolina 98 E5'}, {"1234 BBB", "Peugeot", "407", "2007", 8.1, 'Precio Gasoleo A'} ]. 
     await service.loginUser("test@test.com", "test123");
@@ -199,8 +199,6 @@ describe('UserService', () => {
     vehicleService.eliminarVehiculo("8291 DTS");
   
   });
-  */
-
   
   it('HU20-E03. Intento de marcar como favorito pero no tiene elementos registrados (Escenario Inválido)', async() => {
     //Given: El usuario [“Pepito2002”, “pepito@gmail.com“,“ppt-24”] ha iniciado sesión, la base de datos está disponible, pero no tiene ningún elemento registrado. Lista de vehículos = [ ].
@@ -214,9 +212,7 @@ describe('UserService', () => {
       //Then: El sistema no puede marcar como favorito nada y lanza la excepción NoElementsException().
       expect(error).toBeInstanceOf(NoElementsException);
     }
-    
   });
-  
   
 });
 
