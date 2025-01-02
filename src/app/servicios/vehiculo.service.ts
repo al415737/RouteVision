@@ -16,15 +16,17 @@ export class VehiculoService {
   }
 
   crearVehiculo(matricula: string, marca: string, modelo: string, año_fabricacion: string, consumo: number, tipo: string){
+    console.log('Tipo combustible: ' + tipo);
+    
     if(matricula == '' || matricula == null){
       throw new NullLicenseException();
     }
 
     let vehiculo: Vehiculo;
 
-    if(tipo == 'Precio Gasolina 95 E5' || tipo == 'Precio Gasolina 98 E5'){
+    if(tipo == 'Gasolina'){
         vehiculo = new CocheGasolina(matricula, marca, modelo, año_fabricacion, consumo, tipo);
-    } else if(tipo == 'Precio Gasoleo A' || tipo == 'Precio Gasoleo B'){
+    } else if(tipo == 'Diésel'){
         vehiculo = new CocheDiesel(matricula, marca, modelo, año_fabricacion, consumo, tipo);
     } else {
         vehiculo = new CocheElectrico(matricula, marca, modelo, año_fabricacion, consumo, tipo);
@@ -40,9 +42,9 @@ export class VehiculoService {
 
     let vehiculo: Vehiculo;
     
-    if(tipo == 'Precio Gasolina 95 E5' || tipo == 'Precio Gasolina 98 E5'){
+    if(tipo == 'Gasolina'){
       vehiculo = new CocheGasolina(matricula, marca, modelo, año_fabricacion, consumo, tipo);
-    } else if(tipo == 'Precio Gasoleo A' || tipo == 'Precio Gasoleo B'){
+    } else if(tipo == 'Diésel'){
         vehiculo = new CocheDiesel(matricula, marca, modelo, año_fabricacion, consumo, tipo);
     } else {
         vehiculo = new CocheElectrico(matricula, marca, modelo, año_fabricacion, consumo, tipo);
@@ -53,6 +55,10 @@ export class VehiculoService {
 
   async consultarVehiculo(){
     return this.vehiRepo.consultarVehiculo();
+  }
+
+  getVehiculo(matricula:string){
+    return this.vehiRepo.getVehiculo(matricula);
   }
 
   async eliminarVehiculo(matricula: string):Promise<void>{

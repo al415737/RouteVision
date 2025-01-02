@@ -33,6 +33,10 @@ export class VehiculoFirebaseService implements VehiculoRepository{
         return await this.firestore.consultarVehiculo(PATHVEHICULO);
     }
 
+    async getVehiculo(matricula: string): Promise<any> {
+      return await this.firestore.getVehiculo(matricula);
+    }
+
     async actualizarVehiculo(vehiculo: Vehiculo): Promise<any> {
       const id = await this.firestore.get('matricula', vehiculo.getMatricula(), `vehiculo/${this._authState.currentUser?.uid}/listaVehiculos`);
       if (id == '') {

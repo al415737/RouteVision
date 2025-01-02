@@ -1,5 +1,4 @@
 import { Component, inject } from '@angular/core';
-import { PlaceService } from '../../../servicios/place.service';
 import { FormsModule } from '@angular/forms';
 import {
   MAT_DIALOG_DATA,
@@ -8,30 +7,31 @@ import {
   MatDialogRef,
   MatDialogTitle,
 } from '@angular/material/dialog';
+import { VehiculoService } from '../../../servicios/vehiculo.service';
 
 @Component({
   selector: 'app-delete',
   standalone: true,
   imports: [
-    FormsModule,
-    MatDialogTitle,
-    MatDialogContent,
-    MatDialogActions
-  ],
+      FormsModule,
+      MatDialogTitle,
+      MatDialogContent,
+      MatDialogActions
+    ],
   templateUrl: './delete.component.html',
   styleUrl: './delete.component.css'
 })
 export class DeleteComponent {
   private dialogRef = inject(MatDialogRef);
-  private _placeService = inject(PlaceService);
-  readonly data = inject(MAT_DIALOG_DATA);
-
-  onNoClick(): void {
-    this.dialogRef.close();
-  }
-
-  borrarLugar(){
-    this._placeService.deletePlace(this.data.id);
-    this.dialogRef.close();
-  }
+    private _vehiculoService = inject(VehiculoService);
+    readonly data = inject(MAT_DIALOG_DATA);
+  
+    onNoClick(): void {
+      this.dialogRef.close();
+    }
+  
+    borrarLugar(){
+      this._vehiculoService.eliminarVehiculo(this.data.matricula);
+      this.dialogRef.close();
+    }
 }

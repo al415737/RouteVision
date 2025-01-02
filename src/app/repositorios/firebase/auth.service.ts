@@ -22,7 +22,7 @@ export class AuthService {
     const currentUser = this._auth.currentUser;
 
     if(currentUser)
-      await deleteUser(currentUser);
+      await currentUser.delete();
   }
 
   async signin(email: string, password: string) {

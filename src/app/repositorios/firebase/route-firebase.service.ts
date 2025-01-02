@@ -12,6 +12,7 @@ import { AuthStateService } from '../../utils/auth-state.service';
 import { getAuth } from 'firebase/auth';
 import { ServerNotOperativeException } from '../../excepciones/server-not-operative-exception';
 import { PlaceNotFoundException } from '../../excepciones/place-not-found-exception';
+import { NotAvailableFuelException } from '../../excepciones/not-available-fuel-exception';
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +26,7 @@ export class RouteFirebaseService implements RouteRepository{
   
   consultarRutaEspecifica(ruta: Route): Promise<boolean> {
     const uid = getAuth().currentUser?.uid;
-    const PATHROUTE = `ruta/${uid}/listaRutasInteré`;
+    const PATHROUTE = `ruta/${uid}/listaRutasInterés`;
     return this._firestore.ifExist("nombre", ruta.getNombre(), PATHROUTE);  //Comprobar si la ruta específica existe
   }
   
@@ -38,19 +39,36 @@ export class RouteFirebaseService implements RouteRepository{
   }
 
   
+  //COSTE DE LA RUTA - IRENE
   async obtenerCosteRuta(vehiculo: Vehiculo, ruta: Route,): Promise<number> {
     const existVehiculo = this._firestore.ifExistVehicle(vehiculo);
     
-    if (!existVehiculo) return -1;
+    if (!existVehiculo) 
+      throw new NotExistingObjectException();
+
 
     let costeRuta: number;
+    costeRuta = 0;
 
-    if(vehiculo.getTipo() == 'Eléctrico'){
-      costeRuta=0;
-      //llamar a api luz
-      //llamar a obtenerCoste
+    if(vehiculo.getTipo() == 'Eléctrico'){  //ELECTRICO
+      const fechaHoy = new Date();
 
-    } else {
+      const indiceHora = fechaHoy.getHours(); // Obtener la hora (0-23)
+      console.log('La hora de la que se saca el precio de la luz (teniendo en cuenta la hora actual es: ' + indiceHora);
+
+      const listaPrecios = await this.proxy.getPreciosLuz();
+      // Buscar el precio correspondiente a la hora actual
+      const pvpc = listaPrecios.included.find((item: any) => item.type === 'PVPC');
+      console.log('Precios: ' + pvpc);
+
+      // Extraemos los valores de precio
+      const precios = pvpc.attributes.values;
+        
+      const precioKWh = precios[indiceHora].value / 1000; // Convertir €/MWh a €/kWh
+      costeRuta = vehiculo.obtenerCoste(ruta.getKm(), precioKWh);
+      console.log(`Hora actual: ${indiceHora}, Precio €/kWh: ${precioKWh}, Coste Ruta: ${costeRuta}`);
+
+    } else {  //DIESEL O GASOLINA
       const listaMunicipios = await this.proxy.getMunicipios();
 
       const municipio = listaMunicipios.find((Municipio: any) => Municipio.Municipio === ruta.getOrigen());
@@ -58,12 +76,24 @@ export class RouteFirebaseService implements RouteRepository{
   
       const estacionesEnMunicipio = await this.proxy.getEstacionesEnMunicipio(idMunicipio);
 
-      costeRuta = vehiculo.obtenerCoste(ruta.getKm(), estacionesEnMunicipio.ListaEESSPrecio[0]);
+      let precioGasolinera;
+      if(vehiculo.getTipo() == 'Gasolina'){
+        precioGasolinera = estacionesEnMunicipio.ListaEESSPrecio[0]["Precio Gasolina 95 E5"];
+        console.log(precioGasolinera);
+      } else { 
+        precioGasolinera = estacionesEnMunicipio.ListaEESSPrecio[0]["Precio Gasoleo A"]
+        console.log(precioGasolinera); 
+      }
+
+      console.log(`Kilómetros: ${ruta.getKm()}, Precio: ${precioGasolinera}`);
+      costeRuta = vehiculo.obtenerCoste(ruta.getKm(), precioGasolinera);
+      console.log('Coste Ruta = ' + costeRuta);
     }
 
     console.log('El coste de la ruta es: ' + costeRuta + '€');
     return costeRuta;
   }
+
 
   async costeRutaPieBicicleta(ruta: Route, origen: Place, destino: Place){
     const rutaAPI: any = await this.calcularRuta(origen, destino, ruta.getMovilidad());

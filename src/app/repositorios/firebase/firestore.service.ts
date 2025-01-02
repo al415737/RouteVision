@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { addDoc, collection, Firestore } from '@angular/fire/firestore';
-import { deleteDoc, doc, DocumentReference, getDocs, orderBy, query, setDoc, updateDoc, where } from 'firebase/firestore';
+import { deleteDoc, doc, DocumentReference, getDoc, getDocs, orderBy, query, setDoc, updateDoc, where } from 'firebase/firestore';
 import { User } from '../../modelos/user';
 import { AuthService } from './auth.service';
 import { MailExistingException } from '../../excepciones/mail-existing-exception';
@@ -13,6 +13,7 @@ import { Route } from '../../modelos/route';
 import { CocheGasolina } from '../../modelos/vehiculos/cocheGasolina';
 import { CocheDiesel } from '../../modelos/vehiculos/cocheDiesel';
 import { CocheElectrico } from '../../modelos/vehiculos/cocheElectrico';
+import { NotExistingObjectException } from '../../excepciones/notExistingObjectException';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +23,7 @@ export class FirestoreService {
 
   private constructor(private _firestore: Firestore, private _auth: AuthService) { }
 
+  //CREAR ELEMENTOS
   async createUser(user: User, password: string) {
     try {
       const userCredential = await this._auth.create(user.getEmail(), password);
@@ -30,13 +32,64 @@ export class FirestoreService {
     
       const _collection = collection(this._firestore, 'user');
 
-    await addDoc(_collection, plainObject);
+      await addDoc(_collection, plainObject);
     } catch (error) {
       throw new MailExistingException();
     }
   }
 
-  async get(campo: string, valor: string, PATH: string) {
+  async createVehiculo(vehiculo: Vehiculo, path: string) {
+    const _collection = collection(this._firestore, path); 
+  
+    const objetoPlano = { ...vehiculo};
+    return addDoc(_collection, objetoPlano);
+  }
+
+  async createPlaceC(place: Place, path: string) {
+    const _collection = collection(this._firestore, path);
+
+    
+    const docRef = doc(_collection, place.idPlace); // Crea una referencia con un ID único
+    const idPlace = docRef.id;
+    
+    const objetoPlano = { ...place, idPlace };   //se sobreescribe el idPlace de la clase
+
+    return setDoc(docRef, objetoPlano);
+  }
+
+  async createPlaceT(place: Place, path: string) {
+    const _collection = collection(this._firestore, path);
+    
+    const docRef = doc(_collection, place.idPlace); // Crea una referencia con un ID único
+    const idPlace = docRef.id;
+    
+    const objetoPlano = { ...place, idPlace};   //se sobreescribe el idPlace de la clase -- hemos quitado uid
+    return setDoc(docRef, objetoPlano);
+  }
+
+  async createRoute(route: Route, path: string) {
+    const _collection = collection(this._firestore, path);
+
+    
+    const docRef = doc(_collection, route.getNombre()); // Crea una referencia con un ID único
+    const nombre = docRef.id;
+    
+    const objetoPlano = { ...route, nombre }; 
+
+    return setDoc(docRef, objetoPlano);
+  }
+  //CREAR ELEMENTOS
+
+
+  //BUSCAR/COMPROBAR ELEMENTOS
+  async getAutoIdReference(collectionPath: string): Promise<DocumentReference> {
+    // Crea una referencia con un ID único automáticamente
+    const _collection = collection(this._firestore, collectionPath); // Obtener la colección
+    const docRef = doc(_collection); // Crear una referencia sin ID especificado
+    return docRef; // Retorna la referencia con ID único
+  }
+
+  async get(campo: string, valor: string | undefined, PATH: string) {
     const _collection = collection(this._firestore, PATH);
 
     const q = query(_collection, where(campo, '==', valor));
@@ -50,38 +103,51 @@ export class FirestoreService {
     return firstDocument.id;
   }
 
-  async deleteUser(id: string, PATH: string): Promise<void> {
-    const docRef = doc(this._firestore, PATH, id);
-    await deleteDoc(docRef);
-    await this._auth.delete();      
-  }
-
-  async createVehiculo(vehiculo: Vehiculo, path: string) {
-      const _collection = collection(this._firestore, path); 
+  async getVehiculo(matricula:string){
+    const _collection = collection(this._firestore, `vehiculo/${this._authState.currentUser?.uid}/listaVehiculos/`);
+    // Referencia a la subcolección listaLugares dentro del documento del usuario
+    const id = await this.get('matricula', matricula, `vehiculo/${this._authState.currentUser?.uid}/listaVehiculos/`);
+    const listaLugaresRef = doc(_collection, id);
+    const vehiculo = await getDoc(listaLugaresRef);
     
-      const objetoPlano = { ...vehiculo};
-      return addDoc(_collection, objetoPlano);
-  }
-
-  async actualizarVehiculo(vehiculo:Vehiculo, id:string){
-    const listaVehiculosRef = doc(
-      this._firestore, 
-      `vehiculo/${this._authState.currentUser?.uid}/listaVehiculos/${id}`
-    );
-  
-    const plainObject = { ...vehiculo };
-    try {
-      await updateDoc(listaVehiculosRef, plainObject);
-      return vehiculo;
-    } catch (error) {
-      console.error('Error al actualizar vehículo:', error);
-      return vehiculo;
+    if (vehiculo.exists()) {
+      const data = vehiculo.data(); // Objeto plano
+      if(data['tipo'] == 'Precio Gasolina 95 E5' || data['tipo'] == 'Precio Gasolina 98 E5'){
+        const v = new CocheGasolina(
+          data['matricula'],
+          data['marca'],
+          data['modelo'],
+          data['año_fabricacion'],
+          data['consumo'],
+          data['tipo'],
+        );
+        v.setFavorito(data['favorito']);
+        return v;
+      } else if(data['tipo'] == 'Precio Gasoleo A' || data['tipo'] == 'Precio Gasoleo B'){
+        const v = new CocheDiesel(
+          data['matricula'],
+          data['marca'],
+          data['modelo'],
+          data['año_fabricacion'],
+          data['consumo'],
+          data['tipo'],
+        );
+        v.setFavorito(data['favorito']);
+        return v;
+     } else {
+      const v = new CocheElectrico(
+        data['matricula'],
+        data['marca'],
+        data['modelo'],
+        data['ano_fabricacion'],
+        data['consumo'],
+        data['tipo'],
+      );
+      v.setFavorito(data['favorito']);
+      return v;
+      }
     }
-  }
-
-  async eliminarVehiculo(path: string, id: string):Promise<void>{
-      const docRef = doc(this._firestore, path, id);
-      return await deleteDoc(docRef);
+    return null;
   }
 
   async consultarVehiculo(path: string){
@@ -121,7 +187,7 @@ export class FirestoreService {
           data['matricula'],
           data['marca'],
           data['modelo'],
-          data['año_fabricacion'],
+          data['ano_fabricacion'],
           data['consumo'],
           data['tipo'],
         );
@@ -131,13 +197,14 @@ export class FirestoreService {
      }); 
   }
 
-  async consultarUsuarios(path: string){
-      const _collection = collection(this._firestore, path);
-
-      const documentos = await getDocs(_collection);
-
-      return documentos.docs.map (doc => {
-        const data = doc.data();
+  async getUsuario(){
+    const _collection = collection(this._firestore, `user/`);
+    const id = await this.get('uid', this._authState.currentUser?.uid, `user/`);
+    const lista = doc(_collection, id);
+    const usuario = await getDoc(lista);
+    
+    if (usuario.exists()) {
+      const data = usuario.data(); // Objeto plano
         return new User(
           data['nombre'],
           data['apellidos'],
@@ -146,44 +213,26 @@ export class FirestoreService {
           data['preferencia1'],
           data['preferencia2']
         );
-      });
-  }
-  
-  async getAutoIdReference(collectionPath: string): Promise<DocumentReference> {
-    // Crea una referencia con un ID único automáticamente
-    const _collection = collection(this._firestore, collectionPath); // Obtener la colección
-    const docRef = doc(_collection); // Crear una referencia sin ID especificado
-    return docRef; // Retorna la referencia con ID único
+    }
+    return null;
   }
 
-  async createPlaceC(place: Place, path: string) {
+  async consultarUsuarios(path: string){
     const _collection = collection(this._firestore, path);
 
-    
-    const docRef = doc(_collection, place.idPlace); // Crea una referencia con un ID único
-    const idPlace = docRef.id;
-    
-    const objetoPlano = { ...place, idPlace };   //se sobreescribe el idPlace de la clase
+    const documentos = await getDocs(_collection);
 
-    return setDoc(docRef, objetoPlano);
-  }
-
-  async deletePlace(path: string, idPlace: string){
-    const docRef: DocumentReference = doc(this._firestore, path, idPlace);
-    await deleteDoc(docRef);
-  }
-
-  async createPlaceT(place: Place, path: string) {
-    const _collection = collection(this._firestore, path);
-
-    const usuario = getAuth().currentUser;
-    //const uid = usuario?.uid;
-    
-    const docRef = doc(_collection, place.idPlace); // Crea una referencia con un ID único
-    const idPlace = docRef.id;
-    
-    const objetoPlano = { ...place, idPlace};   //se sobreescribe el idPlace de la clase -- hemos quitado uid
-    return setDoc(docRef, objetoPlano);
+    return documentos.docs.map (doc => {
+      const data = doc.data();
+      return new User(
+        data['nombre'],
+        data['apellidos'],
+        data['email'],
+        data['user'],
+        data['preferencia1'],
+        data['preferencia2']
+      );
+    });
   }
 
   async getPlaces(): Promise<Place[]> {
@@ -230,7 +279,7 @@ export class FirestoreService {
     const querySnapshot = await getDocs(q);
     if (querySnapshot.empty) 
       return false;
-    
+
     return true;
   } 
 
@@ -246,23 +295,6 @@ export class FirestoreService {
       }
 
       return true;
-  }
-  
-  async createRoute(route: Route, path: string) {
-    const _collection = collection(this._firestore, path);
-
-    
-    const docRef = doc(_collection, route.getNombre()); // Crea una referencia con un ID único
-    const nombre = docRef.id;
-    
-    const objetoPlano = { ...route, nombre }; 
-
-    return setDoc(docRef, objetoPlano);
-  }
-
-  async deleteRoute(path: string, nombre: string){
-    const docRef: DocumentReference = doc(this._firestore, path, nombre);
-    await deleteDoc(docRef);
   }
 
   async getRoutes(): Promise<Route[]> {
@@ -291,4 +323,46 @@ export class FirestoreService {
     }
     
   }
+  //BUSCAR/COMPROBAR ELEMENTOS
+
+  //EDITAR ELEMENTOS
+  async actualizarVehiculo(vehiculo:Vehiculo, id:string){
+    const listaVehiculosRef = doc(
+      this._firestore, 
+      `vehiculo/${this._authState.currentUser?.uid}/listaVehiculos/${id}`
+    );
+  
+    const plainObject = { ...vehiculo };
+    try {
+      await updateDoc(listaVehiculosRef, plainObject);
+      return vehiculo;
+    } catch (error) {
+      console.error('Error al actualizar vehículo:', error);
+      return vehiculo;
+    }
+  }
+  //EDITAR ELEMENTOS
+
+  //BORRAR ELEMENTOS
+  async deleteUser(id: string, PATH: string): Promise<void> {
+    const docRef = doc(this._firestore, PATH, id);
+    await deleteDoc(docRef);
+    await this._auth.delete();      
+  }
+
+  async eliminarVehiculo(path: string, id: string):Promise<void>{
+    const docRef = doc(this._firestore, path, id);
+    await deleteDoc(docRef);
+  }
+
+  async deletePlace(path: string, idPlace: string){
+    const docRef: DocumentReference = doc(this._firestore, path, idPlace);
+    await deleteDoc(docRef);
+  }
+
+  async deleteRoute(path: string, nombre: string){
+    const docRef: DocumentReference = doc(this._firestore, path, nombre);
+    await deleteDoc(docRef);
+  }
+  //BORRAR ELEMENTOS
 }

@@ -23,8 +23,12 @@ export class UserService {
     return this.userRepo.consultarUsuarios();
   }
 
-  async deleteUser(email: string):Promise<void> {
-    if (!email.trim())
+  getUsuario(){
+    return this.userRepo.getUsuario();
+  }
+
+  async deleteUser(email: string | null | undefined):Promise<void> {
+    if (!email || !email.trim())
       throw new ObligatoryFieldsException();
 
     return await this.userRepo.deleteUser(email);

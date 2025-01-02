@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
@@ -7,7 +7,10 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { RouterLink } from '@angular/router';
 import { HeaderComponent } from '../../home/header/header.component';
 import { VehiculoService } from '../../../servicios/vehiculo.service';
-import { from } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
+import { Vehiculo } from '../../../modelos/vehiculos/vehiculo';
+import { DeleteComponent } from '../delete/delete.component';
+import { toast } from 'ngx-sonner';
 
 @Component({
   selector: 'app-consultar',
@@ -18,29 +21,37 @@ import { from } from 'rxjs';
 })
 export default class ConsultarComponent {
     //Datos de ejemplo
-    vehiculos = new MatTableDataSource<any>(); //Configuración inicial vacía
-    displayedColumns: string[] = ['matricula', 'marca', 'modelo', 'anyo_fabricacion', 'consumo', 'tipo', 'delete'];
+    dataSource = new MatTableDataSource<any>(); //Configuración inicial vacía
+    vehiculos: Vehiculo[] = [];
+    displayedColumns: string[] = ['matricula', 'marca', 'modelo', 'ano_fabricacion', 'consumo', 'tipo', 'edit', 'delete'];
     currentPage = 0;
+    readonly dialog = inject(MatDialog);
+    @ViewChild(MatPaginator) paginator!: MatPaginator;
 
     constructor(private servicioVehiculo: VehiculoService){}
 
-    ngOnInit(): void{
-        this.obtenerVehiculos();
+    async ngOnInit(): Promise<void>{
+      this.vehiculos = await this.servicioVehiculo.consultarVehiculo();
+      this.obtenerVehiculos();
     }
 
-    obtenerVehiculos(): void{
-      from(this.servicioVehiculo.consultarVehiculo()).subscribe({
-        next: (data) => {
-          this.vehiculos.data = data;   //Cargar los datos obtenidos en la tabla.
-        }
-      });
+    async obtenerVehiculos(){
+      try {
+            const data = await this.servicioVehiculo.consultarVehiculo();
+            this.vehiculos = data;
+            this.dataSource = new MatTableDataSource<Vehiculo>(this.vehiculos);
+            this.dataSource.paginator = this.paginator;
+          } catch (err) {
+            console.log(err);
+          }
     }
 
-    eliminarVehiculo(matricula: string){
-      if(confirm('¿Estás seguro de que deseas eliminar este vehículo?')){
-          this.servicioVehiculo.eliminarVehiculo(matricula);
-          alert('Vehículo eliminado correctamente');
+    eliminarVehiculo(vehiculo: Vehiculo){
+      this.dialog.open(DeleteComponent, {
+        data: {matricula: vehiculo.getMatricula()},
+      }).afterClosed().subscribe(() => {
+          toast.success('Vehiculo borrado correctamente.'); 
           this.obtenerVehiculos();
-      }
+      });
     }
 }

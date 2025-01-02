@@ -23,9 +23,9 @@ import { NotExistingObjectException } from '../../excepciones/notExistingObjectE
 describe('PlaceService', () => {
   let servicePlace: PlaceService;
   let serviceUser: UserService;
-  let geocodinRepositorio: OpenRouteService;
 
   beforeEach(() => {
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
     TestBed.configureTestingModule({
       providers: [
         provideHttpClient(), // Configuración moderna para HttpClient
@@ -42,19 +42,17 @@ describe('PlaceService', () => {
 
     servicePlace = TestBed.inject(PlaceService);
     serviceUser = TestBed.inject(UserService);
-    geocodinRepositorio = TestBed.inject(OpenRouteService); 
   });
   
 
   it('HU5E01. Registrar nuevo lugar de interés (Caso Válido):', async () => {
-
-    // GIVEN: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] quiere dar de alta un nuevo lugar de interés. La API está disponible → lugaresInteres-Ana2002 = [ ].
+    // GIVEN: El usuario [“PlaceTest”, “placetest@test.com“,“test123”] quiere dar de alta un nuevo lugar de interés. La API está disponible → lugaresInteres= [ ].
     await serviceUser.loginUser("test@test.com", "test123"); 
     
     // WHEN: Intenta dar de alta un lugar de interés → Coordenadas = [Latitud: 39.98, Longitud: -0.049]
     const createPlace = await servicePlace.createPlaceC([39.98, -0.049]);
 
-    // THEN: El sistema registra el lugar de interés de Ana2002. → placeListAna2002 = [{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049]}, idLugar = “000”}.    
+    // THEN:  El sistema registra el lugar de interés de PlaceTest. → lugaresInteres = [{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049]}, idLugar = “000”}.
     expect(createPlace).toBeInstanceOf(Place);
     expect(createPlace.idPlace).toBeDefined(); 
     await servicePlace.deletePlace(createPlace.idPlace);
@@ -62,35 +60,33 @@ describe('PlaceService', () => {
   });
 
   it('HU5E02. Registro de un lugar de interés incorrecto (Caso Inválido):', async () => {
-    // GIVEN: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] quiere dar de alta un nuevo lugar de interés. La API está disponible → lugaresInteres-Ana2002 = [ ].
+    // GIVEN: El usuario [“PlaceTest”, “placetest@test.com“,“test123”] quiere dar de alta un nuevo lugar de interés. La API está disponible → lugaresInteres= [ ].
     await serviceUser.loginUser("test@test.com", "test123");
 
-      try{
-        // WHEN: Intenta dar de alta un lugar de interés → Coordenadas = [Latitud: 899,98, Longitud:].
-        await servicePlace.createPlaceC([899.98, ]);
-      } catch (error){  
-        // THEN: El sistema no registra el lugar de interés y lanza la excepción InvalidCoordinatesException().
-        expect(error).toBeInstanceOf(InvalidCoordenatesException);
-      }
+    try{
+      // WHEN: Intenta dar de alta un lugar de interés → Coordenadas = [Latitud: 899,98, Longitud:].
+      await servicePlace.createPlaceC([899.98, ]);
+    } catch (error){  
+      // THEN: El sistema no registra el lugar de interés y lanza la excepción InvalidCoordinatesException().
+      expect(error).toBeInstanceOf(InvalidCoordenatesException);
+    }
     await serviceUser.logoutUser();
   });
 
   //HISTORIA 6 -------------------------------------
   it('HU6E01. Registro de lugar de interés con un topónimo correcto (Escenario Válido):', async () => {
-
-    // GIVEN: La API está disponible y el usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] con
-    // listaLugaresInteres-Ana2002 = [{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud:
-    // 39.98, Longitud: -0.049]}].      
+    // La API está disponible y el usuario [“PlaceTest”, “placetest@test.com“,“test123”] tiene en su base de datos
+    // la lista → listaLugaresInteres = [{NombreCiudad = “Castelló de la Plana”,
+    // Coordenadas = [Latitud: 39.98, Longitud: -0.049],  idLugar = “000”}.  
     await serviceUser.loginUser("test@test.com", "test123"); 
     const place = await servicePlace.createPlaceT('Castellón de la Plana');
 
     // WHEN: Intenta dar de alta un lugar de interés → Topónimo = 'Bilbao'
     const createPlaceT = await servicePlace.createPlaceT('Bilbao');
 
-
     // THEN: El sistema registra el lugar de interés de Ana2002 → lugaresInteres-Ana2002=
     // [{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049]},
-    // {NombreCiudad = “Bilbao”, Coordenadas = [Latitud: 43.26271, Longitud: -2.92528]}].      expect(createPlace).toBeInstanceOf(Place);
+    // {NombreCiudad = “Bilbao”, Coordenadas = [Latitud: 43.26271, Longitud: -2.92528]}].
     expect(createPlaceT).toBeInstanceOf(Place);
     expect(createPlaceT.idPlace).toBeDefined(); 
     await servicePlace.deletePlace(createPlaceT.idPlace);
@@ -100,68 +96,77 @@ describe('PlaceService', () => {
 
   
   it('HU6E03. Registro de lugar de interés con un topónimo incorrecto (Escenario Inválido):', async () => {
-    // GIVEN: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] quiere dar de alta un nuevo lugar de
-    // interés. La API está disponible → lugaresInteres-Ana2002= [{NombreCiudad = “Castelló de la Plana”,
-    // Coordenadas = [Latitud: 39.98, Longitud: -0.049]}, {NombreCiudad = “Bilbao”, Coordenadas = [Latitud:
-    // 43.26271, Longitud: -2.92528]}].     
+    // El usuario [“PlaceTest”, “placetest@test.com“,“test123”] quiere dar de alta un nuevo lugar de interés.
+    // La API está disponible → lugaresInteres= [{NombreCiudad = “Castelló de la Plana”,
+    // Coordenadas = [Latitud: 39.98, Longitud: -0.049],  idLugar = “000”}}}.   
     await serviceUser.loginUser("test@test.com", "test123");
-      const place = await servicePlace.createPlaceT('Castellón de la Plana');
+    const place = await servicePlace.createPlaceT('Castellón de la Plana');
       
-      // WHEN: Intenta dar de alta un lugar de interés → Topónimo = “Cassjdlftellfisonon”.      
-      // THEN: El sistem+a no registra el lugar de interés y se genera la excepción InvalidPlaceException().
-      await expectAsync(servicePlace.createPlaceT('Cassjdlftellfisonon'))
-      .toBeRejectedWith(new InvalidPlaceException());
-      await servicePlace.deletePlace(place.idPlace);
-      await serviceUser.logoutUser();
+    // WHEN: Intenta dar de alta un lugar de interés → Topónimo = “Cassjdlftellfisonon”.      
+    // THEN: El sistema no registra el lugar de interés y se genera la excepción InvalidPlaceException().
+    await expectAsync(servicePlace.createPlaceT('Cassjdlftellfisonon'))
+    .toBeRejectedWith(new InvalidPlaceException());
+    await servicePlace.deletePlace(place.idPlace);
+    await serviceUser.logoutUser();
   });
 
   it('HU7E01. Consulta de lista de lugares dados de alta (Escenario válido):', async() => {
-    //  GIVEN: La API está disponible y el usuario [“Testito”, “test@test.com“,“test1234”] con  place = [{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049], idLugar=”000”}, {NombreCiudad = “Bilbao”, Coordenadas = [Latitud: 43.26271, Longitud: -2.92528], idLugar=”001”}].
-        await serviceUser.loginUser("test@test.com","test123");
-        const lugar1 = await servicePlace.createPlaceC([39.98, -0.049]);
-        const lugar2 = await servicePlace.createPlaceT("Bilbao");
+    // GIVEN: El usuario [“PlaceTest”, “placetest@test.com“,“test123”] con  lugaresInteres = [{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049], idLugar=”000”}, {NombreCiudad = “Bilbao”, Coordenadas = [Latitud: 43.26271, Longitud: -2.92528], idLugar=”001”}] se encuentra registrado. 
+    await serviceUser.loginUser("test@test.com","test123");
+    const lugar1 = await servicePlace.createPlaceC([39.98, -0.049]);
+    const lugar2 = await servicePlace.createPlaceT("Bilbao");
 
-    //WHEN: El usuario Ana2002 quiere consultar su lista de lugares.
-        const lugares = await servicePlace.getPlaces();
+    //WHEN: El usuario PlaceTest quiere consultar su lista de lugares.
+    const lugares = await servicePlace.getPlaces();
 
-    //THEN: El sistema le muestra la lista de lugares = [{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049], idLugar=”000”}, {NombreCiudad = “Bilbao”, Coordenadas = [Latitud: 43.26271, Longitud: -2.92528], idLugar=”001”}].
-        expect(lugares.length).toBe(2);
+    //THEN: El sistema le muestra la lista de lugares = [{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049], idLugar=”000”}, {NombreCiudad = “Bilbao”, Coordenadas = [Latitud: 43.26271, Longitud: -2.92528], idLugar=”001”}]. 
+    expect(lugares.length).toBe(2);
 
-        lugares.forEach((lugar: Place) => {
-          expect(lugar).toBeInstanceOf(Place);
-      });
+    lugares.forEach((lugar: Place) => {
+      expect(lugar).toBeInstanceOf(Place);
+    });
 
-      await servicePlace.deletePlace(lugar1.idPlace);
-      await servicePlace.deletePlace(lugar2.idPlace);
-      await serviceUser.logoutUser();
+    await servicePlace.deletePlace(lugar1.idPlace);
+    await servicePlace.deletePlace(lugar2.idPlace);
+    await serviceUser.logoutUser();
    });
 
    it('HU7E03. Consulta de lista de lugares dados de alta sin estar registrado:', async() => {
-      //GIVEN:  El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] con  listaLugaresInteres-Ana2002 = [{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049], idLugar=”000”}, {NombreCiudad = “Bilbao”, Coordenadas = [Latitud: 43.26271, Longitud: -2.92528], idLugar=”001”}] no se encuentra registrado.
-      await serviceUser.loginUser("test@test.com","test123");
-      const lugar1 = await servicePlace.createPlaceC([39.98, -0.049]);
-      const lugar2 = await servicePlace.createPlaceT("Bilbao");
-      await serviceUser.logoutUser();
-      //  WHEN: El usuario Ana2002 quiere consultar su lista de lugares.
-      //  THEN: El sistema lanza una excepción ServerNotOperativeException().
-      await expectAsync(servicePlace.getPlaces()).toBeRejectedWith(new ServerNotOperativeException());
-      await serviceUser.loginUser("test@test.com","test123");
-      servicePlace.deletePlace(lugar1.idPlace);
-      servicePlace.deletePlace(lugar2.idPlace);
-      await serviceUser.logoutUser();
+    //GIVEN: El usuario [“PlaceTest”, “placetest@test.com“,“test123”] con  lugaresInteres = [{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049], idLugar=”000”}, {NombreCiudad = “Bilbao”, Coordenadas = [Latitud: 43.26271, Longitud: -2.92528], idLugar=”001”}] no se encuentra registrado. 
+    await serviceUser.loginUser("test@test.com","test123");
+    const lugar1 = await servicePlace.createPlaceC([39.98, -0.049]);
+    const lugar2 = await servicePlace.createPlaceT("Bilbao");
+    await serviceUser.logoutUser();
+    //WHEN:  El usuario PlaceTest quiere consultar su lista de lugares..
+    //THEN: El sistema lanza una excepción ServerNotOperativeException().
+    await expectAsync(servicePlace.getPlaces()).toBeRejectedWith(new ServerNotOperativeException());
+    await serviceUser.loginUser("test@test.com","test123");
+    await servicePlace.deletePlace(lugar1.idPlace);
+    await servicePlace.deletePlace(lugar2.idPlace);
+    await serviceUser.logoutUser();
   });
 
   it('HU8E01. Eliminación de un lugar de interés de la lista de lugares de interés del usuario (Escenario Válido):', async() => {
+    //GIVEN: El usuario [“PlaceTest”, “placetest@test.com“,“test123”] quiere eliminar uno de sus lugares de interés → lugaresInteres= [{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049], idLugar = “000”}].
     await serviceUser.loginUser("test@test.com","test123");
     const lugar = await servicePlace.createPlaceC([39.98, -0.049]);
+
+    //WHEN: Intenta eliminar un lugar de interés → [idLugar = “000”, Topónimo = “Castellón”].
     const result = await servicePlace.deletePlace(lugar.idPlace);
+
+    //THEN: El sistema elimina el lugar de interés.
     expect(result).toEqual(true);
     await serviceUser.logoutUser();
    });
 
    it('HU8E02. Eliminación de un lugar de interés que no está en la lista de lugares de interés del usuario (Escenario Inválido):', async() => {
+    //GIVEN: El usuario [“PlaceTest”, “placetest@test.com“,“test123”] quiere eliminar un lugar de interés que no está en su lista de lugares de interés → lugaresInteres =  [{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049], idLugar = “000”}].
     await serviceUser.loginUser("test@test.com","test123");
-    await expectAsync(servicePlace.deletePlace('025')).toBeRejectedWith(new NotExistingObjectException());
+    const lugar = await servicePlace.createPlaceC([39.98, -0.049]);
+    //WHEN: Intenta eliminar un lugar de interés → [idLugar = “001”, Topónimo = “Valencia”].
+    //THEN: El sistema no elimina el lugar de interés y lanza la excepción PlaceNotFoundInListException().
+    await expectAsync(servicePlace.deletePlace('001')).toBeRejectedWith(new NotExistingObjectException());
+    await servicePlace.deletePlace(lugar.idPlace);
     await serviceUser.logoutUser();
    });
 });
