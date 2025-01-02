@@ -13,6 +13,7 @@ import { Route } from '../../modelos/route';
 import { CocheGasolina } from '../../modelos/vehiculos/cocheGasolina';
 import { CocheDiesel } from '../../modelos/vehiculos/cocheDiesel';
 import { CocheElectrico } from '../../modelos/vehiculos/cocheElectrico';
+import { NotExistingObjectException } from '../../excepciones/notExistingObjectException';
 
 @Injectable({
   providedIn: 'root'
@@ -270,7 +271,7 @@ export class FirestoreService {
     const querySnapshot = await getDocs(q);
     if (querySnapshot.empty) 
       return false;
-    
+
     return true;
   } 
 

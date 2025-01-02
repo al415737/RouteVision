@@ -36,7 +36,7 @@ export class RouteService {
     for(const vehiculoU of await vehiculosUsuario) {
       if (vehiculoU.getMatricula() == vehiculo.getMatricula())
         //calcular coste ruta llamando a api
-        return this.routeRepository.obtenerCosteRuta(vehiculo, ruta);
+        return await this.routeRepository.obtenerCosteRuta(vehiculo, ruta);
     }
 
     throw new NotExistingObjectException();

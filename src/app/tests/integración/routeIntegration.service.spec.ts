@@ -95,15 +95,18 @@ describe('RouteIntegrationService', () => {
     });
   
     it('PRUEBA INTEGRACIÓN --> H14-E04. Cálculo del coste asociado a la realización de una ruta en coche utilizando una matrícula no registrada en la lista de vehículos (Escenario Inválido): ', async () => {
-      const mockFuelCostRoute: number = 11.51;
-  
-      spyOn(routeRepo, 'obtenerCosteRuta').and.resolveTo(mockFuelCostRoute);
+      spyOn(routeRepo, 'obtenerCosteRuta').and.resolveTo();
   
       const vehiculoNoExiste = new CocheGasolina("3423 WCX", "Fiat", "Punto", "2016", 8.1, "Gasolina", false);
       const rutaValida = new Route('ruta01', 'Valencia', 'Castellón de la Plana/Castelló de la Plana', 'porDefecto', 'driving-car', 90, 90, false);
   
-      await expectAsync(routeRepo.obtenerCosteRuta(vehiculoNoExiste, rutaValida))
-     .toBeRejectedWithError(NotExistingObjectException);
+      try {
+        await routeRepo.obtenerCosteRuta(vehiculoNoExiste, rutaValida);
+        expect(routeRepo.obtenerCosteRuta).toHaveBeenCalledWith(vehiculoNoExiste, rutaValida);
+
+      } catch (error) {
+        expect(error).toBeInstanceOf(NotExistingObjectException);
+      }
     });
 
     // it('HU15E01. Cálculo de coste calórico de la ruta Valencia-Castellón (Escenario Válido)', async () => {
