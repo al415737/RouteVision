@@ -9,10 +9,18 @@ import { PrecioLuzService } from '../APIs/PrecioLuz/precioLuz.service';
 
 export class ProxysCalculoCombustibleService {
   private cacheMunicipios: any | null = null;
+  // private cacheGasolineras: any | null = null;
   private cacheEstaciones = new Map<number, any>();
   private cacheLuz: any | null = null;
 
   constructor(private precioCarburante: PrecioCarburantes, private precioLuz: PrecioLuzService) {}
+
+  // async getGasolineras(): Promise<any> {
+  //   if (this.cacheGasolineras == null){
+  //     this.cacheGasolineras = await firstValueFrom(this.precioCarburante.getGasolineras());
+  //   }
+  //   return this.cacheGasolineras;
+  // }
 
   async getMunicipios(): Promise<any> {
     if (this.cacheMunicipios == null) {

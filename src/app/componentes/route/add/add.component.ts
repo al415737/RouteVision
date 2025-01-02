@@ -33,8 +33,9 @@ export default class AddComponent {
   
   user: User | null = null;
   places: Place[] = [];
-  vehicles: Vehiculo[] = [];
+  vehiculos: Vehiculo[] = [];
   vehiculo: Vehiculo | null = null; //para inicializar
+  costeRuta: number = 0;
   nombre: string = '';
   origen: Place | null = null;
   destino: Place | null = null;
@@ -50,13 +51,13 @@ export default class AddComponent {
   async load() {
     this.places = await this._placeService.getPlaces();
     this.user = await this._userService.getUsuario();
-    //this.vehicles = await this._vehiculoService.consultarVehiculo();
-    //console.log(this.vehicles);
+    this.vehiculos = await this._vehiculoService.consultarVehiculo();
 
-    if (this.user != null){
+    if (this.user){
       this.movilidad = this.user.getPref1();
       this.option = this.user.getPref2();
     } 
+
   }
 
   async anadirRuta() {
@@ -74,16 +75,17 @@ export default class AddComponent {
     if (this.mapComponent) {
       if (this.origen != null && this.destino != null && this.option.trim() && this.movilidad.trim()) {
         if(this.origen.getIdPlace() != this.destino.getIdPlace())
-          this.mapComponent.getRoute(this.origen, this.destino, this.movilidad, this.option, this.vehiculo);
+          this.mapComponent.getRoute(this.nombre, this.origen, this.destino, this.movilidad, this.option, this.vehiculo);
         else
           toast.info('Por favor, indique dos lugares distintos.');
       }
     }
   }
 
-  updateKmDuracion(result: {distance: number, duration: number}) {
+  updateKmDuracion(result: {distance: number, duration: number, costeRuta: number}) {
     this.kilometros = result.distance;
     this.duration = result.duration;
+    this.costeRuta = result.costeRuta;
   }
 
   

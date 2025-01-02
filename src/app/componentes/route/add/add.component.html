@@ -53,7 +53,7 @@
         <!-- Select para los vehículos -->
         <label for="select-vehiculos">Seleccionar Vehículo:</label>
         <select id="select-vehiculos" [(ngModel)]="vehiculo">
-          <option *ngFor="let v of vehicles" [ngValue]="v">{{ v.getMatricula() }}</option>
+          <option *ngFor="let v of vehiculos" [ngValue]="v">{{ v.getMatricula() }}</option>
         </select>
       }
 
@@ -64,9 +64,12 @@
         <br>
         <p>{{kilometros}} <b>Kilometros</b></p> 
         <p>{{duration}} <b>Minutos</b></p> 
+        @if(costeRuta != 0 && movilidad == 'driving-car'){
+          <p>{{costeRuta}} <b>€</b></p> 
+        }
+
         <!-- Botón para añadir -->
         <button (click)="anadirRuta()" class="btn-success">Añadir Ruta</button>
-      
       } 
 
       <!-- Botón para volver -->
