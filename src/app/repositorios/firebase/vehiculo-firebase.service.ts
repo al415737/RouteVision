@@ -57,8 +57,8 @@ export class VehiculoFirebaseService implements VehiculoRepository{
         await this.firestore.eliminarVehiculo(PATHVEHICULO, id);
     }
 
-    async marcarFavorito(vehiculo: Vehiculo): Promise<any> {
-        vehiculo.setFavorito(true);
+    async marcarFavorito(vehiculo: Vehiculo, favorito: boolean): Promise<any> {
+        vehiculo.setFavorito(favorito);
         return await this.actualizarVehiculo(vehiculo);
     }
 

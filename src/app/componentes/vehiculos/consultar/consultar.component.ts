@@ -31,7 +31,6 @@ export default class ConsultarComponent {
     constructor(private servicioVehiculo: VehiculoService){}
 
     async ngOnInit(): Promise<void>{
-      this.vehiculos = await this.servicioVehiculo.consultarVehiculo();
       this.obtenerVehiculos();
     }
 
@@ -39,6 +38,7 @@ export default class ConsultarComponent {
       try {
             const data = await this.servicioVehiculo.consultarVehiculo();
             this.vehiculos = data;
+            this.vehiculos = this.vehiculos.sort((a, b) => (b.getFavorito() ? 1 : 0) - (a.getFavorito() ? 1 : 0));
             this.dataSource = new MatTableDataSource<Vehiculo>(this.vehiculos);
             this.dataSource.paginator = this.paginator;
           } catch (err) {
@@ -56,12 +56,9 @@ export default class ConsultarComponent {
     }
 
     marcarFavorito(vehiculo: Vehiculo){
-      vehiculo.setFavorito(!vehiculo.getFavorito());
-      console.log(vehiculo);
-      this.servicioVehiculo.marcarFavorito(vehiculo);
+      this.servicioVehiculo.marcarFavorito(vehiculo, !vehiculo.getFavorito());
       this.obtenerVehiculos();
-      this.vehiculos = this.vehiculos.sort((a, b) => (b.getFavorito() ? 1 : 0) - (a.getFavorito() ? 1 : 0));
-      
+     
       if(vehiculo.getFavorito() == true){
         toast.success('Vehículo marcado como favorito.');
       } else {

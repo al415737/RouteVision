@@ -45,8 +45,8 @@ export class PlaceService {
     return await this.placeRepositorio.deletePlace(idPlace);
   }
 
-  async marcarFavorito(place: Place){
-      return await this.placeRepositorio.marcarFavorito(place);
+  async marcarFavorito(place: Place, favorito: boolean){
+      return await this.placeRepositorio.marcarFavorito(place, favorito);
   }
 
 

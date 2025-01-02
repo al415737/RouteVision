@@ -8,5 +8,5 @@ export interface PlaceRepository {
     createPlaceT(toponimo: string): Promise<Place>;
     getPlaces(): Promise<any>;
     deletePlace(idPlace: string): Promise<boolean>;
-    marcarFavorito(place: Place): Promise<any>;
+    marcarFavorito(place: Place, favorito: boolean): Promise<any>;
 }

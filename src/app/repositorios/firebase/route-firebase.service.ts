@@ -159,9 +159,9 @@ export class RouteFirebaseService implements RouteRepository{
     return await this._firestore.getRoutes();
   }
 
-  async marcarFavorito(ruta: Route): Promise<void> {
-      ruta.setFavorito(true);
-      return ;
+  async marcarFavorito(ruta: Route, favorito: boolean): Promise<void> {
+      ruta.setFavorito(favorito);
+      return this.actualizarRoutes(ruta);
   }
 
 }

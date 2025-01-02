@@ -200,12 +200,12 @@ describe('UserService', () => {
     await vehicleService.marcarFavorito(vehiculo);
     
     //Then: El sistema marca como favorito al vehículo, es decir, este vehículo se añade a una lista de listaVehículosFavoritos → [ Matrícula: “8291 DTS” , AñoFabricación: 2002, Marca: “Seat”, Modelo: “León”, Consumo: 5.1L/100km ]. 
-    const vehiculos = await vehicleService.consultarVehiculo();
+    const vehi = await vehicleService.getVehiculo(vehiculo.getMatricula());
 
-    expect(vehiculos[0].matricula).toBe("8291 DTS");
-    expect(vehiculos[0].favorito).toBe(true);
+    expect(vehi.getFavorito()).toBe(true);
 
-    vehicleService.eliminarVehiculo("8291 DTS");
+    await vehicleService.eliminarVehiculo("8291 DTS");
+    await service.logoutUser();
   
   });
   

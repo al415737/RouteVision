@@ -65,8 +65,8 @@ export class VehiculoService {
     await this.vehiRepo.eliminarVehiculo(matricula);
   }
 
-  async marcarFavorito(vehiculo: Vehiculo){
-      return await this.vehiRepo.marcarFavorito(vehiculo);
+  async marcarFavorito(vehiculo: Vehiculo, favorito: boolean){
+      return await this.vehiRepo.marcarFavorito(vehiculo, favorito);
   }
 
 }
