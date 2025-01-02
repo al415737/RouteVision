@@ -69,7 +69,7 @@ export default class AddComponent {
         this._placeService.createPlaceC([this.resultado.coordenadas.lat, this.resultado.coordenadas.lng]);
         
       }else if (this.selectedOption === 'toponym') {
-        this._placeService.createPlaceT(this.resultado.nombre, );
+        this._placeService.createPlaceT(this.resultado.nombre);
       }
       toast.success('Lugar añadido correctamente.');
       this._router.navigateByUrl('/lugares');

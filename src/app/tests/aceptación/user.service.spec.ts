@@ -81,7 +81,7 @@ describe('UserService', () => {
     // ListaVehículos=[{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}]
     // y listaLugaresInterés=[{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049], idLugar = “000”}].
     await service.loginUser("test@test.com", "test123");
-    await vehicleService.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasolina 95 E5");
+    await vehicleService.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Gasolina");
     const lugar = await placeService.createPlaceC([39.98, -0.049]);
     await service.logoutUser();
 

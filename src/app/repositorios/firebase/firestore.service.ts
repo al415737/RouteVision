@@ -112,7 +112,7 @@ export class FirestoreService {
     
     if (vehiculo.exists()) {
       const data = vehiculo.data(); // Objeto plano
-      if(data['tipo'] == 'Precio Gasolina 95 E5' || data['tipo'] == 'Precio Gasolina 98 E5'){
+      if(data['tipo'] == 'Gasolina'){
         return new CocheGasolina(
           data['matricula'],
           data['marca'],
@@ -122,7 +122,7 @@ export class FirestoreService {
           data['tipo'],
           data['favorito']
         );
-      } else if(data['tipo'] == 'Precio Gasoleo A' || data['tipo'] == 'Precio Gasoleo B'){
+      } else if(data['tipo'] == 'Diesel'){
         return new CocheDiesel(
           data['matricula'],
           data['marca'],
@@ -154,7 +154,7 @@ export class FirestoreService {
 
       return documentos.docs.map(doc => { 
         const data = doc.data();
-        if(data['tipo'] == 'Precio Gasolina 95 E5' || data['tipo'] == 'Precio Gasolina 98 E5'){
+        if(data['tipo'] == 'Gasolina'){
             return new CocheGasolina(
               data['matricula'],
               data['marca'],
@@ -164,7 +164,7 @@ export class FirestoreService {
               data['tipo'],
               data['favorito']
             );
-        } else if(data['tipo'] == 'Precio Gasoleo A' || data['tipo'] == 'Precio Gasoleo B'){
+        } else if(data['tipo'] == 'Diesel'){
           return new CocheDiesel(
             data['matricula'],
             data['marca'],
@@ -244,6 +244,7 @@ export class FirestoreService {
           data['toponimo'],
           data['coordenadas'],
           data['favorito'],
+          data['municipio']
         );
       }); 
     } catch (error) {
@@ -308,7 +309,9 @@ export class FirestoreService {
           data['movilidad'],
           data['kilometros'],
           data['duration'],
-          data['favorito']
+          data['favorito'],
+          data['municipio'],
+          data['coste']
         );
       });
     } catch (error) {

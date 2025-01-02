@@ -46,7 +46,7 @@
         <option value ='driving-car'>Coche</option>
         <option value ='driving-car'>Moto</option>
         <option value ='foot-walking'>A pie</option>
-        <option value= 'cycling'>Bicicleta</option>
+        <option value= 'cycling-regular'>Bicicleta</option>
       </select>
       
       @if(movilidad == 'driving-car'){
@@ -66,6 +66,8 @@
         <p>{{duration}} <b>Minutos</b></p> 
         @if(costeRuta != 0 && movilidad == 'driving-car'){
           <p>{{costeRuta}} <b>€</b></p> 
+        }@else if (costeRuta != 0 && movilidad == 'cycling-regular' || movilidad == 'foot-walking') {
+          <p>{{costeRuta}} <b>calorias</b></p> 
         }
 
         <!-- Botón para añadir -->

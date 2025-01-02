@@ -25,7 +25,7 @@ export default class RouteComponent {
   rutas: Route[] = [];
   currentPage = 0;
   dataSource = new MatTableDataSource<Route>();
-  displayedColumns: string[] = ['nombre', 'origen', 'destino', 'option', 'movilidad', 'kilometros', 'duration', 'delete'];
+  displayedColumns: string[] = ['nombre', 'origen', 'destino', 'option', 'movilidad', 'kilometros', 'duration','coste', 'delete'];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 

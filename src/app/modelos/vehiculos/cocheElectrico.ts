@@ -2,6 +2,7 @@ import { Vehiculo } from "./vehiculo";
 
 export class CocheElectrico extends Vehiculo {
     obtenerCoste(kilometros: number, precio: any) { //cambiar para eléctrico
+        console.log("hola")
         return parseFloat(((kilometros/100) * this.getConsumo() * precio).toFixed(2)); 
     }
     // La división km/100 se utiliza porque el consumo de los vehículos eléctricos (o de otros tipos) 

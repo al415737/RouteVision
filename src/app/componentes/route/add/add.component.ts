@@ -63,7 +63,7 @@ export default class AddComponent {
   async anadirRuta() {
     console.log(this.nombre, this.option, this.movilidad, this.origen, this.destino)
     if (this.nombre.trim() && this.origen != null && this.destino != null && this.option.trim() && this.movilidad.trim()) {
-      await this._routeService.createRoute(this.nombre, this.origen, this.destino, this.movilidad, this.option, this.kilometros, this.duration);
+      await this._routeService.createRoute(this.nombre, this.origen, this.destino, this.movilidad, this.option, this.kilometros, this.duration, this.costeRuta);
       toast.success('Ruta añadida correctamente.');
       this._router.navigateByUrl('/rutas');
 
@@ -83,9 +83,9 @@ export default class AddComponent {
   }
 
   updateKmDuracion(result: {distance: number, duration: number, costeRuta: number}) {
-    this.kilometros = result.distance;
-    this.duration = result.duration;
-    this.costeRuta = result.costeRuta;
+    this.kilometros = parseFloat(result.distance.toFixed(2));
+    this.duration = parseFloat(result.duration.toFixed(2));
+    this.costeRuta = parseFloat(result.costeRuta.toFixed(2));
   }
 
   

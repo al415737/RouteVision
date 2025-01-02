@@ -73,6 +73,7 @@ export class MapComponent {
             this.bounds = [];
           }
           
+          
           let lugares: any[] = [];
           for (let i = 0; i < response.features.length; i++) {
             let latlng = {
@@ -88,7 +89,7 @@ export class MapComponent {
             this.currentMarker.addTo(this.map);
             this.listaMarkers.push(this.currentMarker);
             this.bounds.push(this.currentMarker.getLatLng());
-            lugares.push({ nombre: feature, coordenadas: latlng });
+            lugares.push({ nombre: feature, coordenadas: latlng, municipio: response.features[i].properties.region });
           }
           this.lugaresSeleccionados.emit(lugares);
           let zoom = new LatLngBounds(this.bounds);
@@ -156,8 +157,12 @@ export class MapComponent {
       const duration = responseRuta.features[0].properties.summary.duration / 60;
       let costeRuta = 0;
      
-      if(vehiculo != null){
-        costeRuta = await this.routeService.obtenerCosteRuta(vehiculo, new Route(nombre, origen.getToponimo(), destino.getToponimo(), option, movilidad, distance, duration, false));
+      if(movilidad === 'foot-walking' || movilidad === 'cycling-regular'){
+        let ruta = new Route(nombre, origen.getToponimo(), destino.getToponimo(), option, movilidad, distance, duration, false, origen.getMunicipio(), 0);
+        costeRuta = await this.routeService.costeRutaPieBicicleta(ruta, origen, destino);
+      }
+      else if(vehiculo != null){
+        costeRuta = await this.routeService.obtenerCosteRuta(vehiculo, new Route(nombre, origen.getToponimo(), destino.getToponimo(), option, movilidad, distance, duration, false, origen.getMunicipio(), 0));
       }
 
       this.sendToRoute.emit({ distance, duration, costeRuta });

@@ -26,7 +26,7 @@ export class VehiculoService {
 
     if(tipo == 'Gasolina'){
         vehiculo = new CocheGasolina(matricula, marca, modelo, año_fabricacion, consumo, tipo, false);
-    } else if(tipo == 'Diésel'){
+    } else if(tipo == 'Diesel'){
         vehiculo = new CocheDiesel(matricula, marca, modelo, año_fabricacion, consumo, tipo, false);
     } else {
         vehiculo = new CocheElectrico(matricula, marca, modelo, año_fabricacion, consumo, tipo, false);
@@ -44,7 +44,7 @@ export class VehiculoService {
     
     if(tipo == 'Gasolina'){
       vehiculo = new CocheGasolina(matricula, marca, modelo, año_fabricacion, consumo, tipo, favorito);
-    } else if(tipo == 'Diésel'){
+    } else if(tipo == 'Diesel'){
         vehiculo = new CocheDiesel(matricula, marca, modelo, año_fabricacion, consumo, tipo, favorito);
     } else {
         vehiculo = new CocheElectrico(matricula, marca, modelo, año_fabricacion, consumo, tipo, favorito);

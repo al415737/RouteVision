@@ -28,12 +28,13 @@ export class PlaceFirebaseService implements PlaceRepository{
 
     this.toponimo = await firstValueFrom(this.geocoding.searchCoordenadas(coordenadas[0],coordenadas[1]));
     let lugar = this.toponimo.features[0].properties.name;
+    let municipio = this.toponimo.features[0].properties.region;
 
     const docRef = await this.firestore.getAutoIdReference(PATHPLACE);
     const idPlace = docRef.id;
 
 
-    const placeRegisterC: Place = new Place(idPlace, lugar, [coordenadas[1], coordenadas[0]], false);
+    const placeRegisterC: Place = new Place(idPlace, lugar, [coordenadas[1], coordenadas[0]], false, municipio);
 
     await this.firestore.createPlaceC(placeRegisterC, PATHPLACE);
     return placeRegisterC;
@@ -56,6 +57,7 @@ export class PlaceFirebaseService implements PlaceRepository{
     async createPlaceT(toponimo: string): Promise<Place> { 
         const uid = this._authState.currentUser?.uid;
         const PATHPLACE = `Lugar/${uid}/listaLugaresInterés`;
+        let municipio: string = '';
 
         this.coordenadas = await new Promise((resolve, reject) => {
             this.geocoding.searchToponimo(toponimo).subscribe({
@@ -63,6 +65,7 @@ export class PlaceFirebaseService implements PlaceRepository{
                     if (!response.features || response.features.length === 0) {
                         reject(new InvalidPlaceException());
                     } else {
+                        municipio = response.features[0].properties.region;
                         resolve(response.features[0].geometry.coordinates);
                     }
                 },
@@ -73,7 +76,7 @@ export class PlaceFirebaseService implements PlaceRepository{
         const idPlace = docRef.id;
 
 
-        const placeRegisterT: Place = new Place(idPlace, toponimo, this.coordenadas, false);
+        const placeRegisterT: Place = new Place(idPlace, toponimo, this.coordenadas, false, municipio);
 
         await this.firestore.createPlaceT(placeRegisterT, PATHPLACE);
         return placeRegisterT;
