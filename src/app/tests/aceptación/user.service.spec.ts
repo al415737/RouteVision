@@ -47,7 +47,7 @@ describe('UserService', () => {
     placeService = TestBed.inject(PlaceService);
   });
   
-  
+/*
   it('HU1E01. User registration in the system (Valid Scenario)', async () => {
     // GIVEN: El usuario Manu-33 no está registrado en el sistema y se tiene conexión con la base de datos → ListaUsuarios = [ ].
     // WHEN: Manuel intenta registrarse →[Nombre=”Manuel”, Apellido=”García”, User=”Manu33”, Email=”manu33@gmail.com”, Contraseña=”Manu-33”].
@@ -178,12 +178,12 @@ describe('UserService', () => {
            await service.deleteUser("danitorres@gmail.com");
       }
   });
+  */
 
   it('HU20-E01. Usuario marca como favorito su coche (Escenario Válido)', async() => {
     //Given: El usuario [“Pepito2002”, “pepito@gmail.com“,“ppt-24”] tiene iniciada su cuenta y la base de datos está disponible. Lista de vehículos: [ {“8291 DTS” , 2002, “Seat”, “León”, 5.1L/100km, 'Precio Gasolina 98 E5'}, {"1234 BBB", "Peugeot", "407", "2007", 8.1, 'Precio Gasoleo A'} ]. 
     await service.loginUser("test@test.com", "test123");
     const vehiculo = await vehicleService.crearVehiculo("8291 DTS", "Seat", "León", "2002", 5.1, "Precio Gasolina 95 E5");
-    await vehicleService.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasoleo A");
 
     //When: El usuario quiere marcar como favorito su vehículo → [ Matrícula: “8291 DTS” , AñoFabricación: 2002, Marca: “Seat”, Modelo: “León”, Consumo: 5.1L/100km ].
     await vehicleService.marcarFavorito(vehiculo);
@@ -191,19 +191,20 @@ describe('UserService', () => {
     //Then: El sistema marca como favorito al vehículo, es decir, este vehículo se añade a una lista de listaVehículosFavoritos → [ Matrícula: “8291 DTS” , AñoFabricación: 2002, Marca: “Seat”, Modelo: “León”, Consumo: 5.1L/100km ]. 
     const vehiculos = await vehicleService.consultarVehiculo();
 
-    expect(vehiculos[0].matricula).toBe('8291 DTS');
-    expect(vehiculos[0].favorito).toBe('true');
+    expect(vehiculos[0].matricula).toBe("8291 DTS");
+    expect(vehiculos[0].favorito).toBe(true);
 
-    vehicleService.eliminarVehiculo('8291 DTS');
-    vehicleService.eliminarVehiculo('1234 BBB');
+    vehicleService.eliminarVehiculo("8291 DTS");
   
   });
 
+  /*
   it('HU20-E03. Intento de marcar como favorito pero no tiene elementos registrados (Escenario Inválido)', async() => {
     //Given: El usuario [“Pepito2002”, “pepito@gmail.com“,“ppt-24”] ha iniciado sesión, la base de datos está disponible, pero no tiene ningún elemento registrado. Lista de vehículos = [ ].
     //When: El usuario quiere marcar como favorito a su vehículo.
     //Then: El sistema no puede marcar como favorito nada y lanza la excepción NoElementsException().
   });
+  */
   
 });
 

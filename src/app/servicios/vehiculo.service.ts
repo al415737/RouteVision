@@ -51,7 +51,7 @@ export class VehiculoService {
     return this.vehiRepo.actualizarVehiculo(vehiculo);
   }
 
-  consultarVehiculo(){
+  async consultarVehiculo(){
     return this.vehiRepo.consultarVehiculo();
   }
 

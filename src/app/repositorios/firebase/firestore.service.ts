@@ -94,7 +94,7 @@ export class FirestoreService {
     return documentos.docs.map(doc => { 
       const data = doc.data();
       if(data['tipo'] == 'Precio Gasolina 95 E5' || data['tipo'] == 'Precio Gasolina 98 E5'){
-          return new CocheGasolina(
+          const v = new CocheGasolina(
             data['matricula'],
             data['marca'],
             data['modelo'],
@@ -102,8 +102,11 @@ export class FirestoreService {
             data['consumo'],
             data['tipo'],
           );
+          v.setFavorito(data['favorito']);
+          return v;
+
       } else if(data['tipo'] == 'Precio Gasoleo A' || data['tipo'] == 'Precio Gasoleo B'){
-        return new CocheDiesel(
+        const v = new CocheDiesel(
           data['matricula'],
           data['marca'],
           data['modelo'],
@@ -111,8 +114,10 @@ export class FirestoreService {
           data['consumo'],
           data['tipo'],
         );
+        v.setFavorito(data['favorito']);
+        return v;
       } else {
-        return new CocheElectrico(
+        const v = new CocheElectrico(
           data['matricula'],
           data['marca'],
           data['modelo'],
@@ -120,6 +125,8 @@ export class FirestoreService {
           data['consumo'],
           data['tipo'],
         );
+        v.setFavorito(data['favorito']);
+        return v;
       }
      }); 
   }

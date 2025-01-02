@@ -99,7 +99,7 @@ export class RouteFirebaseService implements RouteRepository{
     if(!existPlace || !existPlace2)
       throw new NotExistingObjectException();
   
-    const newRoute: Route = new Route(nombre, start.getToponimo(), end.getToponimo(), preferencia, movilidad, km, duracion, favorito);
+    const newRoute: Route = new Route(nombre, start.getToponimo(), end.getToponimo(), preferencia, movilidad, km, duracion);
     const uid = this._authState.currentUser?.uid;
   
     await this._firestore.createRoute(newRoute, `ruta/${uid}/listaRutasInterés`);
@@ -119,6 +119,11 @@ export class RouteFirebaseService implements RouteRepository{
   async getRoutes(): Promise<Route[]> {
     return await this._firestore.getRoutes();
   }
+
+  async marcarFavorito(ruta: Route): Promise<void> {
+    return ;
+  }
+
 }
 
 

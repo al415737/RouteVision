@@ -53,7 +53,7 @@ export class VehiculoFirebaseService implements VehiculoRepository{
     }
 
     async marcarFavorito(vehiculo: Vehiculo): Promise<any> {
-        const vehiculoModificado = vehiculo.setFavorito(true);
+        vehiculo.setFavorito(true);
         await this.actualizarVehiculo(vehiculo);
     }
 
