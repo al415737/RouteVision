@@ -13,6 +13,7 @@ import { getAuth } from 'firebase/auth';
 import { ServerNotOperativeException } from '../../excepciones/server-not-operative-exception';
 import { PlaceNotFoundException } from '../../excepciones/place-not-found-exception';
 import { NotAvailableFuelException } from '../../excepciones/not-available-fuel-exception';
+import { NoElementsException } from '../../excepciones/no-Elements-exception';
 
 @Injectable({
   providedIn: 'root'
@@ -135,6 +136,14 @@ export class RouteFirebaseService implements RouteRepository{
     await this._firestore.createRoute(newRoute, `ruta/${uid}/listaRutasInterés`);
   
     return newRoute;
+  }
+
+  async actualizarRoutes(route: Route): Promise<any> {
+            const id = await this._firestore.get('nombre', route.getNombre(), `ruta/${this._authState.currentUser?.uid}/listaRutasInterés`);
+            if (id == '') {
+              throw new NoElementsException();
+            }
+            return await this._firestore.actualizarRoutes(route, id);
   }
   
   async deleteRoute(nombre: string): Promise<boolean> {

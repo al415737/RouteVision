@@ -360,7 +360,21 @@ export class FirestoreService {
   }
 
   //EDITAR ELEMENTOS
+  async actualizarRoutes(route:Route, id:string){
+    const listaRoutesRef = doc(
+      this._firestore, 
+      `ruta/${this._authState.currentUser?.uid}/listaRutasInterés/${id}`
+    );
   
+    const plainObject = { ...route };
+    try {
+      await updateDoc(listaRoutesRef, plainObject);
+      return route;
+    } catch (error) {
+      console.error('Error al actualizar vehículo:', error);
+      return route;
+    }
+  }
 
 
   //BORRAR ELEMENTOS

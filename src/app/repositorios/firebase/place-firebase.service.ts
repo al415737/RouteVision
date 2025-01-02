@@ -8,6 +8,7 @@ import { getAuth } from 'firebase/auth';
 import { firstValueFrom } from 'rxjs';
 import { AuthStateService } from '../../utils/auth-state.service';
 import { NotExistingObjectException } from '../../excepciones/notExistingObjectException';
+import { NoElementsException } from '../../excepciones/no-Elements-exception';
 
 @Injectable({
   providedIn: 'root'
@@ -37,6 +38,14 @@ export class PlaceFirebaseService implements PlaceRepository{
 
     await this.firestore.createPlaceC(placeRegisterC, PATHPLACE);
     return placeRegisterC;
+    }
+
+    async actualizarPlace(place: Place): Promise<any> {
+          const id = await this.firestore.get('idPlace', place.getIdPlace(), `Lugar/${this._authState.currentUser?.uid}/listaLugaresInterés`);
+          if (id == '') {
+            throw new NoElementsException();
+          }
+          return await this.firestore.actualizarPlace(place, id);
     }
 
     async deletePlace(idPlace: string): Promise<boolean> {
