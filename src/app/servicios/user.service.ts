@@ -27,7 +27,7 @@ export class UserService {
     if (!email.trim())
       throw new ObligatoryFieldsException();
 
-    await this.userRepo.deleteUser(email);
+    return await this.userRepo.deleteUser(email);
   }
 
   loginUser(email: string, password: string) {

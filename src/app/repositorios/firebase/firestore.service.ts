@@ -81,7 +81,7 @@ export class FirestoreService {
 
   async eliminarVehiculo(path: string, id: string):Promise<void>{
       const docRef = doc(this._firestore, path, id);
-      await deleteDoc(docRef);
+      return await deleteDoc(docRef);
   }
 
   async consultarVehiculo(path: string){
