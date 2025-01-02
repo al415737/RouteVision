@@ -41,6 +41,8 @@ Sigue estos pasos para instalar el proyecto:
    npm install
    ```
 
+---
+
 ## **Ejecutar el Servidor**
 Para iniciar el servidor, utiliza el siguiente comando:  
 ```bash
@@ -48,6 +50,8 @@ ng serve --open
 ```
 Esto abrirá automáticamente el navegador en la siguiente URL:  
 `http://localhost:4200/`
+
+---
 
 ## **Pruebas**
 El proyecto se desarrolló utilizando la **metodología ATDD**, creando el código basado en las pruebas.  
@@ -68,7 +72,7 @@ Se han implementado:
 
 ---
 
-## Autores 👥
+## Autores (👥):
 
 ✨🚀 **Abel Dasí Comes**    
 
@@ -77,7 +81,5 @@ Se han implementado:
 ✨🚀 **Irene Martínez Sancho**    
 
 🚀✨ **Sergio Blasco Torralba**  
-
----
 
 > Un equipo comprometido con la excelencia, la innovación y el trabajo en equipo para llevar RouteVision al siguiente nivel. 💡🌍
