@@ -6,6 +6,7 @@ import { getAuth } from 'firebase/auth';
 import { VehicleNotFoundException } from '../../excepciones/vehicle-not-Found-Exception';
 import { NotExistingObjectException } from '../../excepciones/notExistingObjectException';
 import { AuthStateService } from '../../utils/auth-state.service';
+import { NoElementsException } from '../../excepciones/no-Elements-exception';
 
 @Injectable({
   providedIn: 'root'
@@ -35,7 +36,7 @@ export class VehiculoFirebaseService implements VehiculoRepository{
     async actualizarVehiculo(vehiculo: Vehiculo): Promise<any> {
       const id = await this.firestore.get('matricula', vehiculo.getMatricula(), `vehiculo/${this._authState.currentUser?.uid}/listaVehiculos`);
       if (id == '') {
-        throw new NotExistingObjectException();
+        throw new NoElementsException();
       }
       return await this.firestore.actualizarVehiculo(vehiculo, id);
     }

@@ -19,6 +19,8 @@ import { VEHICULO_REPOSITORY_TOKEN } from '../../repositorios/interfaces/vehicul
 import { VehiculoFirebaseService } from '../../repositorios/firebase/vehiculo-firebase.service';
 import { provideHttpClient } from '@angular/common/http';
 import { UserNotFoundException } from '../../excepciones/user-not-found-exception';
+import { CocheGasolina } from '../../modelos/vehiculos/cocheGasolina';
+import { NoElementsException } from '../../excepciones/no-Elements-exception';
 
 describe('UserService', () => {
   let service: UserService;
@@ -178,7 +180,7 @@ describe('UserService', () => {
            await service.deleteUser("danitorres@gmail.com");
       }
   });
-  */
+  
 
   it('HU20-E01. Usuario marca como favorito su coche (Escenario Válido)', async() => {
     //Given: El usuario [“Pepito2002”, “pepito@gmail.com“,“ppt-24”] tiene iniciada su cuenta y la base de datos está disponible. Lista de vehículos: [ {“8291 DTS” , 2002, “Seat”, “León”, 5.1L/100km, 'Precio Gasolina 98 E5'}, {"1234 BBB", "Peugeot", "407", "2007", 8.1, 'Precio Gasoleo A'} ]. 
@@ -197,14 +199,24 @@ describe('UserService', () => {
     vehicleService.eliminarVehiculo("8291 DTS");
   
   });
+  */
 
-  /*
+  
   it('HU20-E03. Intento de marcar como favorito pero no tiene elementos registrados (Escenario Inválido)', async() => {
     //Given: El usuario [“Pepito2002”, “pepito@gmail.com“,“ppt-24”] ha iniciado sesión, la base de datos está disponible, pero no tiene ningún elemento registrado. Lista de vehículos = [ ].
-    //When: El usuario quiere marcar como favorito a su vehículo.
-    //Then: El sistema no puede marcar como favorito nada y lanza la excepción NoElementsException().
+    await service.loginUser("test@test.com", "test123");
+    const vehiculo = new CocheGasolina("8291 DTS", "Seat", "León", "2002", 5.1, "Precio Gasolina 95 E5");
+
+    try {
+      //When: El usuario quiere marcar como favorito a su vehículo.
+      await vehicleService.marcarFavorito(vehiculo);
+    } catch(error){
+      //Then: El sistema no puede marcar como favorito nada y lanza la excepción NoElementsException().
+      expect(error).toBeInstanceOf(NoElementsException);
+    }
+    
   });
-  */
+  
   
 });
 
