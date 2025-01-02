@@ -44,4 +44,8 @@ export class UserService {
     }
     await this.userRepo.logoutUser();
   }
+
+  editUser(type: number, value: string) {
+    return null;
+  }
 }
