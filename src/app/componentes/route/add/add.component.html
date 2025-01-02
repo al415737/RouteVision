@@ -9,7 +9,7 @@
 <body>
   <app-header></app-header>
   <div class="container">
-    <app-map #mapComponent></app-map>
+    <app-map #mapComponent (sendToRoute)="updateKmDuracion($event)"></app-map>
     <div class="input-container" style="margin-left: 20px;">
       <h2>Añadir Ruta</h2>
       
@@ -32,27 +32,35 @@
       <!-- Select para opción -->
       <label for="select-opcion">Seleccionar Opción:</label>
       <select id="select-opcion" [(ngModel)]="option">
-        <option value="">--Seleccionar--</option>
-        <option [value]="'porDefecto'">Normal</option>
-        <option [value]="'fastest'">Rápida</option>
-        <option [value]="'shortest'">Corta</option>
-        <option [value]="'recommended'">Económica</option>
+        <option value = "">--Seleccionar--</option>
+        <option value = 'porDefecto'>Normal</option>
+        <option value = 'fastest'>Rápida</option>
+        <option value = 'shortest'>Corta</option>
+        <option value = 'recommended'>Económica</option>
       </select>
       
       <!-- Select para movilidad -->
       <label for="select-movilidad">Seleccionar Movilidad:</label>
       <select id="select-movilidad" [(ngModel)]="movilidad">
         <option value="">--Seleccionar--</option>
-        <option [value]="'driving-car'">Coche</option>
-        <option [value]="'driving-car'">Moto</option>
-        <option [value]="'foot-walking'">A pie</option>
-        <option [value]="'cycling'">Bicicleta</option>
+        <option value ='driving-car'>Coche</option>
+        <option value ='driving-car'>Moto</option>
+        <option value ='foot-walking'>A pie</option>
+        <option value= 'cycling'>Bicicleta</option>
       </select>
       
       <!-- Botón para visualizar el mapa -->
       <button (click)="visualizarMapa()" class="btn-success">Mostrar ruta</button>
-      <!-- Botón para añadir -->
-      <button (click)="anadirRuta()" class="btn-success">Añadir Ruta</button>
+      
+      @if (duration != 0 && kilometros != 0) {
+        <br>
+        <p>{{kilometros}} <b>Kilometros</b></p> 
+        <p>{{duration}} <b>Minutos</b></p> 
+        <!-- Botón para añadir -->
+        <button (click)="anadirRuta()" class="btn-success">Añadir Ruta</button>
+      
+      } 
+
       <!-- Botón para volver -->
       <button class="back-button" routerLink="/rutas">Volver</button>
     </div>

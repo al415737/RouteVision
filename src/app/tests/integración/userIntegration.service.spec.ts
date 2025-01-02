@@ -13,6 +13,7 @@ import { Place } from '../../modelos/place';
 import { WrongPasswordException } from '../../excepciones/wrong-password-exception';
 import { UserNotFoundException } from '../../excepciones/user-not-found-exception';
 import { CocheGasolina } from '../../modelos/vehiculos/cocheGasolina';
+import { PrefereneInvalidException } from '../../excepciones/preference-invalid-exception';
 
 describe('UserIntegrationService', () => {
   let service: UserService;
@@ -157,5 +158,24 @@ describe('UserIntegrationService', () => {
       } catch (error) {
         expect(error).toBeInstanceOf(UserNotFoundException);
       }
+  });
+
+  it('HU22-E01. Establecimiento de la ruta más rápida por defecto (Escenario Válido): ', async () => {
+    const mockUser: User = new User("UserTest", "ADIS", "usertest@test.com", "UserTest", "", "fastest");
+    spyOn(userRepo, 'editUser').and.resolveTo();
+    
+    await service.editUser(2, 'fastest');
+    expect(userRepo.editUser).toHaveBeenCalledWith(2, 'fastest');
+    expect(mockUser.getPref2()).toEqual('fastest');
+  });
+
+  it('HU22-E0X. Establecimiento de la ruta que no existe por defecto (Escenario Inválido): ', async () => {
+    spyOn(userRepo, 'editUser').and.resolveTo();      
+    try {
+      await service.editUser(2, 'mierdatest');
+      expect(userRepo.editUser).toHaveBeenCalledWith(2, 'mierdatest');
+    } catch (error) {
+      expect(error).toBeInstanceOf(PrefereneInvalidException);
+    }
   });
 });

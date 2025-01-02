@@ -333,6 +333,17 @@ export class FirestoreService {
       return vehiculo;
     }
   }
+
+  async edit(value: any, PATH: string) {
+    const listaRef = doc(
+      this._firestore, 
+      PATH
+    );
+    const plainObject = { ...value };  
+    await updateDoc(listaRef, plainObject);
+    return value;  
+  }
+
   //EDITAR ELEMENTOS
 
   //BORRAR ELEMENTOS

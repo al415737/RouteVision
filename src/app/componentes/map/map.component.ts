@@ -1,12 +1,14 @@
 import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
-import { tileLayer, Map, marker, geoJSON, Marker, LatLngBounds } from 'leaflet';
+import { tileLayer, Map, marker, geoJSON, Marker, LatLngBounds, LatLng, LatLngExpression } from 'leaflet';
 import { FirestoreService } from '../../repositorios/firebase/firestore.service';
 import { AuthStateService } from '../../utils/auth-state.service';
 import { OpenRouteService } from '../../APIs/Geocoding/openRoute.service';
 import { InvalidPlaceException } from '../../excepciones/invalid-place-exception';
 import { catchError, map, of, throwError } from 'rxjs';
 import { InvalidCoordenatesException } from '../../excepciones/invalid-coordenates-exception';
+import { Place } from '../../modelos/place';
+import { RouteService } from '../../servicios/route.service';
 
 
 @Component({
@@ -22,12 +24,15 @@ export class MapComponent {
   private currentMarker: any | null = null;
   private currentMarker2: any | null = null;
   private listaMarkers: Marker[] = [];
+  private routeLayer: any[] = [];
   private bounds: any[] = [];
   private _rutasService = inject(OpenRouteService);
+  private routeService = inject(RouteService);
   @Input() selectedOption: string = '';
   @Output() nombreCiudades = new EventEmitter<any[]>();
   @Output() coordenadasSeleccionadas = new EventEmitter<{ lat: number; lng: number }>();
   @Output() lugaresSeleccionados = new EventEmitter<any[]>();
+  @Output() sendToRoute = new EventEmitter<{ distance: number; duration: number }>()
 
 
   ngAfterViewInit():void{
@@ -137,4 +142,40 @@ export class MapComponent {
         })
       );
     }
+  
+    async getRoute(origen: Place, destino: Place, movilidad: string, option: string) {
+      this.reset();
+    
+      const responseRuta = option === 'porDefecto'
+      ? await this.routeService.calcularRuta(origen, destino, movilidad)
+      : await this.routeService.getRouteFSE(origen, destino, movilidad, option);
+    
+      const distance = responseRuta.features[0].properties.summary.distance / 1000;
+      const duration = responseRuta.features[0].properties.summary.duration / 60;
+    
+      this.sendToRoute.emit({ distance, duration });
+    
+      const origenCoords: LatLngExpression = [origen.getCoordenadas()[1], origen.getCoordenadas()[0]];
+      const destinoCoords: LatLngExpression = [destino.getCoordenadas()[1], destino.getCoordenadas()[0]];
+    
+      const marker1 = marker(origenCoords).addTo(this.map).bindPopup(origen.getToponimo());
+      const marker2 = marker(destinoCoords).addTo(this.map).bindPopup(destino.getToponimo());
+    
+      this.listaMarkers.push(marker1, marker2);
+    
+      const bounds = new LatLngBounds([marker1.getLatLng(), marker2.getLatLng()]);
+      this.map.fitBounds(bounds);
+    
+      const routeLayer = geoJSON(responseRuta).addTo(this.map);
+      this.routeLayer.push(routeLayer);
+    }
+    
+    reset() {
+      this.listaMarkers.forEach(marker => this.map.removeLayer(marker));
+      this.listaMarkers = [];
+    
+      this.routeLayer.forEach(layer => this.map.removeLayer(layer));
+      this.routeLayer = [];
+    }
+    
 }

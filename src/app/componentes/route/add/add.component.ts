@@ -10,6 +10,8 @@ import { RouteService } from '../../../servicios/route.service';
 import { Place } from '../../../modelos/place';
 import { CommonModule } from '@angular/common';
 import { geoJSON, LatLngExpression, marker, Marker } from 'leaflet';
+import { UserService } from '../../../servicios/user.service';
+import { User } from '../../../modelos/user';
 
 @Component({
   selector: 'app-add',
@@ -24,8 +26,8 @@ export default class AddComponent {
   private _router = inject(Router);
   private _placeService = inject(PlaceService);
   private _routeService = inject(RouteService);
-  markers: Marker[] = [];
-  private routeLayer: any | null = null;
+  private _userService = inject(UserService);
+  user: User | null = null;
   places: Place[] = [];
   nombre: string = '';
   origen: Place | null = null;
@@ -36,18 +38,23 @@ export default class AddComponent {
   duration: number = 0;
 
   async ngOnInit() {
-    await this.loadPlaces();
+    await this.load();
   }
 
-  async loadPlaces() {
+  async load() {
     this.places = await this._placeService.getPlaces();
+    this.user = await this._userService.getUsuario();
+
+    if (this.user != null){
+      this.movilidad = this.user.getPref1();
+      this.option = this.user.getPref2();
+    } 
   }
 
   async anadirRuta() {
     console.log(this.nombre, this.option, this.movilidad, this.origen, this.destino)
     if (this.nombre.trim() && this.origen != null && this.destino != null && this.option.trim() && this.movilidad.trim()) {
-      await this.getRoute();
-      await this._routeService.createRoute(this.nombre, this.origen, this.destino, this.movilidad, this.option, this.routeLayer.features[0].properties.summary.distance / 1000, this.routeLayer.features[0].properties.summary.duration / 60);
+      await this._routeService.createRoute(this.nombre, this.origen, this.destino, this.movilidad, this.option, this.kilometros, this.duration);
       toast.success('Ruta añadida correctamente.');
       this._router.navigateByUrl('/rutas');
 
@@ -55,28 +62,21 @@ export default class AddComponent {
       toast.info('Por favor, rellene todos los campos');
   }
 
-  async visualizarMapa(){
-    if (this.nombre.trim() && this.origen != null && this.destino != null && this.option.trim() && this.movilidad.trim()) {
-      this.addMarker(this.origen);
-      this.addMarker(this.destino);
-      await this.getRoute();
-      geoJSON(this.routeLayer.routes[0].segments[0].steps).addTo(this.map);
+  visualizarMapa() {
+    if (this.mapComponent) {
+      if (this.origen != null && this.destino != null && this.option.trim() && this.movilidad.trim()) {
+        if(this.origen.getIdPlace() != this.destino.getIdPlace())
+          this.mapComponent.getRoute(this.origen, this.destino, this.movilidad, this.option);
+        else
+          toast.info('Por favor, pon dos lugares distintos');
+      }
     }
   }
 
-  addMarker(place: Place) {
-    const latLng: LatLngExpression = [place.getCoordenadas()[0], place.getCoordenadas()[1]];
-    const newMarker = marker(latLng).addTo(this.map).bindPopup(place.getToponimo()).openPopup();
-    this.markers.push(newMarker);
+  updateKmDuracion(result: {distance: number, duration: number}) {
+    this.kilometros = result.distance;
+    this.duration = result.duration;
   }
 
-  async getRoute() {
-    if (this.routeLayer == null && this.nombre.trim() && this.origen != null && this.destino != null && this.movilidad.trim()) {
-      if (this.movilidad == 'porDefecto')
-        this.routeLayer = await this._routeService.calcularRuta(this.origen, this.destino, this.movilidad);
-      else
-        this.routeLayer = await this._routeService.getRouteFSE(this.origen, this.destino, this.movilidad, this.option);
-    }
-  }
   
 }

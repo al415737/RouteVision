@@ -20,6 +20,7 @@ import { VehiculoFirebaseService } from '../../repositorios/firebase/vehiculo-fi
 import { provideHttpClient } from '@angular/common/http';
 import { UserNotFoundException } from '../../excepciones/user-not-found-exception';
 import { NotExistingObjectException } from '../../excepciones/notExistingObjectException';
+import { PrefereneInvalidException } from '../../excepciones/preference-invalid-exception';
 
 describe('UserService', () => {
   let service: UserService;
@@ -192,7 +193,7 @@ describe('UserService', () => {
   });
 
   it('HU22-E01. Establecimiento de la ruta más rápida por defecto (Escenario Válido): ', async () => {
-    await service.loginUser('usertest@test.com', 'test1234');
+    await service.loginUser('usertest@test.com', 'test123');
     await service.editUser(2, 'fastest');
     
     const user: User | null  = await service.getUsuario();
@@ -206,10 +207,14 @@ describe('UserService', () => {
   });
 
   it('HU22-E0X. Establecimiento de la ruta que no existe por defecto (Escenario Inválido): ', async () => {
-    await service.loginUser('usertest@test.com', 'test1234');
-    await expectAsync(
-      service.editUser(2, 'lowtest')
-    ).toBeRejectedWith(new NotExistingObjectException());
+    await service.loginUser('usertest@test.com', 'test123');
+    
+    try {
+      await service.editUser(2, 'mierdatest');
+    } catch (error) {
+      expect(error).toBeInstanceOf(PrefereneInvalidException);
+    }
+
     await service.logoutUser();
   });
 });

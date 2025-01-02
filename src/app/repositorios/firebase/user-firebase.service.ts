@@ -7,6 +7,7 @@ import { Vehiculo } from '../../modelos/vehiculos/vehiculo';
 import { AuthService } from './auth.service';
 import { getAuth, UserCredential } from 'firebase/auth';
 import { UserNotFoundException } from '../../excepciones/user-not-found-exception';
+import { AuthStateService } from '../../utils/auth-state.service';
 
 
 const PATH = 'user';
@@ -16,8 +17,8 @@ const PATH = 'user';
 })
 export class UserFirebaseService implements UserRepository{
 
-  constructor(private _firestore: FirestoreService, private _auth: AuthService) { }
-
+  constructor(private _firestore: FirestoreService, private _auth: AuthService, private _authState: AuthStateService) { }
+  
   async consultarUsuarios(): Promise<User[]> {
       return await this._firestore.consultarUsuarios(PATH);
   }
@@ -50,5 +51,22 @@ export class UserFirebaseService implements UserRepository{
 
   async logoutUser(): Promise<void> {
     await this._auth.logout();
+  }
+
+  async editUser(type: number, value: string): Promise<void> {
+    const user: User | null = await this._firestore.getUsuario();
+    if (user != null) {
+      const id = await this._firestore.get('uid', this._authState.currentUser?.uid, `user/`);
+      switch(type) {
+        case 1:
+          user.setPref1(value);
+          await this._firestore.edit(user, `user/${id}`);
+          break;
+        case 2:
+          user.setPref2(value);
+          await this._firestore.edit(user, `user/${id}`);
+          break;
+      } 
+    }
   }
 }
