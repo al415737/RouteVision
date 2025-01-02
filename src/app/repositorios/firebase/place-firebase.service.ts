@@ -33,7 +33,7 @@ export class PlaceFirebaseService implements PlaceRepository{
     const idPlace = docRef.id;
 
 
-    const placeRegisterC: Place = new Place(idPlace, lugar, coordenadas, false);
+    const placeRegisterC: Place = new Place(idPlace, lugar, [coordenadas[1], coordenadas[0]], false);
 
     await this.firestore.createPlaceC(placeRegisterC, PATHPLACE);
     return placeRegisterC;
