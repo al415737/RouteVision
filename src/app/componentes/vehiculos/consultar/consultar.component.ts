@@ -23,7 +23,7 @@ export default class ConsultarComponent {
     //Datos de ejemplo
     dataSource = new MatTableDataSource<any>(); //Configuración inicial vacía
     vehiculos: Vehiculo[] = [];
-    displayedColumns: string[] = ['matricula', 'marca', 'modelo', 'ano_fabricacion', 'consumo', 'tipo', 'edit', 'delete'];
+    displayedColumns: string[] = ['matricula', 'marca', 'modelo', 'ano_fabricacion', 'consumo', 'tipo', 'favorito', 'edit', 'delete'];
     currentPage = 0;
     readonly dialog = inject(MatDialog);
     @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -53,5 +53,23 @@ export default class ConsultarComponent {
           toast.success('Vehiculo borrado correctamente.'); 
           this.obtenerVehiculos();
       });
+    }
+
+    marcarFavorito(vehiculo: Vehiculo){
+
+      vehiculo.setFavorito(!vehiculo.getFavorito());
+
+      this.servicioVehiculo.marcarFavorito(vehiculo);
+
+      this.obtenerVehiculos();
+
+      this.vehiculos = this.vehiculos.sort((a, b) => (b.getFavorito() ? 1 : 0) - (a.getFavorito() ? 1 : 0));
+
+      if(vehiculo.getFavorito() == true){
+        toast.success('Vehículo marcado como favorito.');
+      } else {
+          toast.success('Vehiculo ya no es favorito.');
+      }
+      
     }
 }
