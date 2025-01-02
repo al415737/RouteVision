@@ -43,7 +43,6 @@ describe('UserIntegrationService', () => {
     vehicleService = TestBed.inject(VehiculoService);
   });
   
-  /*
   it('HU1E01. User registration in the system (Valid Scenario)', async () => {
     const mockUser: User = new User("Manuel", "García", "manu033@gmail.com", "Manu-33",'','');
     spyOn(userRepo, 'createUser').and.resolveTo(mockUser);
@@ -146,7 +145,6 @@ describe('UserIntegrationService', () => {
   
   });
 
-  
   it('HU4-E02. Eliminar una cuenta de un usuario no registrado (Escenario Inválido)', async () => {
       //Given: Lista actual de usuarios = {Pepito, Alba, Dani}.
       const mockData: User[] = [
@@ -169,7 +167,7 @@ describe('UserIntegrationService', () => {
       }
   });
 
-  */
+  
   it('HU20-E01. Usuario marca como favorito su coche (Escenario Válido)', async() => {
       //Given: El usuario [“Pepito2002”, “pepito@gmail.com“,“ppt-24”] tiene iniciada su cuenta y la base de datos está disponible. Lista de vehículos: [ Matrícula: “8291 DTS” , AñoFabricación: 2002, Marca: “Seat”, Modelo: “León”, Consumo: 5.1L/100km ]. 
       const vehiculo = new CocheGasolina("8291 DTS", "Seat", "León", "2002", 5.1, "Precio Gasolina 95 E5");
