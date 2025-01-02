@@ -49,7 +49,6 @@ describe('UserService', () => {
     placeService = TestBed.inject(PlaceService);
   });
   
-/*
   it('HU1E01. User registration in the system (Valid Scenario)', async () => {
     // GIVEN: El usuario Manu-33 no está registrado en el sistema y se tiene conexión con la base de datos → ListaUsuarios = [ ].
     // WHEN: Manuel intenta registrarse →[Nombre=”Manuel”, Apellido=”García”, User=”Manu33”, Email=”manu33@gmail.com”, Contraseña=”Manu-33”].
@@ -147,7 +146,6 @@ describe('UserService', () => {
     //When: El usuario Pepa quiere eliminar su cuenta del sistema.
     await service.deleteUser('pepagimena@gmail.com');
 
-
     //Then: Lista actual de usuarios {Pepito, Alba, Dani}
     const usuariosEnSistema = await service.consultarUsuarios();
 
@@ -166,8 +164,6 @@ describe('UserService', () => {
       await service.createUser("Dani", "Torres", "danitorres@gmail.com", "dani", "dani123");
       await service.logoutUser();
 
-      await new Promise(resolve => setTimeout(resolve, 500));
-
       try {
           //When: El usuario Random quiere cerrar sesión y eliminar su cuenta del sistema.
           await service.logoutUser();
@@ -180,7 +176,6 @@ describe('UserService', () => {
            await service.deleteUser("danitorres@gmail.com");
       }
   });
-  */
   
   it('HU20-E01. Usuario marca como favorito su coche (Escenario Válido)', async() => {
     //Given: El usuario [“Pepito2002”, “pepito@gmail.com“,“ppt-24”] tiene iniciada su cuenta y la base de datos está disponible. Lista de vehículos: [ {“8291 DTS” , 2002, “Seat”, “León”, 5.1L/100km, 'Precio Gasolina 98 E5'}, {"1234 BBB", "Peugeot", "407", "2007", 8.1, 'Precio Gasoleo A'} ]. 
