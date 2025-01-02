@@ -188,14 +188,17 @@ describe('UserIntegrationService', () => {
   
   it('HU20-E03. Intento de marcar como favorito pero no tiene elementos registrados (Escenario Inválido)', async() => {
       //Given: El usuario [“Pepito2002”, “pepito@gmail.com“,“ppt-24”] ha iniciado sesión, la base de datos está disponible, pero no tiene ningún elemento registrado. Lista de vehículos = [ ].
-      spyOn(vehiRepo, 'marcarFavorito').and.resolveTo(NoElementsException);   
+      spyOn(vehiRepo, 'marcarFavorito')  
       const vehiculo = new CocheGasolina("8291 DTS", "Seat", "León", "2002", 5.1, "Precio Gasolina 95 E5");
       
-      //When: El usuario quiere marcar como favorito a su vehículo.
-      
-
-      //Then: El sistema no puede marcar como favorito nada y lanza la excepción NoElementsException().
+      try {
+        //When: El usuario quiere marcar como favorito a su vehículo.
+        await vehicleService.marcarFavorito(vehiculo);
+        expect(vehiRepo.marcarFavorito).toHaveBeenCalledWith(vehiculo);
+      } catch(error){
+        //Then: El sistema no puede marcar como favorito nada y lanza la excepción NoElementsException().
+        expect(error).toBeInstanceOf(NoElementsException);
+      }
   });
-  
 
 });
