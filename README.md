@@ -4,15 +4,12 @@ El **proyecto común** de las asignaturas *Diseño de Software* (EI1039) y *Para
 - *Paradigmas de Software*: orientada hacia la aplicación de metodologías como **ATDD** (Acceptance Test-Driven Development) y otros enfoques relacionados con las pruebas de software.  
 - *Diseño de Software*: centrada en la comparación y selección de estrategias de diseño, además de enfatizar competencias como trabajo en equipo, comunicación, toma de decisiones y gestión del tiempo.
 
----
-
 ## **Objetivo del Proyecto**
 El objetivo es la realización de una **aplicación de movilidad** que permita:  
 - Calcular rutas entre dos lugares de interés, con la posibilidad de elegir el método de movilidad.  
 - Guardar rutas para conocer el trayecto, duración, tipo y coste asociado.  
 - Conexión con **APIs** y **Firebase** para la gestión de datos.
 
----
 
 ## **Propósito Educativo**
 El proyecto busca fomentar:  
@@ -39,11 +36,10 @@ Sigue estos pasos para instalar el proyecto:
 
 1. Clona el repositorio en tu máquina local.  
 2. Comprueba si todas las dependencias están instaladas ejecutando:  
+
    ```bash
    npm install
    ```
-
----
 
 ## **Ejecutar el Servidor**
 Para iniciar el servidor, utiliza el siguiente comando:  
@@ -52,8 +48,6 @@ ng serve --open
 ```
 Esto abrirá automáticamente el navegador en la siguiente URL:  
 `http://localhost:4200/`
-
----
 
 ## **Pruebas**
 El proyecto se desarrolló utilizando la **metodología ATDD**, creando el código basado en las pruebas.  
