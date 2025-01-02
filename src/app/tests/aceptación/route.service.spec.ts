@@ -125,8 +125,11 @@ describe('RutasService', () => {
   it('H14E01. Cálculo del coste asociado a la realización de una ruta en coche (Escenario Válido): ', async () => {
     //GIVEN:  La API está disponible. El usuario [“RouteTest”, “routetest@test.com“,“test123”] con listaVehículos= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”*407”, Año Fabricación=”2007”, Consumo=8,1, “Precio Gasoleo A”}]
     await servicioUsuario.loginUser("test@test.com", "test123"); 
+    
     //const vehiculo = await servicioVehiculo.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Gasolina");
-    const vehiculo = await servicioVehiculo.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Diésel");
+    //const vehiculo = await servicioVehiculo.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Diésel");
+    const vehiculo = await servicioVehiculo.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Eléctrico");
+
 
     //WHEN: El usuario quiere saber el coste de una ruta con unos de sus vehículos de tipo coche para saber cuánto dinero le va a costar y se selecciona el vehículo [Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”*407”, Año Fabricación=”2007”, Consumo=8,1, “Precio Gasoleo A”] para la ruta [Origen:Valencia, Destino:Castellón].
     const ruta = new Route('ruta01', 'Valencia', 'Castellón de la Plana/Castelló de la Plana', 'porDefecto', 'driving-car', 90, 90, false);

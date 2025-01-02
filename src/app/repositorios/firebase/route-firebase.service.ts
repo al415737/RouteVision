@@ -60,11 +60,22 @@ export class RouteFirebaseService implements RouteRepository{
     console.log('Hola');  
     if(vehiculo.getTipo() == 'Eléctrico'){
       const fechaHoy = new Date();
+      console.log(fechaHoy);
+
+      const indiceHora = fechaHoy.getHours(); // Obtener la hora (0-23)
+      console.log(indiceHora);
+
       fechaHoy.setMinutes(0, 0, 0); // Redondea la hora a las 00 minutos, 00 segundos y 00 milisegundos
+      console.log(fechaHoy);
+      
       const horaActual = fechaHoy.toISOString().split('T')[1].split('.')[0]; // Obtiene solo la hora exacta (HH:00:00)
+      console.log(horaActual);
+
 
       const listaPrecios = await this.proxy.getPreciosLuz();
-  
+      console.log(listaPrecios);
+
+
       // Buscar el precio correspondiente a la hora actual
       const pvpc = listaPrecios.included.find((item: any) => item.type === 'PVPC');
       console.log(pvpc);
@@ -79,14 +90,14 @@ export class RouteFirebaseService implements RouteRepository{
         });
 
         if (precioHora) {
-          // Obtener el precio para esa hora
-          costeRuta = vehiculo.obtenerCoste(ruta.getKm(), precioHora);
-          console.log(horaActual + precioHora + costeRuta);
+          const precioKWh = precioHora.value / 1000; // Convertir €/MWh a €/kWh
+          costeRuta = vehiculo.obtenerCoste(ruta.getKm(), precioKWh);
+          console.log(`Hora actual: ${horaActual}, Precio €/kWh: ${precioKWh}, Coste Ruta: ${costeRuta}`);
         } else {
-          console.log(`No se encontró el precio para la hora ${horaActual}`);
+            console.log(`No se encontró el precio para la hora ${horaActual}`);
         }
       } else {
-        console.log('AAAAAAAAAAAAAAAAA');
+          console.error('No se encontró el tipo PVPC en la respuesta de la API');
       }
     } else {
       console.log('Hola1');  

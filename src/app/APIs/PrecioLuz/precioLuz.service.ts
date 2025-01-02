@@ -21,7 +21,7 @@ export class PrecioLuzService {
     const startDate = today.toISOString().split('T')[0];
     const endDate = tomorrow.toISOString().split('T')[0];
 
-    const url = `api/es/datos/mercados/precios-mercados-tiempo-real?start_date=${startDate}&end_date=${endDate}&time_trunc=hour`;
+    const url = `https://apidatos.ree.es/es/datos/mercados/precios-mercados-tiempo-real?start_date=${startDate}&end_date=${endDate}&time_trunc=hour`;
 
     return this.http.get(url);
   }
