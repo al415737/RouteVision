@@ -88,8 +88,8 @@ export class RouteService {
     return this.routeRepository.getRoutes();
   }
 
-  marcarFavorito(ruta: Route){
-
+  async marcarFavorito(ruta: Route){
+      return await this.routeRepository.marcarFavorito(ruta);
   }
 
 }

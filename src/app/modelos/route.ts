@@ -49,6 +49,10 @@ export class Route {
         return this.duration;
     }
 
+    getFavorito(){
+        return this.favorito;
+    }
+
     setKm(km: number) {
         this.kilometros = km;
     }

@@ -164,7 +164,7 @@ export class FirestoreService {
             data['matricula'],
             data['marca'],
             data['modelo'],
-            data['año_fabricacion'],
+            data['ano_fabricacion'],
             data['consumo'],
             data['tipo'],
           );
@@ -176,7 +176,7 @@ export class FirestoreService {
           data['matricula'],
           data['marca'],
           data['modelo'],
-          data['año_fabricacion'],
+          data['ano_fabricacion'],
           data['consumo'],
           data['tipo'],
         );
@@ -341,7 +341,27 @@ export class FirestoreService {
       return vehiculo;
     }
   }
+  
   //EDITAR ELEMENTOS
+  async actualizarPlace(place:Place, id:string){
+    const listaPlaceRef = doc(
+      this._firestore, 
+      `Lugar/${this._authState.currentUser?.uid}/listaLugares/${id}`
+    );
+  
+    const plainObject = { ...place };
+    try {
+      await updateDoc(listaPlaceRef, plainObject);
+      return place;
+    } catch (error) {
+      console.error('Error al actualizar vehículo:', error);
+      return place;
+    }
+  }
+
+  //EDITAR ELEMENTOS
+  
+
 
   //BORRAR ELEMENTOS
   async deleteUser(id: string, PATH: string): Promise<void> {

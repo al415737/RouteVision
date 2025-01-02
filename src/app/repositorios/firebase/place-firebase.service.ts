@@ -84,6 +84,7 @@ export class PlaceFirebaseService implements PlaceRepository{
     }
 
     async marcarFavorito(place: Place): Promise<any> {
-        return null;
+        place.setFavorito(true);
+        return ;
     }
 };

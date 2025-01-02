@@ -7,11 +7,11 @@ export abstract class Vehiculo {
     private tipo: string;
     private favorito: boolean;
 
-    constructor (matricula: string, marca: string, modelo: string, año_fabricacion: string, consumo: number, tipo: string) {
+    constructor (matricula: string, marca: string, modelo: string, ano_fabricacion: string, consumo: number, tipo: string) {
         this.matricula = matricula;
         this.marca = marca;
         this.modelo = modelo;
-        this.ano_fabricacion = año_fabricacion;
+        this.ano_fabricacion = ano_fabricacion;
         this.consumo = consumo;
         this.tipo = tipo;
         this.favorito = false;

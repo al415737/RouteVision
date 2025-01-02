@@ -151,7 +151,8 @@ export class RouteFirebaseService implements RouteRepository{
   }
 
   async marcarFavorito(ruta: Route): Promise<void> {
-    return ;
+      ruta.setFavorito(true);
+      return ;
   }
 
 }

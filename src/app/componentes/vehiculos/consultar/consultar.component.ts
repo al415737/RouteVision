@@ -56,20 +56,16 @@ export default class ConsultarComponent {
     }
 
     marcarFavorito(vehiculo: Vehiculo){
-
       vehiculo.setFavorito(!vehiculo.getFavorito());
-
+      console.log(vehiculo);
       this.servicioVehiculo.marcarFavorito(vehiculo);
-
       this.obtenerVehiculos();
-
       this.vehiculos = this.vehiculos.sort((a, b) => (b.getFavorito() ? 1 : 0) - (a.getFavorito() ? 1 : 0));
-
+      
       if(vehiculo.getFavorito() == true){
         toast.success('Vehículo marcado como favorito.');
       } else {
           toast.success('Vehiculo ya no es favorito.');
       }
-      
     }
 }

@@ -23,6 +23,10 @@ export class Place {
         return this.coordenadas;
     }
 
+    getFavorito(){
+        return this.favorito;
+    }
+
     setFavorito(favorito: boolean){
         this.favorito = true;
     }
