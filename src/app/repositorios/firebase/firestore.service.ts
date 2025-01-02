@@ -147,15 +147,25 @@ export class FirestoreService {
     return null;
   }
 
-  async consultarVehiculo(path: string){
-    const _collection = collection(this._firestore, path);
+    async consultarVehiculo(path: string){
+      const _collection = collection(this._firestore, path);
 
-    const documentos = await getDocs(_collection);
+      const documentos = await getDocs(_collection);
 
-    return documentos.docs.map(doc => { 
-      const data = doc.data();
-      if(data['tipo'] == 'Precio Gasolina 95 E5' || data['tipo'] == 'Precio Gasolina 98 E5'){
-          return new CocheGasolina(
+      return documentos.docs.map(doc => { 
+        const data = doc.data();
+        if(data['tipo'] == 'Precio Gasolina 95 E5' || data['tipo'] == 'Precio Gasolina 98 E5'){
+            return new CocheGasolina(
+              data['matricula'],
+              data['marca'],
+              data['modelo'],
+              data['año_fabricacion'],
+              data['consumo'],
+              data['tipo'],
+              data['favorito']
+            );
+        } else if(data['tipo'] == 'Precio Gasoleo A' || data['tipo'] == 'Precio Gasoleo B'){
+          return new CocheDiesel(
             data['matricula'],
             data['marca'],
             data['modelo'],
@@ -164,29 +174,19 @@ export class FirestoreService {
             data['tipo'],
             data['favorito']
           );
-      } else if(data['tipo'] == 'Precio Gasoleo A' || data['tipo'] == 'Precio Gasoleo B'){
-        return new CocheDiesel(
-          data['matricula'],
-          data['marca'],
-          data['modelo'],
-          data['año_fabricacion'],
-          data['consumo'],
-          data['tipo'],
-          data['favorito']
-        );
-      } else {
-        return new CocheElectrico(
-          data['matricula'],
-          data['marca'],
-          data['modelo'],
-          data['ano_fabricacion'],
-          data['consumo'],
-          data['tipo'],
-          data['favorito']
-        );
-      }
-     }); 
-  }
+        } else {
+          return new CocheElectrico(
+            data['matricula'],
+            data['marca'],
+            data['modelo'],
+            data['ano_fabricacion'],
+            data['consumo'],
+            data['tipo'],
+            data['favorito']
+          );
+        }
+      }); 
+    }
 
   async getUsuario(){
     const _collection = collection(this._firestore, `user/`);

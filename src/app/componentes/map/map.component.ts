@@ -9,6 +9,8 @@ import { catchError, map, of, throwError } from 'rxjs';
 import { InvalidCoordenatesException } from '../../excepciones/invalid-coordenates-exception';
 import { Place } from '../../modelos/place';
 import { RouteService } from '../../servicios/route.service';
+import { Vehiculo } from '../../modelos/vehiculos/vehiculo';
+import { Route } from '../../modelos/route';
 
 
 @Component({
@@ -32,7 +34,7 @@ export class MapComponent {
   @Output() nombreCiudades = new EventEmitter<any[]>();
   @Output() coordenadasSeleccionadas = new EventEmitter<{ lat: number; lng: number }>();
   @Output() lugaresSeleccionados = new EventEmitter<any[]>();
-  @Output() sendToRoute = new EventEmitter<{ distance: number; duration: number }>()
+  @Output() sendToRoute = new EventEmitter<{ distance: number; duration: number; costeRuta: number }>()
 
 
   ngAfterViewInit():void{
@@ -143,7 +145,7 @@ export class MapComponent {
       );
     }
   
-    async getRoute(origen: Place, destino: Place, movilidad: string, option: string) {
+    async getRoute(nombre: string, origen: Place, destino: Place, movilidad: string, option: string, vehiculo: Vehiculo | null) {
       this.reset();
     
       const responseRuta = option === 'porDefecto'
@@ -152,8 +154,13 @@ export class MapComponent {
     
       const distance = responseRuta.features[0].properties.summary.distance / 1000;
       const duration = responseRuta.features[0].properties.summary.duration / 60;
-    
-      this.sendToRoute.emit({ distance, duration });
+      let costeRuta = 0;
+     
+      if(vehiculo != null){
+        costeRuta = await this.routeService.obtenerCosteRuta(vehiculo, new Route(nombre, origen.getToponimo(), destino.getToponimo(), option, movilidad, distance, duration, false));
+      }
+
+      this.sendToRoute.emit({ distance, duration, costeRuta });
     
       const origenCoords: LatLngExpression = [origen.getCoordenadas()[1], origen.getCoordenadas()[0]];
       const destinoCoords: LatLngExpression = [destino.getCoordenadas()[1], destino.getCoordenadas()[0]];
