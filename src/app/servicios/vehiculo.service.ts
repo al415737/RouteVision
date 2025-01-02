@@ -16,8 +16,6 @@ export class VehiculoService {
   }
 
   crearVehiculo(matricula: string, marca: string, modelo: string, año_fabricacion: string, consumo: number, tipo: string){
-    console.log('Tipo combustible: ' + tipo);
-    
     if(matricula == '' || matricula == null){
       throw new NullLicenseException();
     }

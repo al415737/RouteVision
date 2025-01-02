@@ -24,10 +24,10 @@ export class RouteFirebaseService implements RouteRepository{
 
   constructor(private _firestore: FirestoreService, private proxy: ProxysCalculoCombustibleService,  private _geocoding: OpenRouteService, private _authState: AuthStateService) {}
   
-  consultarRutaEspecifica(ruta: Route): Promise<boolean> {
+  async consultarRutaEspecifica(ruta: Route): Promise<boolean> {
     const uid = getAuth().currentUser?.uid;
     const PATHROUTE = `ruta/${uid}/listaRutasInterés`;
-    return this._firestore.ifExist("nombre", ruta.getNombre(), PATHROUTE);  //Comprobar si la ruta específica existe
+    return await this._firestore.ifExist("nombre", ruta.getNombre(), PATHROUTE);  //Comprobar si la ruta específica existe
   }
   
   async calcularRuta(origen: Place, destino: Place, metodoMov: string) {

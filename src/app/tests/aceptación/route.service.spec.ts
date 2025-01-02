@@ -160,12 +160,12 @@ describe('RutasService', () => {
     const destino = await servicioPlace.createPlaceT("Castellón de la Plana");
 
     //WHEN: Se calcula el coste de la ruta Valencia-Castellón con la opción bicicleta. 
-    const ruta = await servicioRutas.createRoute("Valencia-Castellón", origen, destino, "cycling-regular", "economica", 76, 15806, 0);
+    const ruta = await servicioRutas.createRoute("Valencia-Castellón", origen, destino, "cycling-regular", "shortest", 76, 15806, 0);
 
     const coste = await servicioRutas.costeRutaPieBicicleta(ruta, origen, destino);
     
     //THEN: El sistema calcula el tiempo que se tarda en realizar la ruta prevista. El coste es de 500 calorías.
-    const costeEsperado = '2195.28';
+    const costeEsperado = '2005.10';
     expect(coste.toFixed(2)).toEqual(costeEsperado);
 
     await servicioPlace.deletePlace(origen.getIdPlace());
@@ -183,7 +183,7 @@ describe('RutasService', () => {
 
     try {
         //WHEN: El usuario RouteTest quiere realizar la ruta entre Valencia y Castellón en bicicleta.
-        const ruta = new Route("Valencia-Castellón", "Valencia", "Castellón de la Plana", "economica", "cycling-regular", 76, 15806, false, "Valencia", 0);
+        const ruta = new Route("Valencia-Castellón", "Valencia", "Castellón de la Plana", "shortest", "cycling-regular", 76, 15806, false, "Valencia", 0);
         await servicioRutas.costeRutaPieBicicleta(ruta, origen, destino);  
     } catch(error){
         //Then: El sistema no puede calcular el gasto calórico y lanza la excepción NoRouteFoundException()

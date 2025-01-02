@@ -65,12 +65,12 @@ export class RouteService {
     return this.routeRepository.costeRutaPieBicicleta(ruta, origen, destino);
   }
 
-  consultarRutaEspecifica(ruta: Route){
+  async consultarRutaEspecifica(ruta: Route){
     if(ruta.getOrigen() == '' || ruta.getOrigen() == null || ruta.getDestino() == '' || ruta.getDestino() == null || ruta.getMovilidad() == '' || ruta.getMovilidad() == null){
       throw new InvalidCalculateRoute();
     }
-
-    return this.routeRepository.consultarRutaEspecifica(ruta);
+    console.log("hola")
+    return await this.routeRepository.consultarRutaEspecifica(ruta);
   }
 
   createRoute(nombre: string, start: Place, end: Place, movilidad: string, preferencia: string, km: number, duracion: number, coste: number): Promise<Route> {
