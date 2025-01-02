@@ -24,12 +24,11 @@ export default class PlaceComponent {
   places: Place[] = [];
   currentPage = 0;
   dataSource = new MatTableDataSource<Place>();
-  displayedColumns: string[] = ['toponimo', 'coordenadas', 'delete'];
+  displayedColumns: string[] = ['toponimo', 'coordenadas', 'favorito', 'delete'];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   async ngOnInit(): Promise<void> {
-    this.places = await this._placeService.getPlaces();
     this.updateDataSource();
   }
 
@@ -37,6 +36,7 @@ export default class PlaceComponent {
     try {
       const data = await this._placeService.getPlaces();
       this.places = data;
+      this.places = this.places.sort((a, b) => (b.getFavorito() ? 1 : 0) - (a.getFavorito() ? 1 : 0));
       this.dataSource = new MatTableDataSource<Place>(this.places);
       this.dataSource.paginator = this.paginator;
     } catch (err) {
@@ -51,6 +51,17 @@ export default class PlaceComponent {
       toast.success('Lugar eliminado correctamente.');
       this.updateDataSource();
     });
-      
   }
+
+  marcarFavorito(place: Place){
+      this._placeService.marcarFavorito(place, !place.getFavorito());
+      this.updateDataSource();
+       
+      if(place.getFavorito() == true){
+        toast.success('Vehículo marcado como favorito.');
+      } else {
+          toast.success('Vehiculo ya no es favorito.');
+      }
+  }
+
 }

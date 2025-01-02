@@ -50,6 +50,17 @@
         <td mat-cell *matCellDef="let ruta" [style.color]="'white'"> {{ruta.duration}} </td>
       </ng-container>
 
+      <ng-container matColumnDef="favorito">
+        <th mat-header-cell *matHeaderCellDef [style.color]="'white'"> Favorito </th>
+        <td mat-cell *matCellDef="let vehiculo">
+          <button mat-icon-button (click)="marcarFavorito(vehiculo)">
+            <mat-icon [style.color]="vehiculo.favorito ? 'gold' : 'gray'">
+              star
+            </mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
       <ng-container matColumnDef="delete">
         <th mat-header-cell *matHeaderCellDef [style.color]="'white'"></th>
         <td mat-cell *matCellDef="let ruta" [style.color]="'white'">

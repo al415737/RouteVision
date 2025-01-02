@@ -10,6 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { RouteService } from '../../servicios/route.service';
 import { Route } from '../../modelos/route';
 import { DeleteComponent } from './delete/delete.component';
+import { toast } from 'ngx-sonner';
 
 @Component({
   selector: 'app-route',
@@ -25,7 +26,7 @@ export default class RouteComponent {
   rutas: Route[] = [];
   currentPage = 0;
   dataSource = new MatTableDataSource<Route>();
-  displayedColumns: string[] = ['nombre', 'origen', 'destino', 'option', 'movilidad', 'kilometros', 'duration', 'delete'];
+  displayedColumns: string[] = ['nombre', 'origen', 'destino', 'option', 'movilidad', 'kilometros', 'duration', 'favorito','delete'];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
@@ -51,5 +52,16 @@ export default class RouteComponent {
     }).afterClosed().subscribe(() => {
       this.updateDataSource();
     }) ;
+  }
+
+  marcarFavorito(route: Route){
+      this._routeService.marcarFavorito(route, !route.getFavorito());
+      this.updateDataSource();
+       
+      if(route.getFavorito() == true){
+        toast.success('Vehículo marcado como favorito.');
+      } else {
+        toast.success('Vehiculo ya no es favorito.');
+      }
   }
 }
