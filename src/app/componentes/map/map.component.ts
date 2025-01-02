@@ -9,6 +9,7 @@ import { catchError, map, of, throwError } from 'rxjs';
 import { InvalidCoordenatesException } from '../../excepciones/invalid-coordenates-exception';
 import { Place } from '../../modelos/place';
 import { RouteService } from '../../servicios/route.service';
+import { Vehiculo } from '../../modelos/vehiculos/vehiculo';
 
 
 @Component({
@@ -143,7 +144,7 @@ export class MapComponent {
       );
     }
   
-    async getRoute(origen: Place, destino: Place, movilidad: string, option: string) {
+    async getRoute(origen: Place, destino: Place, movilidad: string, option: string, vehiculo: Vehiculo | null) {
       this.reset();
     
       const responseRuta = option === 'porDefecto'

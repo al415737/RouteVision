@@ -12,6 +12,8 @@ import { CommonModule } from '@angular/common';
 import { geoJSON, LatLngExpression, marker, Marker } from 'leaflet';
 import { UserService } from '../../../servicios/user.service';
 import { User } from '../../../modelos/user';
+import { Vehiculo } from '../../../modelos/vehiculos/vehiculo';
+import { VehiculoService } from '../../../servicios/vehiculo.service';
 
 @Component({
   selector: 'app-add',
@@ -27,8 +29,12 @@ export default class AddComponent {
   private _placeService = inject(PlaceService);
   private _routeService = inject(RouteService);
   private _userService = inject(UserService);
+  private _vehiculoService = inject(VehiculoService);
+  
   user: User | null = null;
   places: Place[] = [];
+  vehicles: Vehiculo[] = [];
+  vehiculo: Vehiculo | null = null; //para inicializar
   nombre: string = '';
   origen: Place | null = null;
   destino: Place | null = null;
@@ -44,6 +50,8 @@ export default class AddComponent {
   async load() {
     this.places = await this._placeService.getPlaces();
     this.user = await this._userService.getUsuario();
+    //this.vehicles = await this._vehiculoService.consultarVehiculo();
+    //console.log(this.vehicles);
 
     if (this.user != null){
       this.movilidad = this.user.getPref1();
@@ -59,16 +67,16 @@ export default class AddComponent {
       this._router.navigateByUrl('/rutas');
 
     } else 
-      toast.info('Por favor, rellene todos los campos');
+      toast.info('Por favor, rellene todos los campos.');
   }
 
   visualizarMapa() {
     if (this.mapComponent) {
       if (this.origen != null && this.destino != null && this.option.trim() && this.movilidad.trim()) {
         if(this.origen.getIdPlace() != this.destino.getIdPlace())
-          this.mapComponent.getRoute(this.origen, this.destino, this.movilidad, this.option);
+          this.mapComponent.getRoute(this.origen, this.destino, this.movilidad, this.option, this.vehiculo);
         else
-          toast.info('Por favor, pon dos lugares distintos');
+          toast.info('Por favor, indique dos lugares distintos.');
       }
     }
   }

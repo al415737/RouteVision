@@ -49,6 +49,14 @@
         <option value= 'cycling'>Bicicleta</option>
       </select>
       
+      @if(movilidad == 'driving-car'){
+        <!-- Select para los vehículos -->
+        <label for="select-vehiculos">Seleccionar Vehículo:</label>
+        <select id="select-vehiculos" [(ngModel)]="vehiculo">
+          <option *ngFor="let v of vehicles" [ngValue]="v">{{ v.getMatricula() }}</option>
+        </select>
+      }
+
       <!-- Botón para visualizar el mapa -->
       <button (click)="visualizarMapa()" class="btn-success">Mostrar ruta</button>
       
