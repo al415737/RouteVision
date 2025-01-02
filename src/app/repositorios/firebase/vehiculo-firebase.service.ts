@@ -55,7 +55,7 @@ export class VehiculoFirebaseService implements VehiculoRepository{
 
     async marcarFavorito(vehiculo: Vehiculo): Promise<any> {
         vehiculo.setFavorito(true);
-        await this.actualizarVehiculo(vehiculo);
+        return await this.actualizarVehiculo(vehiculo);
     }
 
 

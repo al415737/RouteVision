@@ -60,7 +60,7 @@ export class VehiculoService {
   }
 
   async marcarFavorito(vehiculo: Vehiculo){
-      await this.vehiRepo.marcarFavorito(vehiculo);
+      return await this.vehiRepo.marcarFavorito(vehiculo);
   }
 
 }
