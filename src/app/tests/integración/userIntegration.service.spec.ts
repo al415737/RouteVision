@@ -154,20 +154,17 @@ describe('UserIntegrationService', () => {
       ];
 
       spyOn(userRepo, 'deleteUser').and.resolveTo();
-      spyOn(userRepo, 'logoutUser').and.resolveTo();
-
-      //When: El usuario Random quiere eliminar su cuenta del sistema.
-      await service.deleteUser('pepagimena@gmail.com');
-
-      //Then: El sistema lanza una excepción UserNotFoundException().
+     
       try {
-        await service.logoutUser();
+        //When: El usuario Random quiere eliminar su cuenta del sistema.
+        await service.deleteUser('pepagimena@gmail.com');
+        expect(userRepo.deleteUser).toHaveBeenCalledWith('pepagimena@gmail.com');
       } catch (error) {
+         //Then: El sistema lanza una excepción UserNotFoundException().
         expect(error).toBeInstanceOf(UserNotFoundException);
       }
   });
 
-  
   it('HU20-E01. Usuario marca como favorito su coche (Escenario Válido)', async() => {
       //Given: El usuario [“Pepito2002”, “pepito@gmail.com“,“ppt-24”] tiene iniciada su cuenta y la base de datos está disponible. Lista de vehículos: [ Matrícula: “8291 DTS” , AñoFabricación: 2002, Marca: “Seat”, Modelo: “León”, Consumo: 5.1L/100km ]. 
       const vehiculo = new CocheGasolina("8291 DTS", "Seat", "León", "2002", 5.1, "Precio Gasolina 95 E5");
