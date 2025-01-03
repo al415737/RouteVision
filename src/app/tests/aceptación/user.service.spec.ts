@@ -246,11 +246,11 @@ describe('UserService', () => {
   
   it('HU20-E01. Usuario marca como favorito su coche (Escenario Válido)', async() => {
     //Given: El usuario [“Pepito2002”, “pepito@gmail.com“,“ppt-24”] tiene iniciada su cuenta y la base de datos está disponible. Lista de vehículos: [ {“8291 DTS” , 2002, “Seat”, “León”, 5.1L/100km, 'Precio Gasolina 98 E5'}, {"1234 BBB", "Peugeot", "407", "2007", 8.1, 'Precio Gasoleo A'} ]. 
-    await service.loginUser("test@test.com", "test123");
+    await service.loginUser("usertest@test.com", "test123");
     const vehiculo = await vehicleService.crearVehiculo("8291 DTS", "Seat", "León", "2002", 5.1, "Precio Gasolina 95 E5");
 
     //When: El usuario quiere marcar como favorito su vehículo → [ Matrícula: “8291 DTS” , AñoFabricación: 2002, Marca: “Seat”, Modelo: “León”, Consumo: 5.1L/100km ].
-    await vehicleService.marcarFavorito(vehiculo);
+    await vehicleService.marcarFavorito(vehiculo, true);
     
     //Then: El sistema marca como favorito al vehículo, es decir, este vehículo se añade a una lista de listaVehículosFavoritos → [ Matrícula: “8291 DTS” , AñoFabricación: 2002, Marca: “Seat”, Modelo: “León”, Consumo: 5.1L/100km ]. 
     const vehi = await vehicleService.getVehiculo(vehiculo.getMatricula());
@@ -264,12 +264,12 @@ describe('UserService', () => {
   
   it('HU20-E03. Intento de marcar como favorito pero no tiene elementos registrados (Escenario Inválido)', async() => {
     //Given: El usuario [“Pepito2002”, “pepito@gmail.com“,“ppt-24”] ha iniciado sesión, la base de datos está disponible, pero no tiene ningún elemento registrado. Lista de vehículos = [ ].
-    await service.loginUser("test@test.com", "test123");
+    await service.loginUser("usertest@test.com", "test123");
     const vehiculo = new CocheGasolina("8291 DTS", "Seat", "León", "2002", 5.1, "Precio Gasolina 95 E5");
 
     try {
       //When: El usuario quiere marcar como favorito a su vehículo.
-      await vehicleService.marcarFavorito(vehiculo);
+      await vehicleService.marcarFavorito(vehiculo, true);
     } catch(error){
       //Then: El sistema no puede marcar como favorito nada y lanza la excepción NoElementsException().
       expect(error).toBeInstanceOf(NoElementsException);

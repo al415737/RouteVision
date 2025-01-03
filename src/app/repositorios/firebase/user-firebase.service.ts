@@ -39,7 +39,7 @@ export class UserFirebaseService implements UserRepository{
     if(id == ''){
       throw new UserNotFoundException();
     }
-    return await this._firestore.deleteUser(id, 'user/');
+    return await this._firestore.delete(id, 'user/');
   }
 
   async loginUser(email: string, password: string): Promise<[Vehiculo[], Place[]]> {

@@ -225,7 +225,7 @@ describe('RutasService', () => {
 
   it('HU15E03. Intento de cálculo de gasto calórico pero no hay rutas dadas de alta (Escenario Inválido)', async () => {
     //Given: El usuario [“Pepito2002”, “pepito@gmail.com“,“crm-24”] ha iniciado sesión y la base de datos está disponible. Lista rutas = []  
-    servicioUsuario.loginUser("test@test.com", "test123");
+    await servicioUsuario.loginUser("routetest@test.com", "test123");
     const origen = await servicioPlace.createPlaceT("València, España");
     const destino = await servicioPlace.createPlaceT("Castellón de la Plana");
     const ruta = new Route("Valencia-Castellón", "Valencia", "Castellón de la Plana", "economica", "cycling-regular", 76, 15806, "Valencia", 0);
@@ -240,7 +240,7 @@ describe('RutasService', () => {
   });
   
   it('H17E01. Guardar una ruta que no existe en el sistema (Escenario válido)', async () => {
-    await servicioUsuario.loginUser("test@test.com", "test123");
+    await servicioUsuario.loginUser("routetest@test.com", "test123");
     const place = await servicioPlace.createPlaceT("Sagunto");
     const place2 = await servicioPlace.createPlaceT("Castellón de la Plana");
 
@@ -263,8 +263,8 @@ describe('RutasService', () => {
     const place2 = await servicioPlace.createPlaceT("Castellón de la Plana");
 
     //WHEN: El usuario quiere añadir la siguiente ruta = {“ruta01”, “Madrid”, “Barcelona”, “driving-car”, “fastest”, 300, 150}.
-    const placeAux: Place = new Place('005', 'Madrid', [], false, "Madrid");
-    const placeAux2: Place = new Place('006', 'Barcelona', [], false, "Madrid");
+    const placeAux: Place = new Place('005', 'Madrid', [], "Madrid");
+    const placeAux2: Place = new Place('006', 'Barcelona', [], "Madrid");
 
     //THEN: El sistema lanza una excepción ServerNotOperativeException().
     await expectAsync(servicioRutas.createRoute('ruta01', placeAux, placeAux2, "driving-car", "fastest", 300, 150, 0)).toBeRejectedWith(new NotExistingObjectException());
