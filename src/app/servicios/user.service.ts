@@ -47,10 +47,10 @@ export class UserService {
   }
 
   async editUser(type: number, value: string) {
-    if (type <= 0 || type > 2)
+    if (type < 1 || type > 2)
       throw new PreferenceInvalidException();
 
-    if (value != '' && value != 'fastest' && value != 'shortest' && value != 'recommended' && value != 'porDefecto' && value != 'driving-car' && value != 'foot-walking' && value != 'cycling')
+    if (value != '' && value != 'fastest' && value != 'shortest' && value != 'recommended' && value != 'porDefecto' && value != 'driving-car' && value != 'foot-walking' && value != 'cycling-regular')
       throw new PreferenceInvalidException(); 
     await this.userRepo.editUser(type, value);
   }

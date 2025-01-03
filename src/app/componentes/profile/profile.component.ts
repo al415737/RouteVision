@@ -31,11 +31,14 @@ export default class ProfileComponent {
   }
 
   async guardarAjustes(preferencia1: string | undefined, preferencia2: string | undefined){
+    console.log('Preferencia 1:', preferencia1);
+    console.log('Preferencia 2:', preferencia2);
+
     if(preferencia1 == undefined || preferencia2 == undefined){
         return ;
     }
-    this._userService.editUser(1, preferencia1);
-    this._userService.editUser(2, preferencia2);
+    await this._userService.editUser(1, preferencia1);
+    await this._userService.editUser(2, preferencia2);
   }
 
 }

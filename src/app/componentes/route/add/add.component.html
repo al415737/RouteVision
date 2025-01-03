@@ -30,26 +30,21 @@
         <option *ngFor="let place of places" [ngValue]="place">{{ place.getToponimo() }}</option>
       </select>
 
-      @if(user?.getPref1()){
-        <p><b>Opción seleccionada:</b> {{ user?.getPref1() }}</p>
-      }
-
-      @if(!user?.getPref1()){
          <!-- Select para opción -->
         <label for="select-opcion">Seleccionar Opción:</label>
         <select id="select-opcion" [(ngModel)]="option">
-          <option value = "">--Seleccionar--</option>
+          <option style="display:pref2"></option>
           <option value = 'porDefecto'>Normal</option>
           <option value = 'fastest'>Rápida</option>
           <option value = 'shortest'>Corta</option>
           <option value = 'recommended'>Económica</option>
         </select>
-      }
+      
       
       <!-- Select para movilidad -->
       <label for="select-movilidad">Seleccionar Movilidad:</label>
       <select id="select-movilidad" [(ngModel)]="movilidad">
-        <option value="">--Seleccionar--</option>
+        <option style="display:pref1"></option>
         <option value ='driving-car'>Coche</option>
         <option value ='driving-car'>Moto</option>
         <option value ='foot-walking'>A pie</option>

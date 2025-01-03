@@ -24,36 +24,34 @@
       <label for="user">Nombre Usuario</label>
       <input id="user" type="string" [(ngModel)]="user" readonly />
       
-      @if(preferencia1 != undefined){
+      <!--@if(preferencia1 != undefined){
         <p><b>Opción seleccionada:</b> {{ preferencia1 }}</p>
-      }
-
-      @if(preferencia1 == undefined){
+      }-->
+      
         <label for="pref1">Preferencia 1</label>
         <select id="pref1" [(ngModel)]="preferencia1">
+          <option value="" selected>Sin preferencia</option>
           <option style="display:none"></option>
           <option value="driving-car">Vehiculo</option>
           <option value="cycling-regular">Bicicleta</option>
           <option value="foot-walking">A pie</option>
         </select>
-      }
 
-      @if(preferencia2 != undefined){
+        <!-- @if(preferencia2 != undefined){
         <p><b>Movilidad seleccionada:</b> {{ preferencia2 }}</p>
-      }
-
-      @if(preferencia2 == undefined){
+        }-->
+     
         <label for="pref2">Preferencia 2</label>
         <select id="pref2" [(ngModel)]="preferencia2">
+          <option value="" selected>Sin preferencia</option>
           <option style="display:none"></option>
           <option value="fastest">Rapida</option>
           <option value="shortest">Corta</option>
           <option value="recommended">Recomendada</option>
           <option value="porDefecto">Por Defecto</option>
         </select>
-      }
 
-      <button  class="btn-success" (click)="guardarAjustes(preferencia1, preferencia2)">Guardar Ajustes</button>
+      <button  class="btn-success" routerLink="/home" (click)="guardarAjustes(preferencia1, preferencia2)">Guardar Ajustes</button>
       <button class="btn-secondary back-button" routerLink="/home">Volver</button>
     </div>
   </div>
