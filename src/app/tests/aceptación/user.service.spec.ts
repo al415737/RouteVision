@@ -19,7 +19,7 @@ import { VEHICULO_REPOSITORY_TOKEN } from '../../repositorios/interfaces/vehicul
 import { VehiculoFirebaseService } from '../../repositorios/firebase/vehiculo-firebase.service';
 import { provideHttpClient } from '@angular/common/http';
 import { UserNotFoundException } from '../../excepciones/user-not-found-exception';
-import { PrefereneInvalidException } from '../../excepciones/preference-invalid-exception';
+import { PreferenceInvalidException } from '../../excepciones/preference-invalid-exception';
 import { CocheGasolina } from '../../modelos/vehiculos/cocheGasolina';
 import { NoElementsException } from '../../excepciones/no-Elements-exception';
 
@@ -193,7 +193,10 @@ describe('UserService', () => {
   });
 
   it('HU21-E01. Configuración de un vehículo/método de transporte predeterminado (Escenario Válido): ', async () => {
+    //GIVEN: El usuario  [“UserTest”, “usertest@test.com“,“test123”] tiene iniciada su cuenta y la base de datos está disponible.
     await service.loginUser("usertest@test.com", "test123");
+
+    //WHEN: El usuario establece el modo de transporte “A pie” como predeterminado.
     await service.editUser(1, 'foot-walking');
 
     const user: User | null  = await service.getUsuario();
@@ -201,25 +204,32 @@ describe('UserService', () => {
     if (user != null) 
       preference = user.getPref1();
 
+    //THEN: El sistema establece el modo de transporte seleccionado como predeterminado para futuros cálculos de rutas.
     expect(preference).toEqual('foot-walking');
     await service.editUser(1, '');
     await service.logoutUser();
   });
 
   it('HU21-E03. Configuración de un vehículo/metodo de transporte predeterminado con un vehículo inexistente (Escenario Inválido): ', async () => {
+    //GIVEN: El usuario [“UserTest”, “usertest@test.com“,“test123”] tiene iniciada su cuenta y la base de datos está disponible.
     await service.loginUser("usertest@test.com", "test123");
     
     try {
+      //WHEN: El usuario establece un método de transporte no válido en la aplicación.
       await service.editUser(1, 'foooot');
     } catch (error) {
-      expect(error).toBeInstanceOf(PrefereneInvalidException);    //CAMBIAR NOMBRE PORFA, PARECE QUE PONGA prefeIRENE
+      //THEN: El sistema lanza la excepción PreferenceInvalidException().
+      expect(error).toBeInstanceOf(PreferenceInvalidException);
     }
 
     await service.logoutUser();
   });
 
   it('HU22-E01. Establecimiento de la ruta más rápida por defecto (Escenario Válido): ', async () => {
+    //GIVEN: El usuario[“UserTest”, “usertest@test.com“,“test123”]  tiene iniciada su sesión  y la base de datos está disponible.
     await service.loginUser("usertest@test.com", "test123");
+
+    //WHEN: El usuario elige el filtro “más rápida" como filtro por defecto.
     await service.editUser(2, 'fastest');
     
     const user: User | null  = await service.getUsuario();
@@ -227,32 +237,36 @@ describe('UserService', () => {
     if (user != null) 
       preference = user.getPref2();
 
+    //THEN: El sistema establece el tipo de ruta seleccionada como predeterminado para futuros cálculos de rutas.
     expect(preference).toEqual('fastest');
     await service.editUser(2, '');
     await service.logoutUser();
   });
 
-  it('HU22-E0X. Establecimiento de la ruta que no existe por defecto (Escenario Inválido): ', async () => {
+  it('HU22-E03. Establecimiento de un tipo de ruta con un nombre inválido (Escenario Inválido): ', async () => {
+    //GIVEN: El usuario  [“UserTest”, “usertest@test.com“,“test123”] ha iniciado sesión y la base de datos está disponible.
     await service.loginUser('usertest@test.com', 'test123');
     
     try {
+      //WHEN: El usuario establece un tipo de ruta no válida en la aplicación.
       await service.editUser(2, 'mierdatest');
     } catch (error) {
-      expect(error).toBeInstanceOf(PrefereneInvalidException);
+      //THEN: El sistema no puede establecer este filtro, lanza la excepción PreferenceInvalidException().
+      expect(error).toBeInstanceOf(PreferenceInvalidException);
     }
 
     await service.logoutUser();
   });
   
   it('HU20-E01. Usuario marca como favorito su coche (Escenario Válido)', async() => {
-    //Given: El usuario [“Pepito2002”, “pepito@gmail.com“,“ppt-24”] tiene iniciada su cuenta y la base de datos está disponible. Lista de vehículos: [ {“8291 DTS” , 2002, “Seat”, “León”, 5.1L/100km, 'Precio Gasolina 98 E5'}, {"1234 BBB", "Peugeot", "407", "2007", 8.1, 'Precio Gasoleo A'} ]. 
+    //GIVEN: El usuario [“UserTest”, “usertest@test.com“,“test123”] tiene iniciada su cuenta y la base de datos está disponible. Lista de vehículos: [ "8291 DTS", "Seat", "León", "2002", 5.1, "Gasolina" ]. 
     await service.loginUser("usertest@test.com", "test123");
-    const vehiculo = await vehicleService.crearVehiculo("8291 DTS", "Seat", "León", "2002", 5.1, "Precio Gasolina 95 E5");
+    const vehiculo = await vehicleService.crearVehiculo("8291 DTS", "Seat", "León", "2002", 5.1, "Gasolina");
 
-    //When: El usuario quiere marcar como favorito su vehículo → [ Matrícula: “8291 DTS” , AñoFabricación: 2002, Marca: “Seat”, Modelo: “León”, Consumo: 5.1L/100km ].
+    //WHEN: El usuario quiere marcar como favorito el vehículo con matricula “8291DTS”
     await vehicleService.marcarFavorito(vehiculo, true);
     
-    //Then: El sistema marca como favorito al vehículo, es decir, este vehículo se añade a una lista de listaVehículosFavoritos → [ Matrícula: “8291 DTS” , AñoFabricación: 2002, Marca: “Seat”, Modelo: “León”, Consumo: 5.1L/100km ]. 
+    //THEN:El sistema marca como favorito al vehículo, es decir, este vehículo se añade a una lista de listaVehículosFavoritos →[ "8291 DTS", "Seat", "León", "2002", 5.1, "Gasolina", true].
     const vehi = await vehicleService.getVehiculo(vehiculo.getMatricula());
 
     expect(vehi.getFavorito()).toBe(true);
@@ -263,15 +277,15 @@ describe('UserService', () => {
   });
   
   it('HU20-E03. Intento de marcar como favorito pero no tiene elementos registrados (Escenario Inválido)', async() => {
-    //Given: El usuario [“Pepito2002”, “pepito@gmail.com“,“ppt-24”] ha iniciado sesión, la base de datos está disponible, pero no tiene ningún elemento registrado. Lista de vehículos = [ ].
+    //GIVEN: El usuario [“Pepito2002”, “pepito@gmail.com“,“ppt-24”] ha iniciado sesión, la base de datos está disponible, pero no tiene ningún elemento registrado. Lista de vehículos = [ ].
     await service.loginUser("usertest@test.com", "test123");
     const vehiculo = new CocheGasolina("8291 DTS", "Seat", "León", "2002", 5.1, "Precio Gasolina 95 E5");
 
     try {
-      //When: El usuario quiere marcar como favorito a su vehículo.
+      //WHEN: El usuario quiere marcar como favorito a su vehículo.
       await vehicleService.marcarFavorito(vehiculo, true);
     } catch(error){
-      //Then: El sistema no puede marcar como favorito nada y lanza la excepción NoElementsException().
+      //THEN: El sistema no puede marcar como favorito nada y lanza la excepción NoElementsException().
       expect(error).toBeInstanceOf(NoElementsException);
     }
   });
