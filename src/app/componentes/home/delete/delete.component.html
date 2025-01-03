@@ -1,8 +1,12 @@
-<h2 mat-dialog-title>Borrar?</h2>
-<mat-dialog-content>
-  <p>Seguro que quieres borrar tu cuenta? Este proceso es irreversible y perderas toda tu información.</p>
+<h2 mat-dialog-title class="dialog-title">
+  ⚠️ ¿Borrar Cuenta?
+</h2>
+<mat-dialog-content class="dialog-content">
+  <p class="dialog-message">
+    ¿Seguro que quieres borrar tu cuenta? Este proceso es <strong>irreversible</strong> y perderás toda tu información.
+  </p>
 </mat-dialog-content>
-<mat-dialog-actions>
-  <button mat-button (click)="onNoClick()">No</button>
-  <button mat-button (click)="borrarCuenta()">Borrar</button>
+<mat-dialog-actions align="end" class="dialog-actions">
+  <button mat-button class="cancel-button" (click)="onNoClick()">Cancelar</button>
+  <button mat-raised-button class="delete-button" (click)="borrarCuenta()">Borrar</button>
 </mat-dialog-actions>
