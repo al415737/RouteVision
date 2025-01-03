@@ -11,57 +11,51 @@
   <app-header></app-header>
 
   <!-- Título de la página -->
-  <h1 [style.color]="'white'">Consultar Vehículos</h1>
-
-  <!-- Botón para navegar a la página de añadir un nuevo vehículo -->
-  <button class="add-button" routerLink="/vehiculos/new">
-    <span class="add-icon">+</span>
-    Añadir Vehículo
-  </button>
+  <h1 [style.color]="'white'">Tu lista de vehículos</h1>
 
   <!-- Contenedor de la tabla con los vehículos -->
   <div class="mat-elevation-z8" id="table-container">
     <!-- Tabla que muestra los datos de los vehículos -->
-    <table mat-table [dataSource]="vehiculos" [style.background]="'linear-gradient(180deg, #011640, #030F26)'">
+    <table mat-table [dataSource]="vehiculos" [style.background]="'#819496'">
       
       <!-- Columna para la matricula del vehículo -->
       <ng-container matColumnDef="matricula">
-        <th mat-header-cell *matHeaderCellDef [style.color]="'white'">Matricula</th>
-        <td mat-cell *matCellDef="let vehiculo" [style.color]="'white'"> {{vehiculo.matricula}} </td>
+        <th mat-header-cell *matHeaderCellDef [style.backgroundColor]="'#4b5563'" [style.color]="'white'" [style.text-align]="'center'">Matricula</th>
+        <td mat-cell *matCellDef="let vehiculo" [style.backgroundColor]="'white'" [style.color]="'#2f3d46'" [style.text-align]="'center'"> {{vehiculo.matricula}} </td>
       </ng-container>
       
       <!-- Columna para la marca del vehículo -->
       <ng-container matColumnDef="marca">
-        <th mat-header-cell *matHeaderCellDef [style.color]="'white'">Marca</th>
-        <td mat-cell *matCellDef="let vehiculo" [style.color]="'white'"> {{vehiculo.marca}} </td>
+        <th mat-header-cell *matHeaderCellDef [style.backgroundColor]="'#4b5563'" [style.color]="'white'" [style.text-align]="'center'">Marca</th>
+        <td mat-cell *matCellDef="let vehiculo" [style.backgroundColor]="'white'" [style.color]="'#2f3d46'" [style.text-align]="'center'"> {{vehiculo.marca}} </td>
       </ng-container>
-
+  
       <!-- Columna para el modelo del vehículo -->
       <ng-container matColumnDef="modelo">
-        <th mat-header-cell *matHeaderCellDef [style.color]="'white'"> Modelo </th>
-        <td mat-cell *matCellDef="let vehiculo"> {{ vehiculo.modelo }} </td>
+        <th mat-header-cell *matHeaderCellDef [style.backgroundColor]="'#4b5563'" [style.color]="'white'" [style.text-align]="'center'"> Modelo </th>
+        <td mat-cell *matCellDef="let vehiculo" [style.backgroundColor]="'white'" [style.color]="'#2f3d46'" [style.text-align]="'center'"> {{ vehiculo.modelo }} </td>
       </ng-container>
-
+  
       <!-- Columna para el año de fabricación del vehículo -->
       <ng-container matColumnDef="ano_fabricacion">
-        <th mat-header-cell *matHeaderCellDef [style.color]="'white'"> Año_fabricacion </th>
-        <td mat-cell *matCellDef="let vehiculo"> {{ vehiculo.ano_fabricacion }} </td>
+        <th mat-header-cell *matHeaderCellDef [style.backgroundColor]="'#4b5563'" [style.color]="'white'" [style.text-align]="'center'"> Año_fabricacion </th>
+        <td mat-cell *matCellDef="let vehiculo" [style.backgroundColor]="'white'" [style.color]="'#2f3d46'" [style.text-align]="'center'"> {{ vehiculo.ano_fabricacion }} </td>
       </ng-container>
-
+  
       <!-- Columna para el consumo del vehículo -->
       <ng-container matColumnDef="consumo">
-        <th mat-header-cell *matHeaderCellDef [style.color]="'white'"> Consumo </th>
-        <td mat-cell *matCellDef="let vehiculo"> {{ vehiculo.consumo }} </td>
+        <th mat-header-cell *matHeaderCellDef [style.backgroundColor]="'#4b5563'" [style.color]="'white'" [style.text-align]="'center'"> Consumo </th>
+        <td mat-cell *matCellDef="let vehiculo" [style.backgroundColor]="'white'" [style.color]="'#2f3d46'" [style.text-align]="'center'"> {{ vehiculo.consumo }} </td>
       </ng-container>
-
+  
       <ng-container matColumnDef="tipo">
-        <th mat-header-cell *matHeaderCellDef [style.color]="'white'"> Tipo </th>
-        <td mat-cell *matCellDef="let vehiculo"> {{ vehiculo.tipo }} </td>
+        <th mat-header-cell *matHeaderCellDef [style.backgroundColor]="'#4b5563'" [style.color]="'white'" [style.text-align]="'center'"> Tipo </th>
+        <td mat-cell *matCellDef="let vehiculo" [style.backgroundColor]="'white'" [style.color]="'#2f3d46'" [style.text-align]="'center'"> {{ vehiculo.tipo }} </td>
       </ng-container>
-
+  
       <ng-container matColumnDef="favorito">
-        <th mat-header-cell *matHeaderCellDef [style.color]="'white'"> Favorito </th>
-        <td mat-cell *matCellDef="let vehiculo">
+        <th mat-header-cell *matHeaderCellDef [style.backgroundColor]="'#4b5563'" [style.color]="'white'" [style.text-align]="'center'"> Favorito </th>
+        <td mat-cell *matCellDef="let vehiculo" [style.backgroundColor]="'white'" [style.color]="'#2f3d46'" [style.text-align]="'center'">
           <button mat-icon-button (click)="marcarFavorito(vehiculo)">
             <mat-icon [style.color]="vehiculo.favorito ? 'gold' : 'gray'">
               star
@@ -69,21 +63,22 @@
           </button>
         </td>
       </ng-container>
-
+  
       <!-- Columna con un botón para editar el vehículo -->
       <ng-container matColumnDef="edit">
-        <th mat-header-cell *matHeaderCellDef [style.color]="'white'"></th>
-        <td mat-cell *matCellDef="let vehiculo" [style.color]="'white'">
-          <button mat-icon-button color="warn" class="delete-button" [routerLink]="['/vehiculos/edit/' + vehiculo.matricula]">
+        <th mat-header-cell *matHeaderCellDef [style.backgroundColor]="'#4b5563'" [style.color]="'white'" [style.text-align]="'center'"></th>
+        <td mat-cell *matCellDef="let vehiculo" [style.backgroundColor]="'white'" [style.color]="'#2f3d46'" [style.text-align]="'center'">
+          <button mat-icon-button color="'#f25858#'" class="edit-button" [routerLink]="['/vehiculos/edit/' + vehiculo.matricula]">
             <mat-icon>edit</mat-icon>
           </button>
         </td>
       </ng-container>
+  
       <!-- Columna con un botón para eliminar el vehículo -->
       <ng-container matColumnDef="delete">
-        <th mat-header-cell *matHeaderCellDef [style.color]="'white'"></th>
-        <td mat-cell *matCellDef="let vehiculo" [style.color]="'white'">
-          <button mat-icon-button color="warn" class="delete-button" (click)="eliminarVehiculo(vehiculo)">
+        <th mat-header-cell *matHeaderCellDef [style.backgroundColor]="'#4b5563'" [style.color]="'white'" [style.text-align]="'center'"></th>
+        <td mat-cell *matCellDef="let vehiculo" [style.backgroundColor]="'white'" [style.color]="'#2f3d46'" [style.text-align]="'center'">
+          <button mat-icon-button color="'#00d8ff'" class="delete-button" (click)="eliminarVehiculo(vehiculo)">
             <mat-icon>delete</mat-icon>
           </button>
         </td>
@@ -95,8 +90,15 @@
     </table>
     
     <!-- Componente de paginación -->
-    <mat-paginator [style.background]="'#025E73'" [pageSize]="5" [showFirstLastButtons]="true" [pageSizeOptions]="[5, 10, 20]" [pageIndex]="currentPage">
+    <mat-paginator [style.background]="'#c3c7ce'" [pageSize]="5" [showFirstLastButtons]="true" [pageSizeOptions]="[5, 10, 20]" [pageIndex]="currentPage">
     </mat-paginator>
   </div>
+
+   <!-- Botón para navegar a la página de añadir un nuevo vehículo -->
+  <button class="add-button" routerLink="/vehiculos/new">
+    <span class="add-icon">+</span>
+    Añadir Vehículo
+  </button>
+  
 </body>
 </html>

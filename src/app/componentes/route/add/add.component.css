@@ -1,9 +1,11 @@
-body {
+  body {
     font-family: Arial, sans-serif;
     line-height: 1.6;
     color: #fff;
     margin: 0;
     background-color: #011640;
+    min-height: 100%;  /* Asegura que el cuerpo se estire a lo largo de toda la página */
+
   }
   
   #map { 
@@ -125,8 +127,16 @@ body {
     }
   
     .input-container {
-      width: 100%;
-      max-width: 600px;
+      display: flex;
+      flex-direction: column;
+      width: 400px;
+      padding: 20px;
+      border: 1px solid #038C8C;
+      border-radius: 8px;
+      background-color: #030F26;
+      box-shadow: 0 2px 4px rgba(3, 140, 140, 0.2);
+      margin-top: 30px; /* Esto empuja el contenedor hacia abajo */
+      margin-bottom: 20px; /* Asegura un poco de espacio en la parte inferior */
     }
   }
   

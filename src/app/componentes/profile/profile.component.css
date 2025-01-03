@@ -1,130 +1,120 @@
+html, body {
+  height: 100%;   /* Asegura que el body y html ocupen toda la altura */
+  margin: 0;
+  background-color: #011640;  /* Fondo azul en toda la página */
+}
+
 body {
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
-    color: #fff;
-    margin: 0;
-    background-color: #011640;
-  }
-  
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  color: #fff;
+  display: flex;
+  flex-direction: column;  /* Flexbox para organización vertical */
+  min-height: 100%;  /* Asegura que el cuerpo se estire completamente */
+  overflow: auto;  /* Permite el desplazamiento cuando el contenido excede */
+}
+
+.container {
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+  justify-content: center;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+  flex-grow: 1;  /* Permite que el contenedor crezca para ocupar espacio restante */
+}
+
+.input-container {
+  display: flex;
+  flex-direction: column;
+  width: 600px;
+  padding: 40px;
+  border: 1px solid #038C8C;
+  border-radius: 8px;
+  background-color: #030F26;
+  box-shadow: 0 2px 4px rgba(3, 140, 140, 0.2);
+}
+
+h2 {
+  margin-top: 0px;
+  margin-bottom: 20px;
+  color: #577EF2;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #fff;
+}
+
+th, td {
+  padding: 15px 10px;
+}
+
+select, input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #038C8C;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: #011640;
+  color: #fff;
+}
+
+select:focus, input:focus {
+  outline: none;
+  border-color: #577EF2;
+  box-shadow: 0 0 0 2px rgba(87, 126, 242, 0.2);
+}
+
+button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  margin-top: 30px;
+}
+
+.btn-primary {
+  background-color: #025E73;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #038C8C;
+}
+
+.btn-success {
+  background-color: #577EF2;
+  color: white;
+}
+
+.btn-success:hover {
+  background-color: #025E73;
+}
+
+button:disabled {
+  background-color: #030F26;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+@media (max-width: 1200px) {
   .container {
-    display: flex;
-    gap: 40px;
-    align-items: flex-start;
-    justify-content: center;
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 20px;
-  }
-  
-  .input-container {
-    display: flex;
     flex-direction: column;
-    width: 600px;
-    padding: 40px;
-    border: 1px solid #038C8C;
-    border-radius: 8px;
-    background-color: #030F26;
-    box-shadow: 0 2px 4px rgba(3, 140, 140, 0.2);
-  }
-  
-  h2 {
-    margin-top: 0px;
-    margin-bottom: 20px;
-    color: #577EF2;
-  }
-  
-  .form-group {
-    margin-bottom: 20px;
-  }
-  
-  label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #fff;
+    align-items: center;
   }
 
-  th, td {
-    padding: 15 px 10 px;
-  }
-  
-  select, input {
+  .input-container {
     width: 100%;
-    padding: 8px;
-    border: 1px solid #038C8C;
-    border-radius: 4px;
-    font-size: 14px;
-    background-color: #011640;
-    color: #fff;
+    max-width: 600px;
   }
-  
-  select:focus, input:focus {
-    outline: none;
-    border-color: #577EF2;
-    box-shadow: 0 0 0 2px rgba(87, 126, 242, 0.2);
-  }
-  
-  .coordinates-group {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
-  
-  .coordinate-input {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .help-text {
-    grid-column: 1 / -1;
-    margin: 10px 0;
-    font-style: italic;
-    color: #577EF2;
-  }
-  
-  button {
-    padding: 10px 15px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: all 0.3s ease;
-    margin-top: 30px;
-  }
-  
-  .btn-primary {
-    background-color: #025E73;
-    color: white;
-  }
-  
-  .btn-primary:hover {
-    background-color: #038C8C;
-  }
-  
-  .btn-success {
-    background-color: #577EF2;
-    color: white;
-  }
-  
-  .btn-success:hover {
-    background-color: #025E73;
-  }
-  
-  button:disabled {
-    background-color: #030F26;
-    cursor: not-allowed;
-    opacity: 0.7;
-  }
-  
-  @media (max-width: 1200px) {
-    .container {
-      flex-direction: column;
-      align-items: center;
-    }
-  
-    .input-container {
-      width: 100%;
-      max-width: 600px;
-    }
-  }
-  
+}
