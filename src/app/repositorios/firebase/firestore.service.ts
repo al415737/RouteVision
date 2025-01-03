@@ -1,19 +1,9 @@
-import { inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { addDoc, collection, Firestore } from '@angular/fire/firestore';
 import { deleteDoc, doc, DocumentReference, getDoc, getDocs, orderBy, query, setDoc, updateDoc, where } from 'firebase/firestore';
 import { User } from '../../modelos/user';
 import { AuthService } from './auth.service';
-import { MailExistingException } from '../../excepciones/mail-existing-exception';
-import { Vehiculo } from '../../modelos/vehiculos/vehiculo';
-import { getAuth } from '@angular/fire/auth';
-import { Place } from '../../modelos/place';
-import { AuthStateService } from '../../utils/auth-state.service';
 import { ServerNotOperativeException } from '../../excepciones/server-not-operative-exception';
-import { Route } from '../../modelos/route';
-import { CocheGasolina } from '../../modelos/vehiculos/cocheGasolina';
-import { CocheDiesel } from '../../modelos/vehiculos/cocheDiesel';
-import { CocheElectrico } from '../../modelos/vehiculos/cocheElectrico';
-import { NotExistingObjectException } from '../../excepciones/notExistingObjectException';
 import { DataAdapter } from '../../utils/dataAdapter';
 
 @Injectable({

@@ -3,9 +3,7 @@ import { ROUTE_REPOSITORY_TOKEN, RouteRepository } from '../repositorios/interfa
 import { ObligatoryFieldsException } from '../excepciones/obligatory-fields-exception';
 import { TypeNotChosenException } from '../excepciones/type-not-chosen-exception';
 import { InvalidCalculateRoute } from '../excepciones/invalid-calculate-route';
-import { VehicleNotFoundException } from '../excepciones/vehicle-not-Found-Exception';
-import { inject, Inject, Injectable } from '@angular/core';
-import { AuthStateService } from '../utils/auth-state.service';
+import { Inject, Injectable } from '@angular/core';
 import { VEHICULO_REPOSITORY_TOKEN, VehiculoRepository } from '../repositorios/interfaces/vehiculo-repository';
 import { Vehiculo } from '../modelos/vehiculos/vehiculo';
 import { Route } from '../modelos/route';

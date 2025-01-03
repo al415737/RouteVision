@@ -1,8 +1,5 @@
 import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
-import { Router } from '@angular/router';
 import { tileLayer, Map, marker, geoJSON, Marker, LatLngBounds, LatLng, LatLngExpression } from 'leaflet';
-import { FirestoreService } from '../../repositorios/firebase/firestore.service';
-import { AuthStateService } from '../../utils/auth-state.service';
 import { OpenRouteService } from '../../APIs/Geocoding/openRoute.service';
 import { InvalidPlaceException } from '../../excepciones/invalid-place-exception';
 import { catchError, map, of, throwError } from 'rxjs';

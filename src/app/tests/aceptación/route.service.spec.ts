@@ -14,8 +14,6 @@ import { PlaceFirebaseService } from '../../repositorios/firebase/place-firebase
 import { TypeNotChosenException } from '../../excepciones/type-not-chosen-exception';
 import { ROUTE_REPOSITORY_TOKEN } from '../../repositorios/interfaces/route-repository';
 import { RouteFirebaseService } from '../../repositorios/firebase/route-firebase.service';
-import { OpenRouteService } from '../../APIs/Geocoding/openRoute.service';
-import { PrecioCarburantes } from '../../APIs/PrecioCarburantes/precioCarburantes.service';
 import { NotExistingObjectException } from '../../excepciones/notExistingObjectException';
 import { Route } from '../../modelos/route';
 import { VehiculoFirebaseService } from '../../repositorios/firebase/vehiculo-firebase.service';

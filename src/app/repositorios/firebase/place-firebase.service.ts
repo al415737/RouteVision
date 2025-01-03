@@ -4,7 +4,6 @@ import { Place } from '../../modelos/place';
 import { FirestoreService } from './firestore.service';
 import { InvalidPlaceException } from '../../excepciones/invalid-place-exception';
 import { OpenRouteService } from '../../APIs/Geocoding/openRoute.service';
-import { getAuth } from 'firebase/auth';
 import { firstValueFrom } from 'rxjs';
 import { AuthStateService } from '../../utils/auth-state.service';
 import { NotExistingObjectException } from '../../excepciones/notExistingObjectException';

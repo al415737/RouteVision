@@ -4,7 +4,6 @@ import { Vehiculo } from '../../modelos/vehiculos/vehiculo';
 import { FirestoreService } from './firestore.service';
 import { getAuth } from 'firebase/auth';
 import { VehicleNotFoundException } from '../../excepciones/vehicle-not-Found-Exception';
-import { NotExistingObjectException } from '../../excepciones/notExistingObjectException';
 import { AuthStateService } from '../../utils/auth-state.service';
 import { NoElementsException } from '../../excepciones/no-Elements-exception';
 

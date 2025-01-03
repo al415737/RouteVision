@@ -1,6 +1,5 @@
 import { Component, inject, ViewChild } from '@angular/core';
 import { PlaceService } from '../../servicios/place.service';
-import { Place } from '../../modelos/place';
 import { HeaderComponent } from "../home/header/header.component";
 import { MatPaginatorModule, MatPaginator} from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';

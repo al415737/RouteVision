@@ -12,7 +12,6 @@ import { AuthStateService } from '../../utils/auth-state.service';
 import { getAuth } from 'firebase/auth';
 import { ServerNotOperativeException } from '../../excepciones/server-not-operative-exception';
 import { PlaceNotFoundException } from '../../excepciones/place-not-found-exception';
-import { NotAvailableFuelException } from '../../excepciones/not-available-fuel-exception';
 import { NoElementsException } from '../../excepciones/no-Elements-exception';
 
 @Injectable({

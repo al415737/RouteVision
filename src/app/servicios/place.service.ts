@@ -1,7 +1,6 @@
-import { inject, Inject, Injectable } from '@angular/core'; 
+import { Inject, Injectable } from '@angular/core'; 
 import { InvalidCoordenatesException } from '../excepciones/invalid-coordenates-exception';
 import { PlaceRepository, PLACE_REPOSITORY_TOKEN } from '../repositorios/interfaces/place-repository';
-import { AuthStateService } from '../utils/auth-state.service';
 import { InvalidPlaceException } from '../excepciones/invalid-place-exception';
 import { Place } from '../modelos/place';
 
