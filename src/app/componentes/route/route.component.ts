@@ -38,6 +38,7 @@ export default class RouteComponent {
     try {
       const data = await this._routeService.getRoutes();
       this.rutas = data;
+      this.rutas = this.rutas.sort((a, b) => (b.getFavorito() ? 1 : 0) - (a.getFavorito() ? 1 : 0));
       this.dataSource = new MatTableDataSource<Route>(this.rutas);
       this.dataSource.paginator = this.paginator;
     } catch (err) {
@@ -58,9 +59,9 @@ export default class RouteComponent {
       this.updateDataSource();
        
       if(route.getFavorito() == true){
-        toast.success('Vehículo marcado como favorito.');
+        toast.success('Ruta marcado como favorito.');
       } else {
-        toast.success('Vehiculo ya no es favorito.');
+        toast.success('Ruta ya no es favorito.');
       }
   }
 }

@@ -250,7 +250,6 @@ export class FirestoreService {
           data['idPlace'], 
           data['toponimo'],
           data['coordenadas'],
-          data['favorito'],
           data['municipio']
         );
         p.setFavorito(data['favorito']);
