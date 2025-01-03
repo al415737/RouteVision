@@ -9,6 +9,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { DeleteComponent } from './delete/delete.component';
 import { toast } from 'ngx-sonner';
+import { ChangeDetectorRef } from '@angular/core';
 
 
 @Component({
@@ -28,18 +29,19 @@ export default class PlaceComponent {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
+  constructor(private changeDetectorRefs: ChangeDetectorRef) {}
   async ngAfterViewInit() {
     this.updateDataSource();
     this.dataSource.paginator = this.paginator;
-    console.log('Paginator inicializado:', this.paginator);
-    console.log('Datos en el DataSource:', this.dataSource.data);
   }
 
   async updateDataSource() {
     try {
       const data = await this._placeService.getPlaces();
       this.places = data.sort((a:Place, b:Place) => (b.getFavorito() ? 1 : 0) - (a.getFavorito() ? 1 : 0));
-      this.dataSource.data = this.places; 
+      this.dataSource = new MatTableDataSource<Place>(this.places);
+      this.changeDetectorRefs.detectChanges();
+      this.dataSource.paginator = this.paginator;
     } catch (err) {
       console.log(err);
     }
