@@ -7,10 +7,11 @@
   <link rel="stylesheet" href="add.component.css">
 </head>
 <body>
+  
   <app-header></app-header>
   <div class="container">
     <app-map #mapComponent (sendToRoute)="updateKmDuracion($event)"></app-map>
-    <div class="input-container" style="margin-left: 20px;">
+    <div class="input-container">
       <h2>Añadir Ruta</h2>
       
       <!-- Input para el nombre de la ruta -->
@@ -58,7 +59,7 @@
       }
 
       <!-- Botón para visualizar el mapa -->
-      <button (click)="visualizarMapa()" class="btn-success">Mostrar ruta</button>
+      <button (click)="visualizarMapa()" class="btn-success">Mostrar ruta e información</button>
       
       @if (duration != 0 && kilometros != 0) {
         <br>
@@ -67,7 +68,7 @@
         @if(costeRuta != 0 && movilidad == 'driving-car'){
           <p>{{costeRuta}} <b>€</b></p> 
         }@else if (costeRuta != 0 && movilidad == 'cycling-regular' || movilidad == 'foot-walking') {
-          <p>{{costeRuta}} <b>calorias</b></p> 
+          <p>{{costeRuta}} <b>Calorias consumidas</b></p> 
         }
 
         <!-- Botón para añadir -->

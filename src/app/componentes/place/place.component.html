@@ -15,7 +15,7 @@
     <table mat-table [dataSource]="places" [style.background]="'#819496'">
       <!-- Position Column -->
       <ng-container matColumnDef="toponimo">
-        <th mat-header-cell *matHeaderCellDef [style.backgroundColor]="'#4b5563'" [style.color]="'white'" [style.text-align]="'center'">Toponimo</th>
+        <th mat-header-cell *matHeaderCellDef [style.backgroundColor]="'#4b5563'" [style.color]="'white'" [style.text-align]="'center'">Nombre del lugar</th>
         <td mat-cell *matCellDef="let place"  [style.backgroundColor]="'white'" [style.color]="'#2f3d46'" [style.text-align]="'center'"> {{place.toponimo}} </td>
       </ng-container>
   
