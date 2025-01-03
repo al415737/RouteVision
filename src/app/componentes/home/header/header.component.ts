@@ -28,9 +28,14 @@ export class HeaderComponent {
   }
 
   onDelete() {
-      this.dialog.open(DeleteComponent).afterClosed().subscribe(() => {
-        this._router.navigateByUrl('/default'); 
-      });
-        
-    }
+    this.dialog.open(DeleteComponent).afterClosed().subscribe((shouldRedirectToHome: boolean) => {
+      if (shouldRedirectToHome) {
+        // Si el usuario cancela, redirigimos a /home
+        this._router.navigateByUrl('/home');
+      } else {
+        // Si el usuario borra la cuenta, redirigimos a /default
+        this._router.navigateByUrl('/default');
+      }
+    });     
+  }
 }

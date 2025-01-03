@@ -1,0 +1,64 @@
+/* Título del diálogo */
+.dialog-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #030F26; /* Color primario oscuro */
+    font-weight: bold;
+    font-size: 20px;
+  }
+  
+  /* Contenido del diálogo */
+  .dialog-content {
+    margin: 16px 0;
+  }
+  
+  .dialog-message {
+    font-size: 16px;
+    line-height: 1.5;
+    color: #011640; /* Color secundario oscuro */
+  }
+  
+  /* Acciones del diálogo */
+  .dialog-actions {
+    margin-top: 16px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+  
+  /* Botón de cancelar */
+  .cancel-button {
+    text-transform: uppercase;
+    background-color: #F9FBFD; /* Fondo claro */
+    color: #030F26; /* Texto oscuro */
+    border: 1px solid #577EF2; /* Borde azul */
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .cancel-button:hover {
+    background-color: #577EF2; /* Fondo azul al pasar el ratón */
+    color: #F9FBFD; /* Texto claro */
+    transform: scale(1.05);
+  }
+  
+  /* Botón de borrar */
+  .delete-button {
+    text-transform: uppercase;
+    background-color: #038C8C; /* Fondo verde/azul vibrante */
+    color: #F9FBFD; /* Texto claro */
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .delete-button:hover {
+    background-color: #025E73; /* Fondo más oscuro al pasar el ratón */
+    transform: scale(1.05);
+  }
+  
