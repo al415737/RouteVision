@@ -113,7 +113,7 @@ export class FirestoreService {
     if (vehiculo.exists()) {
       const data = vehiculo.data(); // Objeto plano
       if(data['tipo'] == 'Gasolina'){
-        return new CocheGasolina(
+        const v =  new CocheGasolina(
           data['matricula'],
           data['marca'],
           data['modelo'],
@@ -121,8 +121,10 @@ export class FirestoreService {
           data['consumo'],
           data['tipo'],
         );
+        v.setFavorito(data['favorito']);
+        return v;
       } else if(data['tipo'] == 'Diesel'){
-        return new CocheDiesel(
+        const v =  new CocheDiesel(
           data['matricula'],
           data['marca'],
           data['modelo'],
@@ -308,7 +310,7 @@ export class FirestoreService {
 
       return querySnapshot.docs.map(doc => { 
         const data = doc.data();
-        return new Route(
+        const v =  new Route(
           data['nombre'],
           data['origen'],
           data['destino'],
@@ -316,10 +318,11 @@ export class FirestoreService {
           data['movilidad'],
           data['kilometros'],
           data['duration'],
-          data['favorito'],
           data['municipio'],
           data['coste']
         );
+        v.setFavorito(data['favorito']);
+        return v
       });
     } catch (error) {
       throw new ServerNotOperativeException();

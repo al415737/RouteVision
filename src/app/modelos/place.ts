@@ -27,4 +27,7 @@ export class Place {
     getMunicipio(){
         return this.municipio;
     }
+    setFavorito(fav:boolean){
+        this.favorito = fav;
+    }
 }

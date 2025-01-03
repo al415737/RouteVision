@@ -11,7 +11,7 @@ export interface RouteRepository {
     obtenerCosteRuta(vehiculo: Vehiculo, ruta: Route): Promise<number>;
     costeRutaPieBicicleta(ruta: Route, origen: Place, destino: Place): any;
     consultarRutaEspecifica(ruta: Route): Promise<boolean>;
-    createRoute(nombre: string, start: Place, end: Place, movilidad: string, preferencia: string, km: number, duracion: number, favorito: boolean, coste:number): Promise<Route>;
+    createRoute(nombre: string, start: Place, end: Place, movilidad: string, preferencia: string, km: number, duracion: number, coste:number): Promise<Route>;
     deleteRoute(nombre: string): Promise<boolean>;
     getRoutes(): Promise<Route[]>;
     marcarFavorito(ruta: Route, favorito: boolean): Promise<void>;
