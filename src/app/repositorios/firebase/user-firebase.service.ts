@@ -35,11 +35,11 @@ export class UserFirebaseService implements UserRepository{
   }
 
   async deleteUser(email: string): Promise<void> {
-    const id = await this._firestore.get('email', email, 'user');
+    const id = await this._firestore.get('email', email, 'user/');
     if(id == ''){
       throw new UserNotFoundException();
     }
-    return await this._firestore.deleteUser(id, 'user');
+    return await this._firestore.deleteUser(id, 'user/');
   }
 
   async loginUser(email: string, password: string): Promise<[Vehiculo[], Place[]]> {

@@ -129,9 +129,8 @@ export class RouteFirebaseService implements RouteRepository{
   
     const newRoute: Route = new Route(nombre, start.getToponimo(), end.getToponimo(), preferencia, movilidad, km, duracion, start.getMunicipio(), coste);
     const uid = this._authState.currentUser?.uid;
-  
-    await this._firestore.createRoute(newRoute, `ruta/${uid}/listaRutasInterés`);
-  
+
+    await this._firestore.create(newRoute.getNombre(), newRoute, `ruta/${uid}/listaRutasInterés`);  
     return newRoute;
   }
 
@@ -148,7 +147,7 @@ export class RouteFirebaseService implements RouteRepository{
       throw new ServerNotOperativeException();
     }
     const uid = this._authState.currentUser?.uid;
-    await this._firestore.deleteRoute(`ruta/${uid}/listaRutasInterés`, nombre);
+    await this._firestore.delete(`ruta/${uid}/listaRutasInterés`, nombre);
     return true;
   }
 

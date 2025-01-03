@@ -23,7 +23,7 @@ export class VehiculoFirebaseService implements VehiculoRepository{
         const uid = getAuth().currentUser?.uid;
         const PATHVEHICULO = `vehiculo/${uid}/listaVehiculos`;
 
-        await this.firestore.createVehiculo(vehiculo, PATHVEHICULO);
+        await this.firestore.create(vehiculo.getMatricula(), vehiculo, PATHVEHICULO);
         return vehiculo;
     }
 
@@ -54,7 +54,7 @@ export class VehiculoFirebaseService implements VehiculoRepository{
           throw new VehicleNotFoundException(); // Lanza una excepción si no se encuentra el vehículo
         }
 
-        await this.firestore.eliminarVehiculo(PATHVEHICULO, id);
+        await this.firestore.delete(PATHVEHICULO, id);
     }
 
     async marcarFavorito(vehiculo: Vehiculo, favorito: boolean): Promise<any> {

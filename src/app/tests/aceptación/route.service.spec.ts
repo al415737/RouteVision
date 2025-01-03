@@ -32,8 +32,6 @@ describe('RutasService', () => {
   let servicioUsuario: UserService;
   let servicioRutas: RouteService;
   let servicioPlace: PlaceService;
-  let openRoute: OpenRouteService;
-  let precioCarburante: PrecioCarburantes;
 
   beforeEach(() => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
@@ -57,14 +55,12 @@ describe('RutasService', () => {
     servicioUsuario = TestBed.inject(UserService);
     servicioRutas = TestBed.inject(RouteService);
     servicioPlace = TestBed.inject(PlaceService);
-    openRoute = TestBed.inject(OpenRouteService);
-    precioCarburante = TestBed.inject(PrecioCarburantes);
   });
 
   it('HU13E01. Cálculo de ruta entre dos puntos de interés (Escenario Válido)', async () => {
     //GIVEN: El usuario [“RouteTest”, “routetest@test.com“,“test123”] autenticado,
     // lugares = [“Valencia”, “Castellón”, “Alicante”]
-    await servicioUsuario.loginUser("test@test.com", "test123");
+    await servicioUsuario.loginUser("routetest@test.com","test123");
 
     const lugar1 = await servicioPlace.createPlaceT("València, España");
     const lugar2 = await servicioPlace.createPlaceT("Castellón de la Plana");
@@ -97,7 +93,7 @@ describe('RutasService', () => {
 
   it('HU13E03. Método de movilidad no válido (Escenario Inválido)', async () => {
     //GIVEN: El usuario [“RouteTest”, “routetest@test.com“,“test123”] autenticado, lugares = [“Valencia”, “Castellón”, “Alicante”].
-    await servicioUsuario.loginUser("test@test.com", "test123");
+    await servicioUsuario.loginUser("routetest@test.com","test123");
     const lugar1 = await servicioPlace.createPlaceT("València, España");
     const lugar2 = await servicioPlace.createPlaceT("Castellón de la Plana");
     const lugar3 = await servicioPlace.createPlaceT("Alicante");
@@ -121,7 +117,7 @@ describe('RutasService', () => {
 
   it('H14E01. Cálculo del coste asociado a la realización de una ruta en coche (Escenario Válido): ', async () => {
     //GIVEN:  La API está disponible. El usuario [“RouteTest”, “routetest@test.com“,“test123”] con listaVehículos= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”*407”, Año Fabricación=”2007”, Consumo=8,1, “Diesel”}]
-    await servicioUsuario.loginUser("test@test.com", "test123"); 
+    await servicioUsuario.loginUser("routetest@test.com","test123");
     
     const vehiculo = await servicioVehiculo.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Diesel");
 
@@ -140,7 +136,7 @@ describe('RutasService', () => {
 
   it('H14E04. Cálculo del coste asociado a la realización de una ruta en coche utilizando una matrícula no registrada en la lista de vehículos (Escenario Inválido): ', async () => {
     //GIVEN: La API está disponible. El usuario [“RouteTest”, “routetest@test.com“,“test123”] con listaVehículos= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”*407”, Año Fabricación=”2007”, Consumo=8,1, “Diesel”}]
-    await servicioUsuario.loginUser("test@test.com", "test123"); 
+    await servicioUsuario.loginUser("routetest@test.com","test123");
     const vehiculo = await servicioVehiculo.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Diesel");
     
     //WHEN: El usuario selecciona el vehículo [Matrícula=”1234 CCC”, Marca=”Peugeot”, Modelo=”*407”, Año Fabricación=”2007”, Consumo=8,1, “Diesel”]  y la ruta [Origen:Valencia, Destino:Castellón]
@@ -155,7 +151,7 @@ describe('RutasService', () => {
 
   it('HU15E01. Cálculo de coste calórico de la ruta Valencia-Castellón (Escenario Válido)', async () => {
     //GIVEN: El usuario [“RouteTest”, “routetest@test.com“,“test123”] tiene su sesión iniciada y la base de datos está disponible. Lista lugares = [Valencia, Castellón]
-    await servicioUsuario.loginUser("test@test.com", "test123");
+    await servicioUsuario.loginUser("routetest@test.com","test123");
     const origen = await servicioPlace.createPlaceT("València, España");
     const destino = await servicioPlace.createPlaceT("Castellón de la Plana");
 
@@ -177,7 +173,7 @@ describe('RutasService', () => {
   
   it('HU15E03. Intento de cálculo de gasto calórico pero no hay rutas dadas de alta (Escenario Inválido)', async () => {
     //GIVEN: El usuario [“RouteTest”, “routetest@test.com“,“test123”] tiene su sesión iniciada y la base de datos está disponible. Lista lugares = [Valencia, Castellón]
-    await servicioUsuario.loginUser("test@test.com", "test123");
+    await servicioUsuario.loginUser("routetest@test.com","test123");
     const origen = await servicioPlace.createPlaceT("València, España");
     const destino = await servicioPlace.createPlaceT("Castellón de la Plana");
 
@@ -196,7 +192,7 @@ describe('RutasService', () => {
 
   it('H16E01. Ruta más rápida/corta/económica calculada correctamente (Caso Válido)', async () => {
     //GIVEN: El usuario [“RouteTest”, “routetest@test.com“,“test123”] autenticado, lugares = [“Sagunto", “Castellón”].
-    await servicioUsuario.loginUser("test@test.com", "test123");
+    await servicioUsuario.loginUser("routetest@test.com","test123");
     const place = await servicioPlace.createPlaceT("Sagunto");
     const place2 = await servicioPlace.createPlaceT("Castellón de la Plana");
 
@@ -214,7 +210,7 @@ describe('RutasService', () => {
 
   it('H16E02. Tipo de ruta no seleccionada (Caso Inválido)', async () => {
     //GIVEN: El usuario [“RouteTest”, “routetest@test.com“,“test123”] autenticado, lugares = [“Sagunto", “Castellón”].
-    await servicioUsuario.loginUser("test@test.com", "test123");
+    await servicioUsuario.loginUser("routetest@test.com","test123");
     const place = await servicioPlace.createPlaceT("Sagunto");
     const place2 = await servicioPlace.createPlaceT("Castellón de la Plana");
 
@@ -227,7 +223,6 @@ describe('RutasService', () => {
     await servicioUsuario.logoutUser();
   });
 
-  
   it('HU15E03. Intento de cálculo de gasto calórico pero no hay rutas dadas de alta (Escenario Inválido)', async () => {
     //Given: El usuario [“Pepito2002”, “pepito@gmail.com“,“crm-24”] ha iniciado sesión y la base de datos está disponible. Lista rutas = []  
     servicioUsuario.loginUser("test@test.com", "test123");
@@ -249,7 +244,7 @@ describe('RutasService', () => {
     const place = await servicioPlace.createPlaceT("Sagunto");
     const place2 = await servicioPlace.createPlaceT("Castellón de la Plana");
 
-    //WHEN: El usuario quiere añadir la siguiente ruta = {“ruta01”, “Sagunto”, “Castellón”, “driving-car”, “fastest”, 90, 60}.
+    //WHEN: El usuario quiere añadir la siguiente ruta = {“ruta01”, “Sagunto”, “Castellón”, “driving-car”, “fastest”, 90, 60, 0.43}.
     const result = await servicioRutas.createRoute('ruta01', place, place2, "driving-car", "fastest", 90, 60, 0.43);
     
     //THEN: El sistema guarda la ruta.
@@ -263,7 +258,7 @@ describe('RutasService', () => {
 
   it('H17E02. Intento de guardar una ruta con lugares no registrados (Escenario inválido):', async () => {
     //GIVEN: El usuario  [“RouteTest”, “routetest@test.com“,“test123”] con la sesión de su cuenta activa, lugares = [“Sagunto", “Castellón”] y la lista de rutas = [ ]
-    await servicioUsuario.loginUser("test@test.com", "test123");
+    await servicioUsuario.loginUser("routetest@test.com","test123");
     const place = await servicioPlace.createPlaceT("Sagunto");
     const place2 = await servicioPlace.createPlaceT("Castellón de la Plana");
 
@@ -281,7 +276,7 @@ describe('RutasService', () => {
 
   it('H18E01. Consultar rutas guardadas (Escenario Válido):', async() => {
     //GIVEN: El usuario  [“RouteTest”, “routetest@test.com“,“test123”] tiene iniciada su sesión. Lista de rutas guardadas = [{Origen: Sagunto, Destino: Alicante, driving-car, fastest, 90, 60}, {Origen: Valencia, Destino: Castellón, driving-car, shortest, 84, 64}]
-    await servicioUsuario.loginUser("test@test.com","test123");
+    await servicioUsuario.loginUser("routetest@test.com","test123");
     const place = await servicioPlace.createPlaceT("Sagunto");
     const place2 = await servicioPlace.createPlaceT("Alicante");
     await servicioRutas.createRoute('ruta01', place, place2, "driving-car", "fastest", 90, 60, 1.3);
@@ -293,7 +288,7 @@ describe('RutasService', () => {
   //WHEN: El usuario quiere consultar las rutas que tiene guardadas. 
     const rutas = await servicioRutas.getRoutes();
 
-  //THEN: El sistema muestra las rutas guardadas. Lista de rutas guardadas =  [{Origen: Sagunto, Destino: Alicante, driving-car, fastest, 90, 60}, {Origen: Valencia, Destino: Castellón, driving-car, shortest, 84, 64}] .
+  //THEN: El sistema muestra las rutas guardadas. Lista de rutas guardadas =  [{Origen: Sagunto, Destino: Alicante, driving-car, fastest, 90, 60, 1.3}, {Origen: Valencia, Destino: Castellón, driving-car, shortest, 84, 64, 1.1}] .
     expect(rutas.length).toBe(2);
     rutas.forEach((ruta: Route) => {
       expect(ruta).toBeInstanceOf(Route);
@@ -312,7 +307,7 @@ describe('RutasService', () => {
   
   it('H18E03. Intento de consulta de rutas guardadas pero el usuario no está registrado (Escenario Inválido):', async() => {
     //GIVEN: El usuario [“RouteTest”, “routetest@test.com“,“test123”] con lista de rutas guardadas = [{Origen: Valencia, Destino: Castellón, driving-car, shortest, 84, 64}]  no está iniciado en el sistema. 
-    await servicioUsuario.loginUser("test@test.com","test123");
+    await servicioUsuario.loginUser("routetest@test.com","test123");
     const place = await servicioPlace.createPlaceT("Valencia");
     const place2 = await servicioPlace.createPlaceT("Castellón de la Plana");
 
@@ -323,7 +318,7 @@ describe('RutasService', () => {
     //THEN: El sistema lanza una excepción ServerNotOperativeException().
     await expectAsync(servicioRutas.getRoutes()).toBeRejectedWith(new ServerNotOperativeException());
 
-    await servicioUsuario.loginUser("test@test.com","test123");
+    await servicioUsuario.loginUser("routetest@test.com","test123");
 
     await servicioPlace.deletePlace(place.idPlace);
     await servicioPlace.deletePlace(place2.idPlace);
@@ -335,7 +330,7 @@ describe('RutasService', () => {
 
   it('H19E01. Eliminar una ruta que existe en el sistema (Escenario válido):', async() => {
     //GIVEN: El usuario [“RouteTest”, “routetest@test.com“,“test123”] con la sesión de su cuenta activa con lista de rutas guardadas = [{Nombre: ruta01, Origen: Valencia, Destino: Castellón, driving-car, shortest, 84, 64}].
-    await servicioUsuario.loginUser("test@test.com","test123");
+    await servicioUsuario.loginUser("routetest@test.com","test123");
     const place = await servicioPlace.createPlaceT("Valencia");
     const place2 = await servicioPlace.createPlaceT("Castellón de la Plana");
     await servicioRutas.createRoute('ruta01', place, place2, "driving-car", "shortest", 84, 64, 1.1);
@@ -354,7 +349,7 @@ describe('RutasService', () => {
 
   it('H19E04. Intento de eliminar una ruta sin estar registrado (Escenario inválido):', async() => {
     //GIVEN: El usuario [“Test”, “test@test.com“,“test123”] con lista de rutas guardadas = [{Origen: Valencia, Destino: Castellón, driving-car, shortest, 84, 64}]  no está iniciado en el sistema. 
-    await servicioUsuario.loginUser("test@test.com","test123");
+    await servicioUsuario.loginUser("routetest@test.com","test123");
     const place = await servicioPlace.createPlaceT("Valencia");
     const place2 = await servicioPlace.createPlaceT("Castellón de la Plana");
     await servicioRutas.createRoute('ruta01', place, place2, "driving-car", "shortest", 84, 64, 1.1);
@@ -364,7 +359,7 @@ describe('RutasService', () => {
     //THEN: El sistema lanza una excepción ServerNotOperativeException().
     await expectAsync(servicioRutas.deleteRoute('ruta01')).toBeRejectedWith(new ServerNotOperativeException());
 
-    await servicioUsuario.loginUser("test@test.com","test123");
+    await servicioUsuario.loginUser("routetest@test.com","test123");
     await servicioPlace.deletePlace(place.idPlace);
     await servicioPlace.deletePlace(place2.idPlace);
     await servicioRutas.deleteRoute('ruta01');
