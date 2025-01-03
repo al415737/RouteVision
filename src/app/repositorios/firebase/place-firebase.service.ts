@@ -36,7 +36,7 @@ export class PlaceFirebaseService implements PlaceRepository{
 
     const placeRegisterC: Place = new Place(idPlace, lugar, [coordenadas[1], coordenadas[0]], false, municipio);
 
-    await this.firestore.createPlaceC(placeRegisterC, PATHPLACE);
+    await this.firestore.create(placeRegisterC.getIdPlace(), placeRegisterC, PATHPLACE);
     return placeRegisterC;
     }
 
@@ -48,7 +48,7 @@ export class PlaceFirebaseService implements PlaceRepository{
         if (exist == '')
             throw new NotExistingObjectException();
 
-        await this.firestore.deletePlace(PATHPLACE, idPlace);
+        await this.firestore.delete(PATHPLACE, idPlace);
         return true;
     }
 
@@ -78,7 +78,7 @@ export class PlaceFirebaseService implements PlaceRepository{
 
         const placeRegisterT: Place = new Place(idPlace, toponimo, this.coordenadas, false, municipio);
 
-        await this.firestore.createPlaceT(placeRegisterT, PATHPLACE);
+        await this.firestore.create(placeRegisterT.getIdPlace(), placeRegisterT, PATHPLACE);
         return placeRegisterT;
     }
 

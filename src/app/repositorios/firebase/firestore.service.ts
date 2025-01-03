@@ -25,59 +25,26 @@ export class FirestoreService {
 
   //CREAR ELEMENTOS
   async createUser(user: User, password: string) {
-    try {
-      const userCredential = await this._auth.create(user.getEmail(), password);
+    const userCredential = await this._auth.create(user.getEmail(), password);
 
-      const plainObject = { ...user, uid: userCredential.user.uid };
+    const plainObject = { ...user, uid: userCredential.user.uid };
     
-      const _collection = collection(this._firestore, 'user');
+    const _collection = collection(this._firestore, 'user');
 
-      await addDoc(_collection, plainObject);
-    } catch (error) {
-      throw new MailExistingException();
-    }
+    await addDoc(_collection, plainObject);
   }
 
-  async createVehiculo(vehiculo: Vehiculo, path: string) {
-    const _collection = collection(this._firestore, path); 
+  async create(id: string, value: any, PATH: string): Promise<void> {
+    const _collection = collection(this._firestore, PATH);
+
+    const docRef = doc(_collection, id); // Crea una referencia con un ID único
+    const nameID = docRef.id;
+    
+    const objetoPlano = { ...value, nameID }; 
+
+    return setDoc(docRef, objetoPlano);
+  }
   
-    const objetoPlano = { ...vehiculo};
-    return addDoc(_collection, objetoPlano);
-  }
-
-  async createPlaceC(place: Place, path: string) {
-    const _collection = collection(this._firestore, path);
-
-    
-    const docRef = doc(_collection, place.idPlace); // Crea una referencia con un ID único
-    const idPlace = docRef.id;
-    
-    const objetoPlano = { ...place, idPlace };   //se sobreescribe el idPlace de la clase
-
-    return setDoc(docRef, objetoPlano);
-  }
-
-  async createPlaceT(place: Place, path: string) {
-    const _collection = collection(this._firestore, path);
-    
-    const docRef = doc(_collection, place.idPlace); // Crea una referencia con un ID único
-    const idPlace = docRef.id;
-    
-    const objetoPlano = { ...place, idPlace};   //se sobreescribe el idPlace de la clase -- hemos quitado uid
-    return setDoc(docRef, objetoPlano);
-  }
-
-  async createRoute(route: Route, path: string) {
-    const _collection = collection(this._firestore, path);
-
-    
-    const docRef = doc(_collection, route.getNombre()); // Crea una referencia con un ID único
-    const nombre = docRef.id;
-    
-    const objetoPlano = { ...route, nombre }; 
-
-    return setDoc(docRef, objetoPlano);
-  }
   //CREAR ELEMENTOS
 
 
@@ -351,25 +318,12 @@ export class FirestoreService {
   //EDITAR ELEMENTOS
 
   //BORRAR ELEMENTOS
-  async deleteUser(id: string, PATH: string): Promise<void> {
+  async delete(PATH: string, id: string): Promise<void> {
     const docRef = doc(this._firestore, PATH, id);
     await deleteDoc(docRef);
-    await this._auth.delete();      
-  }
 
-  async eliminarVehiculo(path: string, id: string):Promise<void>{
-    const docRef = doc(this._firestore, path, id);
-    await deleteDoc(docRef);
-  }
-
-  async deletePlace(path: string, idPlace: string){
-    const docRef: DocumentReference = doc(this._firestore, path, idPlace);
-    await deleteDoc(docRef);
-  }
-
-  async deleteRoute(path: string, nombre: string){
-    const docRef: DocumentReference = doc(this._firestore, path, nombre);
-    await deleteDoc(docRef);
+    if (PATH == `user/`)
+      await this._auth.delete();
   }
   //BORRAR ELEMENTOS
 }
