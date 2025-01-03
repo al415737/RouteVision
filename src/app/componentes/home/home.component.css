@@ -1,13 +1,35 @@
 /* home.component.css */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #011640;
+}
+
 .card-container {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 20px;
   flex-wrap: wrap;
-  height: 100vh; /* Esto asegura que las tarjetas estén centradas verticalmente */
-  padding-top: 20px;
-  background: linear-gradient(180deg, #011640, #030F26);
+  height: 50vh; /* Esto asegura que las tarjetas estén centradas verticalmente */
+  padding-top: 10px;
+}
+
+.welcome-message {
+  text-align: center;
+  margin-top: 30px; /* Un poco más de espacio entre el header y el mensaje */
+  font-size: 2rem; /* Aumenta el tamaño de la fuente */
+  color: #ffffff; /* Blanco para el texto */
+  font-family: 'Arial', sans-serif; /* O cualquier fuente estilizada que prefieras */
+  font-weight: bold;
+  text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.6); /* Sombra para hacer que el texto resalte */
+  letter-spacing: 2px; /* Aumenta el espacio entre las letras para que se vea más elegante */
+  padding: 20px; /* Añadir padding para que el texto no esté pegado al borde */
+  background: linear-gradient(45deg, #011640, #507e9c, #011640); /* Fondo con un degradado bonito */
+  border-radius: 10px; /* Bordes redondeados para hacerlo más suave */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* Sombra que da profundidad */
+  animation: fadeIn 5s ease-out; /* Animación para que aparezca con un efecto */
 }
 
 .card {
