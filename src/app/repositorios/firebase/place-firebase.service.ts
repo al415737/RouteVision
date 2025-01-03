@@ -9,6 +9,7 @@ import { firstValueFrom } from 'rxjs';
 import { AuthStateService } from '../../utils/auth-state.service';
 import { NotExistingObjectException } from '../../excepciones/notExistingObjectException';
 import { ServerNotOperativeException } from '../../excepciones/server-not-operative-exception';
+import { NoElementsException } from '../../excepciones/no-Elements-exception';
 
 @Injectable({
   providedIn: 'root'
@@ -35,10 +36,18 @@ export class PlaceFirebaseService implements PlaceRepository{
     const idPlace = docRef.id;
 
 
-    const placeRegisterC: Place = new Place(idPlace, lugar, [coordenadas[1], coordenadas[0]], false, municipio);
+    const placeRegisterC: Place = new Place(idPlace, lugar, [coordenadas[1], coordenadas[0]], municipio);
 
     await this.firestore.create(placeRegisterC.getIdPlace(), placeRegisterC, PATHPLACE);
     return placeRegisterC;
+    }
+
+    async actualizarPlace(place: Place): Promise<any> {
+        const id = await this.firestore.get('idPlace', place.getIdPlace(), `Lugar/${this._authState.currentUser?.uid}/listaLugaresInterés`);
+        if (id == '') {
+        throw new NoElementsException();
+        }
+        return await this.firestore.edit(place, `Lugar/${this._authState.currentUser?.uid}/listaLugaresInterés/${id}`);
     }
 
     async deletePlace(idPlace: string): Promise<boolean> {
@@ -77,7 +86,7 @@ export class PlaceFirebaseService implements PlaceRepository{
         const idPlace = docRef.id;
 
 
-        const placeRegisterT: Place = new Place(idPlace, toponimo, this.coordenadas, false, municipio);
+        const placeRegisterT: Place = new Place(idPlace, toponimo, this.coordenadas, municipio);
 
         await this.firestore.create(placeRegisterT.getIdPlace(), placeRegisterT, PATHPLACE);
         return placeRegisterT;
@@ -88,4 +97,10 @@ export class PlaceFirebaseService implements PlaceRepository{
             throw new ServerNotOperativeException();
         return await this.firestore.getValues(`Lugar/${this._authState.currentUser.uid}/listaLugaresInterés`);
     }
+
+    async marcarFavorito(place: Place, favorito: boolean): Promise<any> {
+        place.setFavorito(favorito);
+        return await this.actualizarPlace(place);
+    }
+
 };

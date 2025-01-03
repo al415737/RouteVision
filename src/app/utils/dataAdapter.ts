@@ -36,51 +36,52 @@ export class DataAdapter {
   }
 
   static toVehiculo(data: any): Vehiculo {
+    let c: Vehiculo;
     if (data['tipo'] === 'Precio Gasolina 95 E5' || data['tipo'] === 'Precio Gasolina 98 E5') {
-      return new CocheGasolina(
+      c = new CocheGasolina(
         data['matricula'],
         data['marca'],
         data['modelo'],
         data['año_fabricacion'],
         data['consumo'],
-        data['tipo'],
-        data['favorito']
+        data['tipo']
       );
     } else if (data['tipo'] === 'Precio Gasoleo A' || data['tipo'] === 'Precio Gasoleo B') {
-      return new CocheDiesel(
+      c = new CocheDiesel(
         data['matricula'],
         data['marca'],
         data['modelo'],
         data['año_fabricacion'],
         data['consumo'],
-        data['tipo'],
-        data['favorito']
+        data['tipo']
       );
     } else {
-      return new CocheElectrico(
+      c = new CocheElectrico(
         data['matricula'],
         data['marca'],
         data['modelo'],
         data['ano_fabricacion'],
         data['consumo'],
-        data['tipo'],
-        data['favorito']
+        data['tipo']
       );
     }
+    c.setFavorito(data['favorito']);
+    return c;
   }
 
   static toPlace(data: any): Place {
-    return new Place(
+    const p: Place = new Place(
       data['idPlace'], 
       data['toponimo'],
       data['coordenadas'],
-      data['favorito'],
       data['municipio']
     );
+    p.setFavorito(data['favorito']);
+    return p;
   }
 
   static toRoute(data: any): Route {
-    return new Route(
+    const r: Route = new Route(
       data['nombre'],
       data['origen'],
       data['destino'],
@@ -88,9 +89,10 @@ export class DataAdapter {
       data['movilidad'],
       data['kilometros'],
       data['duration'],
-      data['favorito'],
       data['municipio'],
       data['coste']
     );
+    r.setFavorito(data['favorito']);
+    return r;
   }
 }

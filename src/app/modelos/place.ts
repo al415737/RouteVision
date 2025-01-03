@@ -5,11 +5,11 @@ export class Place {
     private favorito: boolean;
     private municipio: string;
 
-    constructor (idPlace: string, toponimo: string, coordenadas: number[], fav: boolean, municipio: string){
+    constructor (idPlace: string, toponimo: string, coordenadas: number[], municipio: string){
         this.idPlace = idPlace
         this.toponimo = toponimo;
         this.coordenadas = coordenadas;
-        this.favorito = fav;
+        this.favorito = false;
         this.municipio = municipio;
     }
 
@@ -26,5 +26,13 @@ export class Place {
     }
     getMunicipio(){
         return this.municipio;
+    }
+
+    getFavorito(){
+        return this.favorito;
+    }
+
+    setFavorito(fav:boolean){
+        this.favorito = fav;
     }
 }

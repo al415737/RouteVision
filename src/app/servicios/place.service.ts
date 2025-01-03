@@ -3,6 +3,7 @@ import { InvalidCoordenatesException } from '../excepciones/invalid-coordenates-
 import { PlaceRepository, PLACE_REPOSITORY_TOKEN } from '../repositorios/interfaces/place-repository';
 import { AuthStateService } from '../utils/auth-state.service';
 import { InvalidPlaceException } from '../excepciones/invalid-place-exception';
+import { Place } from '../modelos/place';
 
 const pathPlace = 'place';
 
@@ -43,5 +44,10 @@ export class PlaceService {
   async deletePlace(idPlace: string): Promise<boolean> {
     return await this.placeRepositorio.deletePlace(idPlace);
   }
+
+  async marcarFavorito(place: Place, favorito: boolean){
+      return await this.placeRepositorio.marcarFavorito(place, favorito);
+  }
+
 
 }

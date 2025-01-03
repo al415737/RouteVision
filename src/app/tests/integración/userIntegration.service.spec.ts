@@ -13,11 +13,17 @@ import { Place } from '../../modelos/place';
 import { WrongPasswordException } from '../../excepciones/wrong-password-exception';
 import { UserNotFoundException } from '../../excepciones/user-not-found-exception';
 import { CocheGasolina } from '../../modelos/vehiculos/cocheGasolina';
-import { PrefereneInvalidException } from '../../excepciones/preference-invalid-exception';
+import { VEHICULO_REPOSITORY_TOKEN, VehiculoRepository } from '../../repositorios/interfaces/vehiculo-repository';
+import { VehiculoService } from '../../servicios/vehiculo.service';
+import { VehiculoFirebaseService } from '../../repositorios/firebase/vehiculo-firebase.service';
+import { NoElementsException } from '../../excepciones/no-Elements-exception';
+import { PreferenceInvalidException } from '../../excepciones/preference-invalid-exception';
 
 describe('UserIntegrationService', () => {
   let service: UserService;
   let userRepo: UserRepository;
+  let vehiRepo: VehiculoRepository;
+  let vehicleService: VehiculoService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -27,13 +33,16 @@ describe('UserIntegrationService', () => {
         provideAuth(() => getAuth()),
         UserService,
         { provide: USER_REPOSITORY_TOKEN, useClass: UserFirebaseService},
+        VehiculoService,
+        { provide: VEHICULO_REPOSITORY_TOKEN, useClass: VehiculoFirebaseService },
       ]
     }).compileComponents();
 
     service = TestBed.inject(UserService);
     userRepo = TestBed.inject(USER_REPOSITORY_TOKEN);
+    vehiRepo = TestBed.inject(VEHICULO_REPOSITORY_TOKEN);
+    vehicleService = TestBed.inject(VehiculoService);
   });
-  
   
   it('HU1E01. User registration in the system (Valid Scenario)', async () => {
     const mockUser: User = new User("Manuel", "García", "manu033@gmail.com", "Manu-33",'','');
@@ -71,7 +80,7 @@ describe('UserIntegrationService', () => {
     // WHEN: El usuario Pepito quiere iniciar sesión con sus datos.  user: “pepito23”, contraseña:  “Pepito123?_ “.
     //  THEN: El sistema carga los datos de Pepito. ListaVehículos=[{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}] y listaLugaresInterés=[{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049], idLugar = “000”}].
     
-    const result: [Vehiculo[], Place[]] = [[new CocheGasolina("1234 BBB", "Peugeot", "407", "2007", 8.1, "Gasolina", true)], [new Place("001", "Castellón de la Plana", [39.98, -0.049], true, "Castellón")]];
+    const result: [Vehiculo[], Place[]] = [[new CocheGasolina("1234 BBB", "Peugeot", "407", "2007", 8.1, "Gasolina")], [new Place("001", "Castellón de la Plana", [39.98, -0.049], "Castellón")]];
     spyOn(userRepo, 'loginUser').and.resolveTo(result);
 
     const resultService = await service.loginUser("test@test.com", "test123");
@@ -85,7 +94,7 @@ describe('UserIntegrationService', () => {
     // WHEN: El usuario Pepito introduce como contraseña: “pepito123_”
     // THEN: El sistema no inicia la sesión de Pepito porque la contraseña introducida no coincide con la que se encuentra en la base de datos para ese usuario. Lanza la excepción WrongPasswordException().
     
-    const result: [Vehiculo[], Place[]] = [[new CocheGasolina("1234 BBB", "Peugeot", "407", "2007", 8.1, "Gasolina", true)], [new Place("001", "Castellón de la Plana", [39.98, -0.049], true, "Castellón")]];
+    const result: [Vehiculo[], Place[]] = [[new CocheGasolina("1234 BBB", "Peugeot", "407", "2007", 8.1, "Gasolina")], [new Place("001", "Castellón de la Plana", [39.98, -0.049], "Castellón")]];
     spyOn(userRepo, 'loginUser').and.resolveTo(result);
 
     try {
@@ -137,7 +146,6 @@ describe('UserIntegrationService', () => {
   
   });
 
-  
   it('HU4-E02. Eliminar una cuenta de un usuario no registrado (Escenario Inválido)', async () => {
       //Given: Lista actual de usuarios = {Pepito, Alba, Dani}.
       const mockData: User[] = [
@@ -147,18 +155,48 @@ describe('UserIntegrationService', () => {
       ];
 
       spyOn(userRepo, 'deleteUser').and.resolveTo();
-      spyOn(userRepo, 'logoutUser').and.resolveTo();
-
-      //When: El usuario Random quiere eliminar su cuenta del sistema.
-      await service.deleteUser('pepagimena@gmail.com');
-
-      //Then: El sistema lanza una excepción UserNotFoundException().
+     
       try {
-        await service.logoutUser();
+        //When: El usuario Random quiere eliminar su cuenta del sistema.
+        await service.deleteUser('pepagimena@gmail.com');
+        expect(userRepo.deleteUser).toHaveBeenCalledWith('pepagimena@gmail.com');
       } catch (error) {
+         //Then: El sistema lanza una excepción UserNotFoundException().
         expect(error).toBeInstanceOf(UserNotFoundException);
       }
   });
+  
+
+  it('HU20-E01. Usuario marca como favorito su coche (Escenario Válido)', async() => {
+    //Given: El usuario [“Pepito2002”, “pepito@gmail.com“,“ppt-24”] tiene iniciada su cuenta y la base de datos está disponible. Lista de vehículos: [ Matrícula: “8291 DTS” , AñoFabricación: 2002, Marca: “Seat”, Modelo: “León”, Consumo: 5.1L/100km ]. 
+    const vehiculo = new CocheGasolina("8291 DTS", "Seat", "León", "2002", 5.1, "Precio Gasolina 95 E5");
+    vehiculo.setFavorito(true);
+    const mockData = vehiculo;
+    spyOn(vehiRepo, 'marcarFavorito').and.resolveTo(mockData);
+
+    //When: El usuario quiere marcar como favorito su vehículo → [ Matrícula: “8291 DTS” , AñoFabricación: 2002, Marca: “Seat”, Modelo: “León”, Consumo: 5.1L/100km ].
+    const vehiculoFavorito = await vehicleService.marcarFavorito(vehiculo, true);
+    
+    //Then: El sistema marca como favorito al vehículo, es decir, este vehículo se añade a una lista de listaVehículosFavoritos → [ Matrícula: “8291 DTS” , AñoFabricación: 2002, Marca: “Seat”, Modelo: “León”, Consumo: 5.1L/100km ]. 
+    expect(vehiRepo.marcarFavorito).toHaveBeenCalledWith(vehiculo, true);
+    expect(vehiculoFavorito).toEqual(mockData);
+});
+
+
+it('HU20-E03. Intento de marcar como favorito pero no tiene elementos registrados (Escenario Inválido)', async() => {
+    //Given: El usuario [“Pepito2002”, “pepito@gmail.com“,“ppt-24”] ha iniciado sesión, la base de datos está disponible, pero no tiene ningún elemento registrado. Lista de vehículos = [ ].
+    spyOn(vehiRepo, 'marcarFavorito')  
+    const vehiculo = new CocheGasolina("8291 DTS", "Seat", "León", "2002", 5.1, "Precio Gasolina 95 E5");
+    
+    try {
+      //When: El usuario quiere marcar como favorito a su vehículo.
+      await vehicleService.marcarFavorito(vehiculo, true);
+      expect(vehiRepo.marcarFavorito).toHaveBeenCalledWith(vehiculo, true);
+    } catch(error){
+      //Then: El sistema no puede marcar como favorito nada y lanza la excepción NoElementsException().
+      expect(error).toBeInstanceOf(NoElementsException);
+    }
+});
 
   it('PRUEBA INTEGRACIÓN --> HU21-E01. Configuración de un vehículo/método de transporte predeterminado (Escenario Válido): ', async () => {
     const mockUser: User = new User("UserTest", "ADIS", "usertest@test.com", "UserTest", "foot-walking", "");
@@ -175,7 +213,7 @@ describe('UserIntegrationService', () => {
       await service.editUser(1, 'foooooot');
       expect(userRepo.editUser).toHaveBeenCalledWith(1, 'fooooot');
     } catch (error) {
-      expect(error).toBeInstanceOf(PrefereneInvalidException);    //CAMBIAR NOMBRE :d
+      expect(error).toBeInstanceOf(PreferenceInvalidException);    //CAMBIAR NOMBRE :d
     }
   });
 
@@ -194,7 +232,47 @@ describe('UserIntegrationService', () => {
       await service.editUser(2, 'mierdatest');
       expect(userRepo.editUser).toHaveBeenCalledWith(2, 'mierdatest');
     } catch (error) {
-      expect(error).toBeInstanceOf(PrefereneInvalidException);
+      expect(error).toBeInstanceOf(PreferenceInvalidException);
     }
   });
+
+  it('PRUEBA INTEGRACIÓN --> HU21-E01. Configuración de un vehículo/método de transporte predeterminado (Escenario Válido): ', async () => {
+    const mockUser: User = new User("UserTest", "ADIS", "usertest@test.com", "UserTest", "foot-walking", "");
+    spyOn(userRepo, 'editUser').and.resolveTo();
+    
+    await service.editUser(1, 'foot-walking');
+    expect(userRepo.editUser).toHaveBeenCalledWith(1, 'foot-walking');
+    expect(mockUser.getPref1()).toEqual('foot-walking');
+  });
+
+  it('PRUEBA INTEGRACIÓN --> HU21-E03. Configuración de un vehículo/metodo de transporte predeterminado con un vehículo inexistente (Escenario Inválido): ', async () => {
+    spyOn(userRepo, 'editUser').and.resolveTo();      
+    try {
+      await service.editUser(1, 'foooooot');
+      expect(userRepo.editUser).toHaveBeenCalledWith(1, 'fooooot');
+    } catch (error) {
+      expect(error).toBeInstanceOf(PreferenceInvalidException);    //CAMBIAR NOMBRE :d
+    }
+  });
+
+  it('HU22-E01. Establecimiento de la ruta más rápida por defecto (Escenario Válido): ', async () => {
+    const mockUser: User = new User("UserTest", "ADIS", "usertest@test.com", "UserTest", "", "fastest");
+    spyOn(userRepo, 'editUser').and.resolveTo();
+    
+    await service.editUser(2, 'fastest');
+    expect(userRepo.editUser).toHaveBeenCalledWith(2, 'fastest');
+    expect(mockUser.getPref2()).toEqual('fastest');
+  });
+
+  it('HU22-E0X. Establecimiento de la ruta que no existe por defecto (Escenario Inválido): ', async () => {
+    spyOn(userRepo, 'editUser').and.resolveTo();      
+    try {
+      await service.editUser(2, 'mierdatest');
+      expect(userRepo.editUser).toHaveBeenCalledWith(2, 'mierdatest');
+    } catch (error) {
+      expect(error).toBeInstanceOf(PreferenceInvalidException);
+    }
+  });
+
+
 });

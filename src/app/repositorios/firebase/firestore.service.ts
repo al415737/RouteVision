@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { addDoc, collection, Firestore } from '@angular/fire/firestore';
-import { deleteDoc, doc, DocumentReference, getDoc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
+import { deleteDoc, doc, DocumentReference, getDoc, getDocs, orderBy, query, setDoc, updateDoc, where } from 'firebase/firestore';
 import { User } from '../../modelos/user';
 import { AuthService } from './auth.service';
 import { MailExistingException } from '../../excepciones/mail-existing-exception';
@@ -121,7 +121,7 @@ export class FirestoreService {
     return value;  
   }
   //EDITAR ELEMENTOS
-
+ 
   //BORRAR ELEMENTOS
   async delete(PATH: string, id: string): Promise<void> {
     const docRef = doc(this._firestore, PATH, id);
