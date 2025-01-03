@@ -8,6 +8,7 @@ import { getAuth } from 'firebase/auth';
 import { firstValueFrom } from 'rxjs';
 import { AuthStateService } from '../../utils/auth-state.service';
 import { NotExistingObjectException } from '../../excepciones/notExistingObjectException';
+import { ServerNotOperativeException } from '../../excepciones/server-not-operative-exception';
 
 @Injectable({
   providedIn: 'root'
@@ -83,6 +84,8 @@ export class PlaceFirebaseService implements PlaceRepository{
     }
 
     async getPlaces(): Promise<any> {
-        return await this.firestore.getPlaces();
+        if (this._authState.currentUser == null)
+            throw new ServerNotOperativeException();
+        return await this.firestore.getValues(`Lugar/${this._authState.currentUser.uid}/listaLugaresInterés`);
     }
 };

@@ -14,6 +14,7 @@ import { CocheGasolina } from '../../modelos/vehiculos/cocheGasolina';
 import { CocheDiesel } from '../../modelos/vehiculos/cocheDiesel';
 import { CocheElectrico } from '../../modelos/vehiculos/cocheElectrico';
 import { NotExistingObjectException } from '../../excepciones/notExistingObjectException';
+import { DataAdapter } from '../../utils/dataAdapter';
 
 @Injectable({
   providedIn: 'root'
@@ -70,6 +71,20 @@ export class FirestoreService {
     return firstDocument.id;
   }
 
+  async getValues(PATH: string): Promise<any> {
+    try {
+      const listaRef = collection(this._firestore, PATH);
+      const querySnapshot = await getDocs(listaRef);
+
+      return querySnapshot.docs.map(doc => { 
+        const data = doc.data();
+        return DataAdapter.adapt(PATH, data);
+      });
+    } catch (error) {
+      throw new ServerNotOperativeException();
+    }
+  }
+
   async getVehiculo(matricula:string){
     const _collection = collection(this._firestore, `vehiculo/${this._authState.currentUser?.uid}/listaVehiculos/`);
     // Referencia a la subcolección listaLugares dentro del documento del usuario
@@ -114,48 +129,7 @@ export class FirestoreService {
     return null;
   }
 
-    async consultarVehiculo(path: string){
-      const _collection = collection(this._firestore, path);
-
-      const documentos = await getDocs(_collection);
-
-      return documentos.docs.map(doc => { 
-        const data = doc.data();
-        if(data['tipo'] == 'Gasolina'){
-            return new CocheGasolina(
-              data['matricula'],
-              data['marca'],
-              data['modelo'],
-              data['año_fabricacion'],
-              data['consumo'],
-              data['tipo'],
-              data['favorito']
-            );
-        } else if(data['tipo'] == 'Diesel'){
-          return new CocheDiesel(
-            data['matricula'],
-            data['marca'],
-            data['modelo'],
-            data['año_fabricacion'],
-            data['consumo'],
-            data['tipo'],
-            data['favorito']
-          );
-        } else {
-          return new CocheElectrico(
-            data['matricula'],
-            data['marca'],
-            data['modelo'],
-            data['ano_fabricacion'],
-            data['consumo'],
-            data['tipo'],
-            data['favorito']
-          );
-        }
-      }); 
-    }
-
-  async getUsuario(){
+ async getUsuario(){
     const _collection = collection(this._firestore, `user/`);
     const id = await this.get('uid', this._authState.currentUser?.uid, `user/`);
     const lista = doc(_collection, id);
@@ -173,50 +147,6 @@ export class FirestoreService {
         );
     }
     return null;
-  }
-
-  async consultarUsuarios(path: string){
-    const _collection = collection(this._firestore, path);
-
-    const documentos = await getDocs(_collection);
-
-    return documentos.docs.map (doc => {
-      const data = doc.data();
-      return new User(
-        data['nombre'],
-        data['apellidos'],
-        data['email'],
-        data['user'],
-        data['preferencia1'],
-        data['preferencia2']
-      );
-    });
-  }
-
-  async getPlaces(): Promise<Place[]> {
-    try {
-      if (this._authState.currentUser == null) {
-        throw new ServerNotOperativeException();
-      }
-        // Referencia a la subcolección listaLugares dentro del documento del usuario
-      const listaLugaresRef = collection(this._firestore, `Lugar/${this._authState.currentUser?.uid}/listaLugaresInterés`);
-      
-      // Obtener todos los documentos de la subcolección
-      const querySnapshot = await getDocs(listaLugaresRef);
-
-      return querySnapshot.docs.map(doc => { 
-        const data = doc.data();
-        return new Place(
-          data['idPlace'], 
-          data['toponimo'],
-          data['coordenadas'],
-          data['favorito'],
-          data['municipio']
-        );
-      }); 
-    } catch (error) {
-      throw new ServerNotOperativeException();
-    }
   }
 
   async ifExistPlace(place: Place) {
@@ -256,36 +186,7 @@ export class FirestoreService {
 
       return true;
   }
-
-  async getRoutes(): Promise<Route[]> {
-    try {
-      if (this._authState.currentUser == null) {
-        throw new ServerNotOperativeException();
-      }
-      const listaRutasRef = collection(this._firestore, `ruta/${this._authState.currentUser?.uid}/listaRutasInterés`);
-      const querySnapshot = await getDocs(listaRutasRef);
-      
-
-      return querySnapshot.docs.map(doc => { 
-        const data = doc.data();
-        return new Route(
-          data['nombre'],
-          data['origen'],
-          data['destino'],
-          data['option'],
-          data['movilidad'],
-          data['kilometros'],
-          data['duration'],
-          data['favorito'],
-          data['municipio'],
-          data['coste']
-        );
-      });
-    } catch (error) {
-      throw new ServerNotOperativeException();
-    }
-    
-  }
+  
   //BUSCAR/COMPROBAR ELEMENTOS
 
   //EDITAR ELEMENTOS

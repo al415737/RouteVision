@@ -15,9 +15,9 @@ export class DataAdapter {
         return DataAdapter.toUser(data);
       case 'vehiculo':
         return DataAdapter.toVehiculo(data);
-      case 'place':
+      case 'Lugar':
         return DataAdapter.toPlace(data);
-      case 'route':
+      case 'ruta':
         return DataAdapter.toRoute(data);
       default:
         throw new Error(`No adapter found for path: ${path}`);

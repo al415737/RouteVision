@@ -10,17 +10,17 @@ import { UserNotFoundException } from '../../excepciones/user-not-found-exceptio
 import { AuthStateService } from '../../utils/auth-state.service';
 
 
-const PATH = 'user';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserFirebaseService implements UserRepository{
+  private PATH = 'user/';
 
   constructor(private _firestore: FirestoreService, private _auth: AuthService, private _authState: AuthStateService) { }
   
   async consultarUsuarios(): Promise<User[]> {
-      return await this._firestore.consultarUsuarios(PATH);
+      return await this._firestore.getValues(this.PATH);
   }
 
   async getUsuario(): Promise<User | null> {
@@ -36,6 +36,7 @@ export class UserFirebaseService implements UserRepository{
 
   async deleteUser(email: string): Promise<void> {
     const id = await this._firestore.get('email', email, `user/`);
+    console.log(id);
     await this._firestore.delete(`user/`, id);
   }
 
@@ -43,8 +44,8 @@ export class UserFirebaseService implements UserRepository{
     const userCredential: UserCredential = await this._auth.signin(email, password);
     const uid = userCredential.user.uid;
 
-    const places = await this._firestore.getPlaces();
-    const vehiculos = await this._firestore.consultarVehiculo(`vehiculo/${uid}/listaVehiculos`);
+    const places = await this._firestore.getValues(`Lugar/${this._authState.currentUser?.uid}/listaLugaresInterés`);
+    const vehiculos = await this._firestore.getValues(`vehiculo/${uid}/listaVehiculos`);
 
     return [vehiculos, places];
   }

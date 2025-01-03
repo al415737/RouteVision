@@ -143,7 +143,9 @@ export class RouteFirebaseService implements RouteRepository{
   }
 
   async getRoutes(): Promise<Route[]> {
-    return await this._firestore.getRoutes();
+    if (this._authState.currentUser == null)
+      throw new ServerNotOperativeException();
+    return await this._firestore.getValues(`ruta/${this._authState.currentUser.uid}/listaRutasInterés`);
   }
 }
 
