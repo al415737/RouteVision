@@ -13,6 +13,7 @@ import { getAuth } from 'firebase/auth';
 import { ServerNotOperativeException } from '../../excepciones/server-not-operative-exception';
 import { PlaceNotFoundException } from '../../excepciones/place-not-found-exception';
 import { NotAvailableFuelException } from '../../excepciones/not-available-fuel-exception';
+import { NoElementsException } from '../../excepciones/no-Elements-exception';
 
 @Injectable({
   providedIn: 'root'
@@ -119,18 +120,26 @@ export class RouteFirebaseService implements RouteRepository{
     return response;
   }
 
-  async createRoute(nombre: string, start: Place, end: Place, movilidad: string, preferencia: string, km: number, duracion: number, favorito: boolean, coste:number): Promise<Route> {
+  async createRoute(nombre: string, start: Place, end: Place, movilidad: string, preferencia: string, km: number, duracion: number, coste:number): Promise<Route> {
     const existPlace: boolean = await this._firestore.ifExistPlace(start);
     const existPlace2: boolean = await this._firestore.ifExistPlace(end);
   
     if(!existPlace || !existPlace2)
       throw new NotExistingObjectException();
   
-    const newRoute: Route = new Route(nombre, start.getToponimo(), end.getToponimo(), preferencia, movilidad, km, duracion, favorito, start.getMunicipio(), coste);
+    const newRoute: Route = new Route(nombre, start.getToponimo(), end.getToponimo(), preferencia, movilidad, km, duracion, start.getMunicipio(), coste);
     const uid = this._authState.currentUser?.uid;
 
     await this._firestore.create(newRoute.getNombre(), newRoute, `ruta/${uid}/listaRutasInterés`);  
     return newRoute;
+  }
+
+  async actualizarRoutes(route: Route): Promise<any> {
+            const id = await this._firestore.get('nombre', route.getNombre(), `ruta/${this._authState.currentUser?.uid}/listaRutasInterés`);
+            if (id == '') {
+              throw new NoElementsException();
+            }
+            return await this._firestore.actualizarRoutes(route, id);
   }
   
   async deleteRoute(nombre: string): Promise<boolean> {
@@ -145,6 +154,12 @@ export class RouteFirebaseService implements RouteRepository{
   async getRoutes(): Promise<Route[]> {
     return await this._firestore.getRoutes();
   }
+
+  async marcarFavorito(ruta: Route, favorito: boolean): Promise<void> {
+      ruta.setFavorito(favorito);
+      return this.actualizarRoutes(ruta);
+  }
+
 }
 
 

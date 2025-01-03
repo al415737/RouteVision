@@ -13,7 +13,7 @@ export class Route {
     private coste: number;
 
     constructor (nombre: string, origen: string, destino: string, option: string, movilidad: string, kilometros: number,
-        duration: number, fav: boolean, municipio: string, coste: number) {
+        duration: number, municipio: string, coste: number) {
         this.nombre = nombre;
         this.origen = origen;
         this.destino = destino;
@@ -21,7 +21,7 @@ export class Route {
         this.movilidad = movilidad;
         this.kilometros = kilometros;
         this.duration = duration;
-        this.favorito = fav;
+        this.favorito = false;
         this.municipio = municipio;
         this.coste = coste;
     }
@@ -54,6 +54,10 @@ export class Route {
         return this.duration;
     }
 
+    getFavorito(){
+        return this.favorito;
+    }
+
     setKm(km: number) {
         this.kilometros = km;
     }
@@ -64,5 +68,9 @@ export class Route {
 
     getMunicipio(): string {
         return this.municipio;
+    }
+    
+    setFavorito(favorito: boolean){
+        this.favorito = favorito;
     }
 }

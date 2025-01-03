@@ -23,7 +23,7 @@ export default class ConsultarComponent {
     //Datos de ejemplo
     dataSource = new MatTableDataSource<any>(); //Configuración inicial vacía
     vehiculos: Vehiculo[] = [];
-    displayedColumns: string[] = ['matricula', 'marca', 'modelo', 'ano_fabricacion', 'consumo', 'tipo', 'edit', 'delete'];
+    displayedColumns: string[] = ['matricula', 'marca', 'modelo', 'ano_fabricacion', 'consumo', 'tipo', 'favorito', 'edit', 'delete'];
     currentPage = 0;
     readonly dialog = inject(MatDialog);
     @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -31,7 +31,6 @@ export default class ConsultarComponent {
     constructor(private servicioVehiculo: VehiculoService){}
 
     async ngOnInit(): Promise<void>{
-      this.vehiculos = await this.servicioVehiculo.consultarVehiculo();
       this.obtenerVehiculos();
     }
 
@@ -39,6 +38,7 @@ export default class ConsultarComponent {
       try {
             const data = await this.servicioVehiculo.consultarVehiculo();
             this.vehiculos = data;
+            this.vehiculos = this.vehiculos.sort((a, b) => (b.getFavorito() ? 1 : 0) - (a.getFavorito() ? 1 : 0));
             this.dataSource = new MatTableDataSource<Vehiculo>(this.vehiculos);
             this.dataSource.paginator = this.paginator;
           } catch (err) {
@@ -53,5 +53,16 @@ export default class ConsultarComponent {
           toast.success('Vehiculo borrado correctamente.'); 
           this.obtenerVehiculos();
       });
+    }
+
+    marcarFavorito(vehiculo: Vehiculo){
+      this.servicioVehiculo.marcarFavorito(vehiculo, !vehiculo.getFavorito());
+      this.obtenerVehiculos();
+     
+      if(vehiculo.getFavorito() == true){
+        toast.success('Vehículo marcado como favorito.');
+      } else {
+          toast.success('Vehiculo ya no es favorito.');
+      }
     }
 }

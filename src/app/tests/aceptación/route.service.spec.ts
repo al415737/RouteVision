@@ -123,7 +123,7 @@ describe('RutasService', () => {
 
 
     //WHEN: El usuario quiere saber el coste de una ruta con unos de sus vehículos de tipo coche para saber cuánto dinero le va a costar y se selecciona el vehículo [Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”*407”, Año Fabricación=”2007”, Consumo=8,1, “Diesel”] para la ruta [Origen:Valencia, Destino:Castellón].
-    const ruta = new Route('ruta01', 'Valencia', 'Castellón de la Plana/Castelló de la Plana', 'porDefecto', 'driving-car', 90, 90, false, "Valencia", 0);
+    const ruta = new Route('ruta01', 'Valencia', 'Castellón de la Plana/Castelló de la Plana', 'porDefecto', 'driving-car', 90, 90, "Valencia", 0);
     
     //THEN: El sistema obtiene el combustible y se realiza el cálculo del coste total del viaje. * Coste: 90km/100 * 8,1L * 1.40€ = 10,21€
 
@@ -140,8 +140,8 @@ describe('RutasService', () => {
     const vehiculo = await servicioVehiculo.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Diesel");
     
     //WHEN: El usuario selecciona el vehículo [Matrícula=”1234 CCC”, Marca=”Peugeot”, Modelo=”*407”, Año Fabricación=”2007”, Consumo=8,1, “Diesel”]  y la ruta [Origen:Valencia, Destino:Castellón]
-    const ruta = new Route('ruta01','Valencia', 'Castellón de la Plana/Castelló de la Plana', 'porDefecto', 'driving-car', 90, 90, false, "Valencia", 0);
-    const vehiculoNoExiste = new CocheDiesel("1234 CCC", "Peugeot", "407", "2007", 8.1, 'Diesel', false);
+    const ruta = new Route('ruta01','Valencia', 'Castellón de la Plana/Castelló de la Plana', 'porDefecto', 'driving-car', 90, 90, "Valencia", 0);
+    const vehiculoNoExiste = new CocheDiesel("1234 CCC", "Peugeot", "407", "2007", 8.1, 'Diesel');
 
     //THEN: El sistema no obtiene el coste y genera una excepción NotExistingObjectException().
     await expectAsync(servicioRutas.obtenerCosteRuta(vehiculoNoExiste, ruta)).toBeRejectedWith(new NotExistingObjectException());
@@ -179,7 +179,7 @@ describe('RutasService', () => {
 
     try {
         //WHEN: El usuario RouteTest quiere realizar la ruta entre Valencia y Castellón en bicicleta.
-        const ruta = new Route("Valencia-Castellón", "Valencia", "Castellón de la Plana", "shortest", "cycling-regular", 76, 15806, false, "Valencia", 0);
+        const ruta = new Route("Valencia-Castellón", "Valencia", "Castellón de la Plana", "shortest", "cycling-regular", 76, 15806, "Valencia", 0);
         await servicioRutas.costeRutaPieBicicleta(ruta, origen, destino);  
     } catch(error){
         //Then: El sistema no puede calcular el gasto calórico y lanza la excepción NoRouteFoundException()
@@ -223,10 +223,24 @@ describe('RutasService', () => {
     await servicioUsuario.logoutUser();
   });
 
+  it('HU15E03. Intento de cálculo de gasto calórico pero no hay rutas dadas de alta (Escenario Inválido)', async () => {
+    //Given: El usuario [“Pepito2002”, “pepito@gmail.com“,“crm-24”] ha iniciado sesión y la base de datos está disponible. Lista rutas = []  
+    servicioUsuario.loginUser("test@test.com", "test123");
+    const origen = await servicioPlace.createPlaceT("València, España");
+    const destino = await servicioPlace.createPlaceT("Castellón de la Plana");
+    const ruta = new Route("Valencia-Castellón", "Valencia", "Castellón de la Plana", "economica", "cycling-regular", 76, 15806, "Valencia", 0);
+
+    try {
+        //When: El usuario Pepito quiere realizar la ruta entre Valencia y Castellón en bicicleta.
+        await servicioRutas.costeRutaPieBicicleta(ruta, origen, destino);  
+    } catch(error){
+        //Then: El sistema no puede calcular el gasto calórico y lanza la excepción NoRouteFoundException()
+        expect(error).toBeInstanceOf(NoRouteFoundException);
+    }
+  });
   
-  it('H17E01. Guardar una ruta correctamente (Escenario válido):', async () => {
-    //GIVEN: El usuario [“RouteTest”, “routetest@test.com“,“test123”] con la sesión de su cuenta activa, lugares = [“Sagunto", “Castellón”] y la lista de rutas = [ ]
-    await servicioUsuario.loginUser("routetest@test.com","test123");
+  it('H17E01. Guardar una ruta que no existe en el sistema (Escenario válido)', async () => {
+    await servicioUsuario.loginUser("test@test.com", "test123");
     const place = await servicioPlace.createPlaceT("Sagunto");
     const place2 = await servicioPlace.createPlaceT("Castellón de la Plana");
 

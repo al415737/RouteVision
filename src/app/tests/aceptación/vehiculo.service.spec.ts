@@ -127,7 +127,7 @@ import { CocheDiesel } from '../../modelos/vehiculos/cocheDiesel';
     
     //WHEN: El usuario borra el vehículo {"3423 WCX", "Fiat", "Punto", "2016", 8.1, "Gasolina"”}.
     //THEN: El sistema no borra el vehículo y lanza la excepción VehicleNotFoundException().
-    const vehiculoNoExiste = new CocheGasolina("3423 WCX", "Fiat", "Punto", "2016", 8.1, "Gasolina", false);
+    const vehiculoNoExiste = new CocheGasolina("3423 WCX", "Fiat", "Punto", "2016", 8.1, "Gasolina");
     await expectAsync(serviceV.eliminarVehiculo(vehiculoNoExiste.getMatricula()))
     .toBeRejectedWithError(VehicleNotFoundException); // Manejo por tipo de excepción
     
@@ -139,7 +139,7 @@ import { CocheDiesel } from '../../modelos/vehiculos/cocheDiesel';
     //GIVEN: El usuario [“VehicleTest”, “vehicletest@test.com“,“test123”] con la sesión de su cuenta activa y la lista actual de vehículos = [{"1234 BBB", "Peugeot", "407", "2007", 8.1, 'Diesel'}].
     await servicioUser.loginUser("vehicletest@test.com", "test123");
     await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, 'Diesel');
-    const comparacion = new CocheDiesel("1234 BBB", "Peugeot", "407", "2007", 7.1, 'Diesel', false);
+    const comparacion = new CocheDiesel("1234 BBB", "Peugeot", "407", "2007", 7.1, 'Diesel');
 
     //WHEN: El usuario quiere actualizar los datos del vehículo “1234 BBB” con la marca = “Peugeot”, modelo = “407”, tipo de combustible = “Diesel”, año de fabricación = “2010” y consumo = “7.1”.
     const resul = await serviceV.actualizarVehiculo("1234 BBB", "Peugeot", "407", "2007", 7.1, 'Diesel', false);
