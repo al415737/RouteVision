@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formulario de Vehículo</title>
+  <link rel="stylesheet" href="edit.component.css">
+</head>
+<body>
+  <app-header></app-header>
+
+  <div class="container">
+    <div class="input-container" style="margin-left: 20px;">
+      <h2>Editar Vehículo</h2>
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <div class="form-group">
+            <label for="matricula">Matricula</label>
+            <input type="text" id="matricula" name="matricula" placeholder="Escribe una matricula" formControlName="matricula" />
+            <!--PARA EL VALIDADOR:-->
+            @if (isRequired('matricula')) {
+                <small class="text-red"> Este campo es requerido.</small>
+            }
+        </div>
+        <div class="form-group">
+            <label for="marca">Marca</label>
+            <input type="text" id="marca" name="marca" placeholder="Escribe tu marca" formControlName="marca" />
+            <!--PARA EL VALIDADOR:-->
+            @if (isRequired('marca')) {
+                <small class="text-red"> Este campo es requerido.</small>
+            }
+        </div>
+        <div class="form-group">
+            <label for="modelo">Modelo</label>
+            <input type="text" id="modelo" name="modelo" placeholder="Escribe tu modelo" formControlName="modelo" />
+            <!--PARA EL VALIDADOR:-->
+            @if (isRequired('modelo')) {
+                <small class="text-red"> Este campo es requerido.</small>
+            }
+        </div>
+        <div class="form-group">
+            <label for="fecha">Fecha Fabricación</label>
+            <input type="date" id="fecha" name="fecha" placeholder="Eliga tu fecha de Fabricación" formControlName="fecha" />
+        </div>
+        <div class="form-group">
+          <label for="tipo">Tipo de combustible</label>
+          <select id="tipo" formControlName="tipo" required>
+            <option style="display:none"></option>
+            <option value="Gasolina">Gasolina</option>
+            <option value="Diesel">Diesel</option>
+            <option value="Electrico">Electrico</option>
+          </select>
+          <!--PARA EL VALIDADOR:-->
+          @if (isRequired('tipo')) {
+              <small class="text-red"> Este campo es requerido.</small>
+          }
+      </div>
+      <div class="form-group">
+        <label for="consumo">Consumo</label>
+        <input type="number" id="consumo" name="consumo" placeholder="Escribe tu consumo" formControlName="consumo" step="0.01" min="0"/>
+        <!--PARA EL VALIDADOR:-->
+        @if (isRequired('consumo')) {
+            <small class="text-red"> Este campo es requerido.</small>
+        }
+    </div>
+    <input style="display:none" type="text" id="favorito" name="favorito" formControlName="favorito"/>
+    <div class="form-buttons">
+      <button type="submit" class="btn btn-success">Editar Vehículo</button>
+      
+    </div>
+    </form>
+    <button class="btn btn-secondary back-button" routerLink="/vehiculos">Volver</button>
+    </div>
+  </div>
+</body>
+</html>

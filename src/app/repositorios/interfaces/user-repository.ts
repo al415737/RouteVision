@@ -6,8 +6,10 @@ import { Place } from '../../modelos/place';
 export const USER_REPOSITORY_TOKEN = new InjectionToken<UserRepository>('UserRepository');
 
 export interface UserRepository {
-    createUser(nombre: string, apellidos: string, email: string, user: string, password: string): Promise<User>;
+    createUser(nombre: string, apellidos: string, email: string, user: string, password: string, preferencia1: string, preferencia2: string): Promise<User>;
     consultarUsuarios(): Promise<User[]>;
+    getUsuario(): Promise<User | null>;
+    editUser(type: number, value: string): Promise<void>;
     deleteUser(email: string): Promise<void>;
     loginUser(email: string, password: string): Promise<[Vehiculo[], Place[]]>;
     logoutUser(): Promise<void>;

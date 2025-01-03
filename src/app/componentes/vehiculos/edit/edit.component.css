@@ -1,0 +1,146 @@
+html, body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    color: #fff;
+    margin: 0;
+    background-color: #011640;
+    min-height: 100%;
+  }
+  
+  .container {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+    justify-content: center;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .input-container {
+    display: flex;
+    flex-direction: column;
+    width: 600px;
+    padding: 30px;
+    border: 1px solid #038C8C;
+    border-radius: 8px;
+    background-color: #030F26;
+    box-shadow: 0 2px 4px rgba(3, 140, 140, 0.2);
+  }
+  
+  h2 {
+    margin-bottom: 10px;
+    color: #577EF2;
+  }
+  
+  .form-group {
+    margin-bottom: 8px;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 2px;
+    font-weight: bold;
+    color: #fff;
+  }
+
+  th, td {
+    padding: 15 px 10 px;
+  }
+  
+  select, input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #038C8C;
+    border-radius: 4px;
+    font-size: 14px;
+    background-color: #011640;
+    color: #fff;
+  }
+  
+  select:focus, input:focus {
+    outline: none;
+    border-color: #577EF2;
+    box-shadow: 0 0 0 2px rgba(87, 126, 242, 0.2);
+  }
+  
+  .coordinates-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  
+  .coordinate-input {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .help-text {
+    grid-column: 1 / -1;
+    margin: 10px 0;
+    font-style: italic;
+    color: #577EF2;
+  }
+  
+  button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+  }
+  
+  .btn-primary {
+    background-color: #025E73;
+    color: white;
+  }
+  
+  .btn-primary:hover {
+    background-color: #038C8C;
+  }
+  
+  .btn-success {
+    background-color: #577EF2;
+    color: white;
+  }
+  
+  .btn-success:hover {
+    background-color: #025E73;
+  }
+  
+  button:disabled {
+    background-color: #030F26;
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+  
+  @media (max-width: 1400px) {
+    .container {
+      flex-direction: column;
+      align-items: center;
+      background-color: #011640;
+    }
+  
+    .input-container {
+      width: 100%;
+      max-width: 600px;
+    }
+  }
+
+  .text-red {
+    color: red;
+    font-size: 0.875rem;
+}
+.form-buttons {
+  display: flex;
+  justify-content: center; /* Centra los botones horizontalmente */
+  gap: 10px; /* Espaciado horizontal entre botones */
+  margin-top: 20px; /* Espacio superior opcional */
+}
+
+.form-buttons button {
+  margin: 10px 0; /* Espacio entre botones */
+  width: 300px; /* Ajusta el ancho a tu preferencia */
+}

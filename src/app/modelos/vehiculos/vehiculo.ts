@@ -2,17 +2,19 @@ export abstract class Vehiculo {
     private matricula: string;
     private marca: string;
     private modelo: string;
-    private año_fabricacion: string;
+    private ano_fabricacion: string;
     private consumo: number;
     private tipo: string;
+    private favorito: boolean;
 
-    constructor (matricula: string, marca: string, modelo: string, año_fabricacion: string, consumo: number, tipo: string) {
+    constructor (matricula: string, marca: string, modelo: string, ano_fabricacion: string, consumo: number, tipo: string) {
         this.matricula = matricula;
         this.marca = marca;
         this.modelo = modelo;
-        this.año_fabricacion = año_fabricacion;
+        this.ano_fabricacion = ano_fabricacion;
         this.consumo = consumo;
         this.tipo = tipo;
+        this.favorito = false;
     }
 
     getMatricula(): string {
@@ -32,11 +34,19 @@ export abstract class Vehiculo {
     }
 
     getAñoFabricacion(){
-        return this.año_fabricacion;
+        return this.ano_fabricacion;
     }
 
     getTipo(){
         return this.tipo;
+    }
+
+    setFavorito(favorito: boolean){
+        this.favorito = favorito;
+    }
+
+    getFavorito(){
+        return this.favorito;
     }
 
     abstract obtenerCoste(kilometros: number, precio: any): any;

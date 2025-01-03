@@ -8,8 +8,6 @@ import { Observable } from 'rxjs';
 
 export class PrecioCarburantes {
 
-  private baseUrl = 'https://sedeaplicaciones.minetur.gob.es/ServiciosRESTCarburantes/PreciosCarburantes';
-
   constructor(private http: HttpClient) {}
 
   getMunicipios(): Observable<any> {
@@ -20,5 +18,5 @@ export class PrecioCarburantes {
   getEstacionesEnMunicipio(idMunicipio: number): Observable<any> {
     const url = `https://sedeaplicaciones.minetur.gob.es/ServiciosRESTCarburantes/PreciosCarburantes/EstacionesTerrestres/FiltroMunicipio/${idMunicipio}`;
     return this.http.get(url);
-  } 
+  }
 }

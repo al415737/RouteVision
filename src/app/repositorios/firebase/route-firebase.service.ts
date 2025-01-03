@@ -12,6 +12,7 @@ import { AuthStateService } from '../../utils/auth-state.service';
 import { getAuth } from 'firebase/auth';
 import { ServerNotOperativeException } from '../../excepciones/server-not-operative-exception';
 import { PlaceNotFoundException } from '../../excepciones/place-not-found-exception';
+import { NoElementsException } from '../../excepciones/no-Elements-exception';
 
 @Injectable({
   providedIn: 'root'
@@ -23,14 +24,15 @@ export class RouteFirebaseService implements RouteRepository{
 
   constructor(private _firestore: FirestoreService, private proxy: ProxysCalculoCombustibleService,  private _geocoding: OpenRouteService, private _authState: AuthStateService) {}
   
-  consultarRutaEspecifica(ruta: Route): Promise<boolean> {
+  async consultarRutaEspecifica(ruta: Route): Promise<boolean> {
     const uid = getAuth().currentUser?.uid;
-    const PATHROUTE = `ruta/${uid}/listaRutasInteré`;
-    return this._firestore.ifExist("nombre", ruta.getNombre(), PATHROUTE);  //Comprobar si la ruta específica existe
+    const PATHROUTE = `ruta/${uid}/listaRutasInterés`;
+    return await this._firestore.ifExist("nombre", ruta.getNombre(), PATHROUTE);  //Comprobar si la ruta específica existe
   }
   
   async calcularRuta(origen: Place, destino: Place, metodoMov: string) {
-    if(!this._firestore.ifExistPlace(origen) || !this._firestore.ifExistPlace(destino)){ 
+    const PATH = `Lugar/${this._authState.currentUser?.uid}/listaLugaresInterés`;
+    if(!this._firestore.ifExist('idPlace', origen.getIdPlace(), PATH) || !this._firestore.ifExist('idPlace', destino.getIdPlace(), PATH)){ 
       throw new PlaceNotFoundException();
     }
 
@@ -38,35 +40,65 @@ export class RouteFirebaseService implements RouteRepository{
   }
 
   
-  async obtenerCosteRuta(vehiculo: Vehiculo, ruta: Route,): Promise<number> {
-    const existVehiculo = this._firestore.ifExistVehicle(vehiculo);
+  //COSTE DE LA RUTA - IRENE
+  async obtenerCosteRuta(vehiculo: Vehiculo, ruta: Route): Promise<number> {
+    const existVehiculo = this._firestore.ifExist('matricula', vehiculo.getMatricula(), `vehiculo/${this._authState.currentUser?.uid}/listaVehiculos`);
     
-    if (!existVehiculo) return -1;
+    if (!existVehiculo) 
+      throw new NotExistingObjectException();
+
 
     let costeRuta: number;
+    costeRuta = 0;
 
-    if(vehiculo.getTipo() == 'Eléctrico'){
-      costeRuta=0;
-      //llamar a api luz
-      //llamar a obtenerCoste
+    if(vehiculo.getTipo() == 'Electrico'){  //ELECTRICO
+      const fechaHoy = new Date();
 
-    } else {
+      const indiceHora = fechaHoy.getHours(); // Obtener la hora (0-23)
+      console.log('La hora de la que se saca el precio de la luz (teniendo en cuenta la hora actual es: ' + indiceHora);
+
+      const listaPrecios = await this.proxy.getPreciosLuz();
+      // Buscar el precio correspondiente a la hora actual
+      const pvpc = listaPrecios.included.find((item: any) => item.type === 'PVPC');
+
+      // Extraemos los valores de precio
+      const precios = pvpc.attributes.values;
+        
+      const precioKWh = precios[indiceHora].value / 1000; // Convertir €/MWh a €/kWh
+      costeRuta = vehiculo.obtenerCoste(ruta.getKm(), precioKWh);
+
+    } else {  //DIESEL O GASOLINA
       const listaMunicipios = await this.proxy.getMunicipios();
 
-      const municipio = listaMunicipios.find((Municipio: any) => Municipio.Municipio === ruta.getOrigen());
+      const municipio = listaMunicipios.find((Municipio: any) => Municipio.Municipio === ruta.getMunicipio());
+      if (municipio == undefined){
+        return -2;
+      }
       const idMunicipio = municipio.IDMunicipio;
   
       const estacionesEnMunicipio = await this.proxy.getEstacionesEnMunicipio(idMunicipio);
-
-      costeRuta = vehiculo.obtenerCoste(ruta.getKm(), estacionesEnMunicipio.ListaEESSPrecio[0]);
+      if (estacionesEnMunicipio.ListaEESSPrecio.length == 0){
+        return -1;
+      }
+      let precioGasolinera;
+      if(vehiculo.getTipo() == 'Gasolina'){
+        precioGasolinera = estacionesEnMunicipio.ListaEESSPrecio[0]["Precio Gasolina 95 E5"];
+      } else { 
+        precioGasolinera = estacionesEnMunicipio.ListaEESSPrecio[0]["Precio Gasoleo A"]
+      }
+      costeRuta = vehiculo.obtenerCoste(ruta.getKm(), precioGasolinera);
     }
-
-    console.log('El coste de la ruta es: ' + costeRuta + '€');
     return costeRuta;
   }
 
+
   async costeRutaPieBicicleta(ruta: Route, origen: Place, destino: Place){
-    const rutaAPI: any = await this.calcularRuta(origen, destino, ruta.getMovilidad());
+    let rutaAPI:any = null;
+    if (ruta.getOption() === 'porDefecto'){
+      rutaAPI = await this.calcularRuta(origen, destino, ruta.getMovilidad());
+    }else{
+      rutaAPI = await this.getRouteFSE(origen, destino, ruta.getMovilidad(), ruta.getOption());
+    } 
     const duracion = (rutaAPI.features[0].properties.summary.duration) / 3600;
     let coste = 0;
 
@@ -83,8 +115,9 @@ export class RouteFirebaseService implements RouteRepository{
   }
 
   async getRouteFSE(start: Place, end: Place, movilidad: string, preferencia: string): Promise<any> {
-    const existPlace: boolean = await this._firestore.ifExistPlace(start);
-    const existPlace2: boolean = await this._firestore.ifExistPlace(end);
+    const PATH = `Lugar/${this._authState.currentUser?.uid}/listaLugaresInterés`;
+    const existPlace: boolean = await this._firestore.ifExist('idPlace',start.getIdPlace(), PATH);
+    const existPlace2: boolean = await this._firestore.ifExist('idPlace',end.getIdPlace(), PATH);
     if(!existPlace || !existPlace2)
       throw new NotExistingObjectException();
 
@@ -92,19 +125,26 @@ export class RouteFirebaseService implements RouteRepository{
     return response;
   }
 
-  async createRoute(nombre: string, start: Place, end: Place, movilidad: string, preferencia: string, km: number, duracion: number): Promise<Route> {
-    const existPlace: boolean = await this._firestore.ifExistPlace(start);
-    const existPlace2: boolean = await this._firestore.ifExistPlace(end);
-  
+  async createRoute(nombre: string, start: Place, end: Place, movilidad: string, preferencia: string, km: number, duracion: number, coste:number): Promise<Route> {
+    const PATH = `Lugar/${this._authState.currentUser?.uid}/listaLugaresInterés`;
+    const existPlace: boolean = await this._firestore.ifExist('idPlace',start.getIdPlace(), PATH);
+    const existPlace2: boolean = await this._firestore.ifExist('idPlace',end.getIdPlace(), PATH);
     if(!existPlace || !existPlace2)
       throw new NotExistingObjectException();
   
-    const newRoute: Route = new Route(nombre, start.getToponimo(), end.getToponimo(), preferencia, movilidad, km, duracion);
+    const newRoute: Route = new Route(nombre, start.getToponimo(), end.getToponimo(), preferencia, movilidad, km, duracion, start.getMunicipio(), coste);
     const uid = this._authState.currentUser?.uid;
-  
-    await this._firestore.createRoute(newRoute, `ruta/${uid}/listaRutasInterés`);
-  
+
+    await this._firestore.create(newRoute.getNombre(), newRoute, `ruta/${uid}/listaRutasInterés`);  
     return newRoute;
+  }
+
+  async actualizarRoutes(route: Route): Promise<any> {
+    const id = await this._firestore.get('nombre', route.getNombre(), `ruta/${this._authState.currentUser?.uid}/listaRutasInterés`);
+    if (id == '') {
+      throw new NoElementsException();
+    }
+    return await this._firestore.edit(route, `ruta/${this._authState.currentUser?.uid}/listaRutasInterés/${id}`);
   }
   
   async deleteRoute(nombre: string): Promise<boolean> {
@@ -112,13 +152,21 @@ export class RouteFirebaseService implements RouteRepository{
       throw new ServerNotOperativeException();
     }
     const uid = this._authState.currentUser?.uid;
-    await this._firestore.deleteRoute(`ruta/${uid}/listaRutasInterés`, nombre);
+    await this._firestore.delete(`ruta/${uid}/listaRutasInterés`, nombre);
     return true;
   }
 
   async getRoutes(): Promise<Route[]> {
-    return await this._firestore.getRoutes();
+    if (this._authState.currentUser == null)
+      throw new ServerNotOperativeException();
+    return await this._firestore.getValues(`ruta/${this._authState.currentUser.uid}/listaRutasInterés`);
   }
+
+  async marcarFavorito(ruta: Route, favorito: boolean): Promise<void> {
+      ruta.setFavorito(favorito);
+      return this.actualizarRoutes(ruta);
+  }
+
 }
 
 

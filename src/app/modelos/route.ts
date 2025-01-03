@@ -1,5 +1,3 @@
-import { or } from "firebase/firestore";
-
 export class Route {
     private nombre: string;
     private origen: string;
@@ -8,8 +6,12 @@ export class Route {
     private movilidad: string;
     private kilometros: number;
     private duration: number;
+    private favorito: boolean;
+    private municipio: string;
+    private coste: number;
 
-    constructor (nombre: string, origen: string, destino: string, option: string, movilidad: string, kilometros: number, duration: number) {
+    constructor (nombre: string, origen: string, destino: string, option: string, movilidad: string, kilometros: number,
+        duration: number, municipio: string, coste: number) {
         this.nombre = nombre;
         this.origen = origen;
         this.destino = destino;
@@ -17,6 +19,9 @@ export class Route {
         this.movilidad = movilidad;
         this.kilometros = kilometros;
         this.duration = duration;
+        this.favorito = false;
+        this.municipio = municipio;
+        this.coste = coste;
     }
 
     getNombre() {
@@ -47,11 +52,23 @@ export class Route {
         return this.duration;
     }
 
+    getFavorito(){
+        return this.favorito;
+    }
+
     setKm(km: number) {
         this.kilometros = km;
     }
 
     setDuration(duration: number) {
         this.duration = duration;
+    }
+
+    getMunicipio(): string {
+        return this.municipio;
+    }
+    
+    setFavorito(favorito: boolean){
+        this.favorito = favorito;
     }
 }

@@ -1,12 +1,14 @@
 import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
-import { Router } from '@angular/router';
-import { tileLayer, Map, marker, geoJSON, Marker, LatLngBounds } from 'leaflet';
-import { FirestoreService } from '../../repositorios/firebase/firestore.service';
-import { AuthStateService } from '../../utils/auth-state.service';
+import { tileLayer, Map, marker, geoJSON, Marker, LatLngBounds, LatLng, LatLngExpression } from 'leaflet';
 import { OpenRouteService } from '../../APIs/Geocoding/openRoute.service';
 import { InvalidPlaceException } from '../../excepciones/invalid-place-exception';
-import { catchError, map, of, throwError } from 'rxjs';
+import { catchError, map, throwError } from 'rxjs';
 import { InvalidCoordenatesException } from '../../excepciones/invalid-coordenates-exception';
+import { Place } from '../../modelos/place';
+import { RouteService } from '../../servicios/route.service';
+import { Vehiculo } from '../../modelos/vehiculos/vehiculo';
+import { Route } from '../../modelos/route';
+import { toast } from 'ngx-sonner';
 
 
 @Component({
@@ -22,12 +24,15 @@ export class MapComponent {
   private currentMarker: any | null = null;
   private currentMarker2: any | null = null;
   private listaMarkers: Marker[] = [];
+  private routeLayer: any[] = [];
   private bounds: any[] = [];
   private _rutasService = inject(OpenRouteService);
+  private routeService = inject(RouteService);
   @Input() selectedOption: string = '';
   @Output() nombreCiudades = new EventEmitter<any[]>();
   @Output() coordenadasSeleccionadas = new EventEmitter<{ lat: number; lng: number }>();
   @Output() lugaresSeleccionados = new EventEmitter<any[]>();
+  @Output() sendToRoute = new EventEmitter<{ distance: number; duration: number; costeRuta: number }>()
 
 
   ngAfterViewInit():void{
@@ -66,6 +71,7 @@ export class MapComponent {
             this.bounds = [];
           }
           
+          
           let lugares: any[] = [];
           for (let i = 0; i < response.features.length; i++) {
             let latlng = {
@@ -73,6 +79,7 @@ export class MapComponent {
               lng: response.features[i].geometry.coordinates[0]
             };
             const feature = response.features[i].properties.label;
+            console.log(response.features[i])
             this.currentMarker = marker(latlng).bindTooltip(feature, {
               permanent: true,
               className: "my-label",
@@ -81,7 +88,7 @@ export class MapComponent {
             this.currentMarker.addTo(this.map);
             this.listaMarkers.push(this.currentMarker);
             this.bounds.push(this.currentMarker.getLatLng());
-            lugares.push({ nombre: feature, coordenadas: latlng });
+            lugares.push({ nombre: feature, coordenadas: latlng, municipio: response.features[i].properties.region });
           }
           this.lugaresSeleccionados.emit(lugares);
           let zoom = new LatLngBounds(this.bounds);
@@ -114,7 +121,7 @@ export class MapComponent {
               lat: response.features[i].geometry.coordinates[1],
               lng: response.features[i].geometry.coordinates[0]
             };
-    
+            console.log(response.features[i])
             this.currentMarker = marker(latlng).bindTooltip(feature, {
               permanent: true,
               className: "my-label",
@@ -137,4 +144,56 @@ export class MapComponent {
         })
       );
     }
+  
+    async getRoute(nombre: string, origen: Place, destino: Place, movilidad: string, option: string, vehiculo: Vehiculo | null) {
+      this.reset();
+    
+      const responseRuta = option === 'porDefecto'
+      ? await this.routeService.calcularRuta(origen, destino, movilidad)
+      : await this.routeService.getRouteFSE(origen, destino, movilidad, option);
+    
+      const distance = responseRuta.features[0].properties.summary.distance / 1000;
+      const duration = responseRuta.features[0].properties.summary.duration / 60;
+      let costeRuta = 0;
+     
+      if(movilidad === 'foot-walking' || movilidad === 'cycling-regular'){
+        let ruta = new Route(nombre, origen.getToponimo(), destino.getToponimo(), option, movilidad, distance, duration, origen.getMunicipio(), 0);
+        costeRuta = await this.routeService.costeRutaPieBicicleta(ruta, origen, destino);
+      }
+      else if(vehiculo != null){
+        costeRuta = await this.routeService.obtenerCosteRuta(vehiculo, new Route(nombre, origen.getToponimo(), destino.getToponimo(), option, movilidad, distance, duration, origen.getMunicipio(), 0));
+      }
+
+      if (costeRuta == -1) {
+        toast.error('El lugar de origen no dispone de gasolineras. Por favor, elija un lugar con gasolineras cercanas.');
+      }else if(costeRuta == -2){
+        toast.error('No existe tu municipio en la base de datos de gasolineras. Por favor, contacta con el administrador.');
+      }
+      else{
+        this.sendToRoute.emit({ distance, duration, costeRuta });
+    
+        const origenCoords: LatLngExpression = [origen.getCoordenadas()[1], origen.getCoordenadas()[0]];
+        const destinoCoords: LatLngExpression = [destino.getCoordenadas()[1], destino.getCoordenadas()[0]];
+      
+        const marker1 = marker(origenCoords).addTo(this.map).bindPopup(origen.getToponimo());
+        const marker2 = marker(destinoCoords).addTo(this.map).bindPopup(destino.getToponimo());
+      
+        this.listaMarkers.push(marker1, marker2);
+      
+        const bounds = new LatLngBounds([marker1.getLatLng(), marker2.getLatLng()]);
+        this.map.fitBounds(bounds);
+      
+        const routeLayer = geoJSON(responseRuta).addTo(this.map);
+        this.routeLayer.push(routeLayer);
+      }
+    }
+    
+    reset() {
+      this.listaMarkers.forEach(marker => this.map.removeLayer(marker));
+      this.listaMarkers = [];
+    
+      this.routeLayer.forEach(layer => this.map.removeLayer(layer));
+      this.routeLayer = [];
+    }
+    
 }

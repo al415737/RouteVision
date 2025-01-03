@@ -3,6 +3,7 @@ import { UserRepository, USER_REPOSITORY_TOKEN } from '../repositorios/interface
 import { ObligatoryFieldsException } from '../excepciones/obligatory-fields-exception';
 import { UserNotFoundException } from '../excepciones/user-not-found-exception';
 import { Auth } from '@angular/fire/auth';
+import { PreferenceInvalidException } from '../excepciones/preference-invalid-exception';
 
 @Injectable({
   providedIn: 'root'
@@ -12,26 +13,30 @@ export class UserService {
   
   constructor(@Inject(USER_REPOSITORY_TOKEN) private userRepo: UserRepository) {}
 
-  createUser(nombre: string, apellidos: string, email: string, user: string, password: string) {
+  async createUser(nombre: string, apellidos: string, email: string, user: string, password: string) {
     if (!nombre.trim() || !apellidos.trim() || !email.trim() || !user.trim() || !password.trim())
       throw new ObligatoryFieldsException();
 
-    return this.userRepo.createUser(nombre, apellidos, email, user, password);
+    return await this.userRepo.createUser(nombre, apellidos, email, user, password, '', '');
   }
 
-  consultarUsuarios(){
-    return this.userRepo.consultarUsuarios();
+  async consultarUsuarios(){
+    return await this.userRepo.consultarUsuarios();
   }
 
-  async deleteUser(email: string):Promise<void> {
-    if (!email.trim())
+  async getUsuario(){
+    return await this.userRepo.getUsuario();
+  }
+
+  async deleteUser(email: string | null | undefined):Promise<void> {
+    if (!email || !email.trim())
       throw new ObligatoryFieldsException();
 
-    await this.userRepo.deleteUser(email);
+    return await this.userRepo.deleteUser(email);
   }
 
-  loginUser(email: string, password: string) {
-    return this.userRepo.loginUser(email, password);
+  async loginUser(email: string, password: string) {
+    return await this.userRepo.loginUser(email, password);
   }
 
   async logoutUser(): Promise<void> {
@@ -39,5 +44,14 @@ export class UserService {
       throw new UserNotFoundException();
     }
     await this.userRepo.logoutUser();
+  }
+
+  async editUser(type: number, value: string) {
+    if (type < 1 || type > 2)
+      throw new PreferenceInvalidException();
+
+    if (value != '' && value != 'fastest' && value != 'shortest' && value != 'recommended' && value != 'porDefecto' && value != 'driving-car' && value != 'foot-walking' && value != 'cycling-regular')
+      throw new PreferenceInvalidException(); 
+    await this.userRepo.editUser(type, value);
   }
 }

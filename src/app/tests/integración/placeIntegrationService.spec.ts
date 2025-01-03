@@ -45,7 +45,7 @@ describe('PlaceIntegrationService', () => {
 
   //HISTORIA 5
   it('PRUEBA INTEGRACIÓN --> HU5E01. Registrar nuevo lugar de interés (Caso Válido):', async () => {
-    const mockPlace: Place = new Place('001', "Castellón de la Plana", [39.98, -0.049]);
+    const mockPlace: Place = new Place('001', "Castellón de la Plana", [39.98, -0.049], "Castellón");
 
     spyOn(placeRepositorio, 'createPlaceC').and.resolveTo(mockPlace);
     
@@ -55,12 +55,12 @@ describe('PlaceIntegrationService', () => {
   });
 
   it('PRUEBA INTEGRACIÓN --> HU5E02. Registro de un lugar de interés incorrecto (Caso Inválido):', async () => {
-    const mockPlace: Place = new Place('001', "Castellón de la Plana", [39.98, -0.049]);
+    const mockPlace: Place = new Place('001', "Castellón de la Plana", [39.98, -0.049], "Castellón");
 
     spyOn(placeRepositorio, 'createPlaceC').and.resolveTo(mockPlace);
   
     try{
-      servicePlace.createPlaceC([899.99, ]);
+      await servicePlace.createPlaceC([899.99, ]);
       expect(placeRepositorio.createPlaceC).toHaveBeenCalledWith([899.99, ]);
     } catch(error) {
       expect(error).toBeInstanceOf(InvalidCoordenatesException);
@@ -70,22 +70,22 @@ describe('PlaceIntegrationService', () => {
 
   //HISTORIA 6
   it('PRUEBA INTEGRACIÓN --> HU6E01. Registro de lugar de interés con un topónimo correcto (Escenario Válido):', async () => {
-    const mockPlace: Place = new Place('002', "Bilbao", [43.26271, -2.92528]);
+    const mockPlace: Place = new Place('002', "Bilbao", [43.26271, -2.92528], "Bilbao");
 
     spyOn(placeRepositorio, 'createPlaceT').and.resolveTo(mockPlace);
     
-    const result = await servicePlace.createPlaceT('Bilbao');
-    expect(placeRepositorio.createPlaceT).toHaveBeenCalledWith('Bilbao');
+    const result = await servicePlace.createPlaceT("Bilbao");
+    expect(placeRepositorio.createPlaceT).toHaveBeenCalledWith("Bilbao");
     expect(result).toEqual(mockPlace);
   });
 
   it('PRUEBA INTEGRACIÓN --> HU6E01. Registro de lugar de interés con un topónimo correcto (Escenario Válido):', async () => {
-    const mockPlace: Place = new Place('002', "Bilbao", [43.26271, -2.92528]);
+    const mockPlace: Place = new Place('002', "Bilbao", [43.26271, -2.92528], "Bilbao");
 
     spyOn(placeRepositorio, 'createPlaceT').and.resolveTo(mockPlace);
   
     try{
-      servicePlace.createPlaceT('');
+      await servicePlace.createPlaceT('');
       expect(placeRepositorio.createPlaceT).toHaveBeenCalledWith('');
     } catch(error) {
       expect(error).toBeInstanceOf(InvalidPlaceException);
@@ -93,7 +93,7 @@ describe('PlaceIntegrationService', () => {
   });
 
   it('PRUEBA INTEGRACIÓN --> HU7E01. Consulta de lista de lugares dados de alta (Escenario válido):', async () => {
-    const mockPlace: Place[] = [new Place('001', "Castellón de la Plana", [39.98, -0.049]), new Place('002', "Barcelona", [33.98, -0.049]),];
+    const mockPlace: Place[] = [new Place('001', "Castellón de la Plana", [39.98, -0.049], "Castellón"), new Place('002', "Barcelona", [33.98, -0.049], "Barcelona")];
 
     spyOn(placeRepositorio, 'getPlaces').and.resolveTo(mockPlace);
     
@@ -103,14 +103,13 @@ describe('PlaceIntegrationService', () => {
   });
 
   it('PRUEBA INTEGRACIÓN --> HU7E02. Consulta de lista de lugares dados de alta sin estar registrado (Escenario inválido):', async () => {
-    const mockPlace: Place[] = [new Place('001', "Castellón de la Plana", [39.98, -0.049]), new Place('002', "Barcelona", [33.98, -0.049]),];
+    const mockPlace: Place[] = [new Place('001', "Castellón de la Plana", [39.98, -0.049], "Castellón"), new Place('002', "Barcelona", [33.98, -0.049], "Barcelona")];
     spyOn(placeRepositorio, 'getPlaces').and.resolveTo(mockPlace);
     spyOn(authStateService as any, 'currentUser').and.returnValue(null);
   
     try{
-      servicePlace.getPlaces();
+      await servicePlace.getPlaces();
       expect(placeRepositorio.getPlaces).toHaveBeenCalledWith();
-      throw new ServerNotOperativeException();
     } catch(error) {
       expect(error).toBeInstanceOf(ServerNotOperativeException);
     }
@@ -118,7 +117,7 @@ describe('PlaceIntegrationService', () => {
   });
 
   it('HU8E01. Eliminación de un lugar de interés de la lista de lugares de interés del usuario (Escenario Válido):', async() => {
-    const mockPlace: Place = new Place('001', "Castellón de la Plana", [39.98, -0.049]);
+    const mockPlace: Place = new Place('001', "Castellón de la Plana", [39.98, -0.049], "Castellón");
     spyOn(placeRepositorio, 'deletePlace').and.resolveTo(true);
     const result = await servicePlace.deletePlace(mockPlace.idPlace);
     expect(placeRepositorio.deletePlace).toHaveBeenCalledWith(mockPlace.idPlace);
@@ -128,7 +127,7 @@ describe('PlaceIntegrationService', () => {
   it('HU8E02. Eliminación de un lugar de interés que no está en la lista de lugares de interés del usuario (Escenario Inválido):', async() => {
     spyOn(placeRepositorio, 'deletePlace').and.resolveTo(true);
     try {
-      const result = await servicePlace.deletePlace('025');
+      await servicePlace.deletePlace('025');
       expect(placeRepositorio.deletePlace).toHaveBeenCalledWith('025');
     } catch (error) {
       throw new NotExistingObjectException(); 

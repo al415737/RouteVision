@@ -1,7 +1,6 @@
 import { inject, Injectable } from '@angular/core';
-import { Auth, authState, getAuth, signOut } from '@angular/fire/auth';
+import { Auth, authState, getAuth } from '@angular/fire/auth';
 import { Observable } from 'rxjs';
-import { UserNotFoundException } from '../excepciones/user-not-found-exception';
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +16,4 @@ export class AuthStateService {
     return getAuth().currentUser;
   }
 
-  logOut() {
-    return signOut(this._auth);
-  }
 }

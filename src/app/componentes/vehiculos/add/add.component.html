@@ -12,32 +12,68 @@
   <div class="container">
     <div class="input-container" style="margin-left: 20px;">
       <h2>Añadir Vehículo</h2>
-
-      <label for="matricula">Matrícula:</label>
-      <input id="matricula" type="text" [(ngModel)]="matricula" placeholder="Introduce la matrícula" required />
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <div class="form-group">
+            <label for="matricula">Matricula</label>
+            <input type="text" id="matricula" name="matricula" placeholder="Escribe una matricula" formControlName="matricula" />
+            <!--PARA EL VALIDADOR:-->
+            @if (isRequired('matricula')) {
+                <small class="text-red"> Este campo es requerido.</small>
+            }
+            @if (getControlError('matricula', 'pattern')){
+              <small class="text-red"> La matrícula no tiene el formato correcto.</small>
+            }
+        </div>
+        <div class="form-group">
+            <label for="marca">Marca</label>
+            <input type="text" id="marca" name="marca" placeholder="Escribe tu marca" formControlName="marca" />
+            <!--PARA EL VALIDADOR:-->
+            @if (isRequired('marca')) {
+                <small class="text-red"> Este campo es requerido.</small>
+            }
+        </div>
+        <div class="form-group">
+            <label for="modelo">Modelo</label>
+            <input type="text" id="modelo" name="modelo" placeholder="Escribe tu modelo" formControlName="modelo" />
+            <!--PARA EL VALIDADOR:-->
+            @if (isRequired('modelo')) {
+                <small class="text-red"> Este campo es requerido.</small>
+            }
+        </div>
+        <div class="form-group">
+            <label for="fecha">Fecha Fabricación</label>
+            <input type="date" id="fecha" name="fecha" placeholder="Eliga tu fecha de Fabricación" formControlName="fecha" />
+        </div>
+        <div class="form-group">
+          <label for="tipo">Tipo de combustible</label>
+          <select id="tipo" formControlName="tipo" required>
+            <option style="display:none"></option>
+            <option value="Gasolina">Gasolina</option>
+            <option value="Diesel">Diesel</option>
+            <option value="Electrico">Eléctrico</option>
+          </select>
+          <!--PARA EL VALIDADOR:-->
+          @if (isRequired('tipo')) {
+              <small class="text-red"> Este campo es requerido.</small>
+          }
+      </div>
+      <div class="form-group">
+        <label for="consumo">Consumo</label>
+        <input type="number" id="consumo" name="consumo" placeholder="Escribe tu consumo" formControlName="consumo" step="0.01" min="0"/>
+        <!--PARA EL VALIDADOR:-->
+        @if (isRequired('consumo')) {
+            <small class="text-red"> Este campo es requerido.</small>
+        }
+        @if (getControlError('consumo', 'consumoInvalido')) {
+          <small class="text-red"> El consumo debe ser mayor que cero.</small>
+        }
+    </div>
+    <div class="form-buttons">
+      <button type="submit" class="btn btn-success">Añadir Vehículo</button>
       
-      <label for="marca">Marca:</label>
-      <input id="marca" type="text" [(ngModel)]="marca" placeholder="Introduce la marca del vehículo" required />
-      
-      <label for="modelo">Modelo:</label>
-      <input id="modelo" type="text" [(ngModel)]="modelo" placeholder="Introduce el modelo del vehículo" required />
-      
-      <label for="anyo_fabricacion">Año de fabricación:</label>
-      <input id="anyo_fabricacion" type="string" [(ngModel)]="anyo_fabricacion" placeholder="Introduce el año de fabricación" required />
-      
-      <label for="consumo">Consumo (L/100km):</label>
-      <input id="consumo" type="number" [(ngModel)]="consumo" placeholder="Introduce el consumo" required step="0.01" min="0"/>
-
-      <label for="tipo">Tipo de Combustible:</label>
-      <select id="tipo" [(ngModel)]="tipo" required>
-        <option value="Gasolina 95 E5">Gasolina 95 E5</option>
-        <option value="Gasolina 98 E5">Gasolina 98 E5</option>
-        <option value="Gasoleo A">Gasoleo A</option>
-        <option value="Gasoleo B">Gasoleo B</option>
-      </select>
-
-      <button (click)="guardarVehiculo()" class="btn-success">Añadir Vehículo</button>
-      <button class="btn-secondary back-button" routerLink="/vehiculos">Volver</button>
+    </div>
+    </form>
+    <button class="btn btn-secondary back-button" routerLink="/vehiculos">Volver</button>
     </div>
   </div>
 </body>

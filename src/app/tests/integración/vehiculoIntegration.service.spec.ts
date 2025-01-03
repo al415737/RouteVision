@@ -14,6 +14,7 @@ import { firebaseConfig } from '../../app.config';
 import { CocheGasolina } from '../../modelos/vehiculos/cocheGasolina';
 import { CocheDiesel } from '../../modelos/vehiculos/cocheDiesel';
 import { VehicleNotFoundException } from '../../excepciones/vehicle-not-Found-Exception';
+import { NotExistingObjectException } from '../../excepciones/notExistingObjectException';
 
 describe('VehiculoIntegrationService', () => {
     let service: UserService;
@@ -49,13 +50,13 @@ describe('VehiculoIntegrationService', () => {
 
     it('HU9E01. Vehículo registrado en el sistema (Escenario Válido)', async () => {
         //GIVEN: El usuario [“Ana2002”, “anita@gmail.com“,“aNa-24”] con listaVehículos-Ana2002 = [ ].
-        const mockData = new CocheDiesel("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasoleo A");
+        const mockData = new CocheDiesel("1234 BBB", "Peugeot", "407", "2007", 8.1, "Diesel");
         spyOn(vehiRepo, 'crearVehiculo').and.resolveTo(mockData);
 
         spyOn(vehiRepo, 'eliminarVehiculo').and.resolveTo();
 
         //WHEN: El usuario intenta dar de alta un vehículo → [Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1].
-        const vehiculo = await vehiculoService.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasoleo A");
+        const vehiculo = await vehiculoService.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Diesel");
         
         //THEN: El sistema registra el vehículo en la parte de la base de datos dirigida a Ana2002 →  listaVehículos-Ana2002= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1}].
         expect(vehiRepo.crearVehiculo).toHaveBeenCalledWith(mockData);
@@ -66,7 +67,7 @@ describe('VehiculoIntegrationService', () => {
     });
 
     it('HU9E05. Registro de vehículo sin matricula (Escenario Inválido)', async () => {
-        const mockData = new CocheDiesel("", "Peugeot", "407", "2007", 8.1, "Precio Gasoleo A");
+        const mockData = new CocheDiesel("", "Peugeot", "407", "2007", 8.1, "Diesel");
         spyOn(vehiRepo, 'crearVehiculo').and.resolveTo(mockData);
         
         spyOn(vehiRepo, 'eliminarVehiculo').and.resolveTo();
@@ -75,7 +76,7 @@ describe('VehiculoIntegrationService', () => {
 
         try{
             //When: El usuario intenta dar de alta un vehículo → [Matrícula=” ”, Marca=”Seat”, Modelo=”Ibiza”, Año Fabricación=”2003”, Consumo=4.3].
-            vehiculoService.crearVehiculo("", "Peugeot", "407", "2007", 8.1,"Precio Gasoleo A")
+            vehiculoService.crearVehiculo("", "Peugeot", "407", "2007", 8.1,"Diesel")
             expect(vehiRepo.crearVehiculo).toHaveBeenCalledWith(mockData);
             //Then: El sistema no registra el vehículo y lanza una excepción NullLicenseException() →  listaVehículos-Ana2002= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1}].
         }catch(error){
@@ -86,7 +87,7 @@ describe('VehiculoIntegrationService', () => {
     it('HU10E01. Consulta de vehículos dados de alta (Escenario Válido)', async () => {
         //Given: El usuario Ana con la sesión iniciada y la listaVehículos = [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1}].
         const mockData: Vehiculo[] = [
-            new CocheDiesel("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasoleo A"),
+            new CocheDiesel("1234 BBB", "Peugeot", "407", "2007", 8.1, "Diesel"),
         ];
         spyOn(vehiRepo, 'consultarVehiculo').and.resolveTo(Promise.resolve(mockData));
 
@@ -113,12 +114,11 @@ describe('VehiculoIntegrationService', () => {
         expect(vehiculos).toEqual(mockData);  
     });
 
-
     //HISTORIA 11
     it('PRUEBA INTEGRACIÓN --> H11-E01. Eliminar vehículo existente del sistema (Escenario Válido): ', async () => {
         spyOn(vehiRepo, 'eliminarVehiculo').and.resolveTo();
 
-        const vehiculo = new CocheGasolina("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasolina 95 E5");
+        const vehiculo = new CocheGasolina("1234 BBB", "Peugeot", "407", "2007", 8.1, "Gasolina");
 
         const result = await vehiculoService.eliminarVehiculo(vehiculo.getMatricula());
         expect(vehiRepo.eliminarVehiculo).toHaveBeenCalledWith(vehiculo.getMatricula());
@@ -137,4 +137,33 @@ describe('VehiculoIntegrationService', () => {
             expect(error).toBeInstanceOf(VehicleNotFoundException);
         }
     });
+
+    it('HU12E01. Actualización correcta de un vehículo (Escenario válido):', async () => {
+        //GIVEN: El usuario [“Test”, “test@test.com“,“test123”] con la sesión de su cuenta activa y la lista actual de vehículos = [{"1234 BBB", "Peugeot", "407", "2007", 8.1, 'Diesel'}].
+        const mockData: Vehiculo = new CocheDiesel("1234 BBB", "Peugeot", "407", "2007", 7.1, 'Diesel');
+        spyOn(vehiRepo, 'actualizarVehiculo').and.resolveTo(mockData);
+
+        //WHEN: El usuario quiere actualizar los datos del vehículo “1234 BBB” con la marca = “Peugeot”, modelo = “407”, tipo de combustible = “Diesel”, año de fabricación = “2010” y consumo del vehículo cada 100 km = “7.1”.
+        const vehiculos = await vehiculoService.actualizarVehiculo("1234 BBB", "Peugeot", "407", "2007", 7.1, 'Diesel', false);
+        expect(vehiRepo.actualizarVehiculo).toHaveBeenCalledWith(mockData);
+
+        //THEN: Se actualiza los datos del vehículo = {["1234 BBB", "Peugeot", "407", "2007", 7.1, 'Diesel'].
+        expect(vehiculos).toEqual(mockData);
+    });
+
+    it('HU12E03. Error al intentar actualizar un vehículo que no existe (Escenario inválido):', async () => {
+        //GIVEN: El usuario [“Test”, “test@test.com“,“test123”] con la sesión de su cuenta activa y la lista actual de vehículos = [{"1234 BBB", "Peugeot", "407", "2007", 8.1, 'Diesel'}].
+        spyOn(vehiRepo, 'actualizarVehiculo');
+        const mockData = new CocheDiesel("1234 BBB", "Peugeot", "407", "2007", 7.1, 'Diesel')
+    
+        //WHEN: El usuario quiere actualizar los datos del vehículo “1234 BBB” con la marca = “Peugeot”, modelo = “407”, tipo de combustible = “Diesel”, año de fabricación = “2010” y consumo del vehículo cada 100 km = “7.1”.
+        //THEN: Se actualiza la lista actual de vehículos = {{"1234 BBB", "Peugeot", "407", "2007", 7.1, 'Diesel'}.
+        try {
+            await vehiculoService.actualizarVehiculo("1234 BBB", "Peugeot", "407", "2007", 7.1, 'Diesel', false)
+            expect(vehiRepo.actualizarVehiculo).toHaveBeenCalledWith(mockData);
+        } catch (error) {
+            expect(error).toBeInstanceOf(NotExistingObjectException);
+        }
+        
+      });
 });

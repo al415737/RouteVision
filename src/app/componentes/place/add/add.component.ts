@@ -49,6 +49,7 @@ export default class AddComponent {
 
   buscarCoordenadas(){
     if (this.mapComponent) {
+      console.log(this.latitude, this.longitude)
       if (this.latitude && this.longitude) {
         this.mapComponent.buscarCoordenadas(parseFloat(this.latitude), parseFloat(this.longitude)).subscribe({
           error: (err:any) => {
@@ -69,8 +70,9 @@ export default class AddComponent {
         this._placeService.createPlaceC([this.resultado.coordenadas.lat, this.resultado.coordenadas.lng]);
         
       }else if (this.selectedOption === 'toponym') {
-        this._placeService.createPlaceT(this.resultado.nombre, );
+        this._placeService.createPlaceT(this.resultado.nombre);
       }
+      toast.success('Lugar añadido correctamente.');
       this._router.navigateByUrl('/lugares');
     }else{
       toast.info('Por favor, seleccione un lugar o coordenadas.');

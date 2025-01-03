@@ -1,8 +1,8 @@
-import { inject, Inject, Injectable } from '@angular/core'; 
+import { Inject, Injectable } from '@angular/core'; 
 import { InvalidCoordenatesException } from '../excepciones/invalid-coordenates-exception';
 import { PlaceRepository, PLACE_REPOSITORY_TOKEN } from '../repositorios/interfaces/place-repository';
-import { AuthStateService } from '../utils/auth-state.service';
 import { InvalidPlaceException } from '../excepciones/invalid-place-exception';
+import { Place } from '../modelos/place';
 
 const pathPlace = 'place';
 
@@ -13,7 +13,7 @@ const pathPlace = 'place';
 export class PlaceService {
   constructor(@Inject(PLACE_REPOSITORY_TOKEN) private placeRepositorio: PlaceRepository) { }
 
-  createPlaceC(coordenadas: number[]){
+  async createPlaceC(coordenadas: number[]){
     if (coordenadas.length != 2) {
       throw new InvalidCoordenatesException();
     }
@@ -26,22 +26,27 @@ export class PlaceService {
         throw new InvalidCoordenatesException();
     }
     
-    return this.placeRepositorio.createPlaceC(coordenadas);
+    return await this.placeRepositorio.createPlaceC(coordenadas);
   } 
 
-  createPlaceT(toponimo: string){
+  async createPlaceT(toponimo: string){
     if (toponimo == null || toponimo == '') {
       throw new InvalidPlaceException();
     }
-    return this.placeRepositorio.createPlaceT(toponimo);
+    return await this.placeRepositorio.createPlaceT(toponimo);
   }
 
-  getPlaces(){
-    return this.placeRepositorio.getPlaces();
+  async getPlaces(){
+    return await this.placeRepositorio.getPlaces();
     }
 
   async deletePlace(idPlace: string): Promise<boolean> {
     return await this.placeRepositorio.deletePlace(idPlace);
   }
+
+  async marcarFavorito(place: Place, favorito: boolean){
+      return await this.placeRepositorio.marcarFavorito(place, favorito);
+  }
+
 
 }
