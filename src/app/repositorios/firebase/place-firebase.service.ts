@@ -94,6 +94,6 @@ export class PlaceFirebaseService implements PlaceRepository{
 
     async marcarFavorito(place: Place, favorito: boolean): Promise<any> {
         place.setFavorito(favorito);
-        return this.actualizarPlace(place);
+        return await this.actualizarPlace(place);
     }
 };

@@ -55,12 +55,13 @@ export default class PlaceComponent {
 
   marcarFavorito(place: Place){
       this._placeService.marcarFavorito(place, !place.getFavorito());
+      place.setFavorito(!place.getFavorito());
       this.updateDataSource();
        
       if(place.getFavorito() == true){
-        toast.success('Vehículo marcado como favorito.');
+        toast.success('Lugar de interés marcado como favorito.');
       } else {
-          toast.success('Vehiculo ya no es favorito.');
+          toast.success('Lugar ya no es favorito.');
       }
   }
 

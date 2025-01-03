@@ -248,11 +248,13 @@ export class FirestoreService {
 
       return querySnapshot.docs.map(doc => { 
         const data = doc.data();
-        return new Place(
+        const p = new Place(
           data['idPlace'], 
           data['toponimo'],
           data['coordenadas'],
         );
+        p.setFavorito(data['favorito']);
+        return p;
       }); 
     } catch (error) {
       throw new ServerNotOperativeException();
@@ -346,7 +348,7 @@ export class FirestoreService {
   async actualizarPlace(place:Place, id:string){
     const listaPlaceRef = doc(
       this._firestore, 
-      `Lugar/${this._authState.currentUser?.uid}/listaLugares/${id}`
+      `Lugar/${this._authState.currentUser?.uid}/listaLugaresInterés/${id}`
     );
   
     const plainObject = { ...place };
@@ -354,7 +356,7 @@ export class FirestoreService {
       await updateDoc(listaPlaceRef, plainObject);
       return place;
     } catch (error) {
-      console.error('Error al actualizar vehículo:', error);
+      console.error('Error al actualizar lugar:', error);
       return place;
     }
   }
@@ -371,7 +373,7 @@ export class FirestoreService {
       await updateDoc(listaRoutesRef, plainObject);
       return route;
     } catch (error) {
-      console.error('Error al actualizar vehículo:', error);
+      console.error('Error al actualizar rutas:', error);
       return route;
     }
   }
