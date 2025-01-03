@@ -50,9 +50,13 @@ export default class PlaceComponent {
   onDelete(place: Place) {
     this.dialog.open(DeleteComponent, {
       data: {id: place.getIdPlace(), nombre:place.getToponimo()},
-    }).afterClosed().subscribe(() => {
-      toast.success('Lugar eliminado correctamente.');
-      this.updateDataSource();
+    }).afterClosed().subscribe((result) => {
+      if (result.borrado) {
+        toast.success("El lugar se ha borrado correctamente")
+        this.updateDataSource();
+      } else {
+        toast.info("No se ha borrado el lugar")
+      }
     });
   }
 

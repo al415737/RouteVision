@@ -27,11 +27,11 @@ export class DeleteComponent {
   readonly data = inject(MAT_DIALOG_DATA);
 
   onNoClick(): void {
-    this.dialogRef.close();
+    this.dialogRef.close({borrado:false});
   }
 
   borrarLugar(){
     this._placeService.deletePlace(this.data.id);
-    this.dialogRef.close();
+    this.dialogRef.close({borrado:true});
   }
 }

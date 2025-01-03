@@ -4,7 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { HeaderComponent } from '../../home/header/header.component';
 import { VehiculoService } from '../../../servicios/vehiculo.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -26,6 +26,7 @@ export default class ConsultarComponent {
     displayedColumns: string[] = ['matricula', 'marca', 'modelo', 'ano_fabricacion', 'consumo', 'tipo', 'favorito', 'edit', 'delete'];
     currentPage = 0;
     readonly dialog = inject(MatDialog);
+    private router = inject(Router);
     @ViewChild(MatPaginator) paginator!: MatPaginator;
 
     constructor(private servicioVehiculo: VehiculoService){}
@@ -49,10 +50,14 @@ export default class ConsultarComponent {
     eliminarVehiculo(vehiculo: Vehiculo){
       this.dialog.open(DeleteComponent, {
         data: {matricula: vehiculo.getMatricula()},
-      }).afterClosed().subscribe(() => {
-          toast.success('Vehiculo borrado correctamente.'); 
+      }).afterClosed().subscribe((result) => {
+        if (result.borrado) {
+          toast.success("El vehiculo se ha borrado correctamente")
           this.obtenerVehiculos();
-      });
+        } else {
+          toast.info("No se ha borrado el vehiculo")
+        }
+      }); 
     }
 
     marcarFavorito(vehiculo: Vehiculo){

@@ -48,9 +48,14 @@ export default class RouteComponent {
   onDelete(route: Route) {
     this.dialog.open(DeleteComponent, {
       data: {id: route.getNombre()},
-    }).afterClosed().subscribe(() => {
-      this.updateDataSource();
-    }) ;
+    }).afterClosed().subscribe((result) => {
+      if (result.borrado) {
+        toast.success("La ruta se ha borrado correctamente")
+        this.updateDataSource();
+      } else {
+        toast.info("No se ha borrado la ruta")
+      }
+    });
   }
 
   marcarFavorito(route: Route){

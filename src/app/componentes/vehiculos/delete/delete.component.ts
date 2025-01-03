@@ -8,6 +8,7 @@ import {
   MatDialogTitle,
 } from '@angular/material/dialog';
 import { VehiculoService } from '../../../servicios/vehiculo.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-delete',
@@ -24,14 +25,15 @@ import { VehiculoService } from '../../../servicios/vehiculo.service';
 export class DeleteComponent {
   private dialogRef = inject(MatDialogRef);
     private _vehiculoService = inject(VehiculoService);
+    private router = inject(Router);
     readonly data = inject(MAT_DIALOG_DATA);
   
     onNoClick(): void {
-      this.dialogRef.close();
+      this.dialogRef.close({borrado:false});
     }
   
     borrarLugar(){
       this._vehiculoService.eliminarVehiculo(this.data.matricula);
-      this.dialogRef.close();
+      this.dialogRef.close({borrado:true});
     }
 }
