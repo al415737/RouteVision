@@ -29,4 +29,9 @@ export default class ProfileComponent {
     this.preferencia1 = usuario?.getPref1();
     this.preferencia2 = usuario?.getPref2();
   }
+
+  async guardarAjustes(){
+    
+  }
+
 }
