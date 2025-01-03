@@ -71,6 +71,18 @@ export class FirestoreService {
     return firstDocument.id;
   }
 
+  async getValue(id: string, PATH: string): Promise<any> {
+    const _collection = collection(this._firestore, PATH);
+    const lista = doc(_collection, id);
+    const value = await getDoc(lista);
+    
+    if (value.exists()) {
+      const data = value.data(); // Objeto plano
+        return DataAdapter.adapt(PATH, data);
+    }
+    return null;
+  }
+
   async getValues(PATH: string): Promise<any> {
     try {
       const listaRef = collection(this._firestore, PATH);
@@ -84,94 +96,6 @@ export class FirestoreService {
       throw new ServerNotOperativeException();
     }
   }
-
-  async getVehiculo(matricula:string){
-    const _collection = collection(this._firestore, `vehiculo/${this._authState.currentUser?.uid}/listaVehiculos/`);
-    // Referencia a la subcolección listaLugares dentro del documento del usuario
-    const id = await this.get('matricula', matricula, `vehiculo/${this._authState.currentUser?.uid}/listaVehiculos/`);
-    const listaLugaresRef = doc(_collection, id);
-    const vehiculo = await getDoc(listaLugaresRef);
-    
-    if (vehiculo.exists()) {
-      const data = vehiculo.data(); // Objeto plano
-      if(data['tipo'] == 'Gasolina'){
-        return new CocheGasolina(
-          data['matricula'],
-          data['marca'],
-          data['modelo'],
-          data['año_fabricacion'],
-          data['consumo'],
-          data['tipo'],
-          data['favorito']
-        );
-      } else if(data['tipo'] == 'Diesel'){
-        return new CocheDiesel(
-          data['matricula'],
-          data['marca'],
-          data['modelo'],
-          data['año_fabricacion'],
-          data['consumo'],
-          data['tipo'],
-          data['favorito']
-        );
-     } else {
-        return new CocheElectrico(
-          data['matricula'],
-          data['marca'],
-          data['modelo'],
-          data['ano_fabricacion'],
-          data['consumo'],
-          data['tipo'],
-          data['favorito']
-        );
-      }
-    }
-    return null;
-  }
-
- async getUsuario(){
-    const _collection = collection(this._firestore, `user/`);
-    const id = await this.get('uid', this._authState.currentUser?.uid, `user/`);
-    const lista = doc(_collection, id);
-    const usuario = await getDoc(lista);
-    
-    if (usuario.exists()) {
-      const data = usuario.data(); // Objeto plano
-        return new User(
-          data['nombre'],
-          data['apellidos'],
-          data['email'],
-          data['user'],
-          data['preferencia1'],
-          data['preferencia2']
-        );
-    }
-    return null;
-  }
-
-  async ifExistPlace(place: Place) {
-    const _collection = collection(this._firestore, `Lugar/${this._authState.currentUser?.uid}/listaLugaresInterés`);
-
-    const q = query(_collection, where('idPlace', '==', place.idPlace));
-
-    const querySnapshot = await getDocs(q);
-    if (querySnapshot.empty) 
-      return false;
-    
-    return true;
-  }
-
-  async ifExistVehicle(vehicle: Vehiculo) {
-    const _collection = collection(this._firestore, `vehiculo/${this._authState.currentUser?.uid}/listaVehiculos`);
-
-    const q = query(_collection, where('matricula', '==', vehicle.getMatricula()));
-
-    const querySnapshot = await getDocs(q);
-    if (querySnapshot.empty) 
-      return false;
-
-    return true;
-  } 
 
   async ifExist(campo: string, valor: string, path: string){
       const _collection = collection(this._firestore, path);

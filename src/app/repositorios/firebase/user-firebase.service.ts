@@ -24,7 +24,8 @@ export class UserFirebaseService implements UserRepository{
   }
 
   async getUsuario(): Promise<User | null> {
-    return await this._firestore.getUsuario();
+    const id = await this._firestore.get('uid', this._authState.currentUser?.uid, `user/`);
+    return await this._firestore.getValue(id,this.PATH);
   }
 
   async createUser(nombre: string, apellidos: string, email: string, user: string, password: string, preferncia1: string, preferncia2: string): Promise<User>{
@@ -55,7 +56,9 @@ export class UserFirebaseService implements UserRepository{
   }
 
   async editUser(type: number, value: string): Promise<void> {
-    const user: User | null = await this._firestore.getUsuario();
+    const id = await this._firestore.get('uid', this._authState.currentUser?.uid, `user/`);
+    
+    const user: User | null = await this._firestore.getValue(id,this.PATH);
     if (user != null) {
       const id = await this._firestore.get('uid', this._authState.currentUser?.uid, `user/`);
       switch(type) {
