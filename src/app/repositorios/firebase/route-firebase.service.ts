@@ -32,7 +32,8 @@ export class RouteFirebaseService implements RouteRepository{
   }
   
   async calcularRuta(origen: Place, destino: Place, metodoMov: string) {
-    if(!this._firestore.ifExistPlace(origen) || !this._firestore.ifExistPlace(destino)){ 
+    const PATH = `Lugar/${this._authState.currentUser?.uid}/listaLugaresInterés`;
+    if(!this._firestore.ifExist('idPlace', origen.getIdPlace(), PATH) || !this._firestore.ifExist('idPlace', destino.getIdPlace(), PATH)){ 
       throw new PlaceNotFoundException();
     }
 
@@ -42,7 +43,7 @@ export class RouteFirebaseService implements RouteRepository{
   
   //COSTE DE LA RUTA - IRENE
   async obtenerCosteRuta(vehiculo: Vehiculo, ruta: Route): Promise<number> {
-    const existVehiculo = this._firestore.ifExistVehicle(vehiculo);
+    const existVehiculo = this._firestore.ifExist('matricula', vehiculo.getMatricula(), `vehiculo/${this._authState.currentUser?.uid}/listaVehiculos`);
     
     if (!existVehiculo) 
       throw new NotExistingObjectException();
@@ -111,8 +112,9 @@ export class RouteFirebaseService implements RouteRepository{
   }
 
   async getRouteFSE(start: Place, end: Place, movilidad: string, preferencia: string): Promise<any> {
-    const existPlace: boolean = await this._firestore.ifExistPlace(start);
-    const existPlace2: boolean = await this._firestore.ifExistPlace(end);
+    const PATH = `Lugar/${this._authState.currentUser?.uid}/listaLugaresInterés`;
+    const existPlace: boolean = await this._firestore.ifExist('idPlace',start.getIdPlace(), PATH);
+    const existPlace2: boolean = await this._firestore.ifExist('idPlace',end.getIdPlace(), PATH);
     if(!existPlace || !existPlace2)
       throw new NotExistingObjectException();
 
@@ -121,9 +123,9 @@ export class RouteFirebaseService implements RouteRepository{
   }
 
   async createRoute(nombre: string, start: Place, end: Place, movilidad: string, preferencia: string, km: number, duracion: number, coste:number): Promise<Route> {
-    const existPlace: boolean = await this._firestore.ifExistPlace(start);
-    const existPlace2: boolean = await this._firestore.ifExistPlace(end);
-  
+    const PATH = `Lugar/${this._authState.currentUser?.uid}/listaLugaresInterés`;
+    const existPlace: boolean = await this._firestore.ifExist('idPlace',start.getIdPlace(), PATH);
+    const existPlace2: boolean = await this._firestore.ifExist('idPlace',end.getIdPlace(), PATH);
     if(!existPlace || !existPlace2)
       throw new NotExistingObjectException();
   
@@ -135,11 +137,11 @@ export class RouteFirebaseService implements RouteRepository{
   }
 
   async actualizarRoutes(route: Route): Promise<any> {
-            const id = await this._firestore.get('nombre', route.getNombre(), `ruta/${this._authState.currentUser?.uid}/listaRutasInterés`);
-            if (id == '') {
-              throw new NoElementsException();
-            }
-            return await this._firestore.actualizarRoutes(route, id);
+    const id = await this._firestore.get('nombre', route.getNombre(), `ruta/${this._authState.currentUser?.uid}/listaRutasInterés`);
+    if (id == '') {
+      throw new NoElementsException();
+    }
+    return await this._firestore.edit(route, `ruta/${this._authState.currentUser?.uid}/listaRutasInterés/${id}`);
   }
   
   async deleteRoute(nombre: string): Promise<boolean> {
@@ -152,7 +154,9 @@ export class RouteFirebaseService implements RouteRepository{
   }
 
   async getRoutes(): Promise<Route[]> {
-    return await this._firestore.getRoutes();
+    if (this._authState.currentUser == null)
+      throw new ServerNotOperativeException();
+    return await this._firestore.getValues(`ruta/${this._authState.currentUser.uid}/listaRutasInterés`);
   }
 
   async marcarFavorito(ruta: Route, favorito: boolean): Promise<void> {

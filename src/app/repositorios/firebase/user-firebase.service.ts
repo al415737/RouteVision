@@ -10,21 +10,22 @@ import { UserNotFoundException } from '../../excepciones/user-not-found-exceptio
 import { AuthStateService } from '../../utils/auth-state.service';
 
 
-const PATH = 'user';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserFirebaseService implements UserRepository{
+  private PATH = 'user/';
 
   constructor(private _firestore: FirestoreService, private _auth: AuthService, private _authState: AuthStateService) { }
   
   async consultarUsuarios(): Promise<User[]> {
-      return await this._firestore.consultarUsuarios(PATH);
+      return await this._firestore.getValues(this.PATH);
   }
 
   async getUsuario(): Promise<User | null> {
-    return await this._firestore.getUsuario();
+    const id = await this._firestore.get('uid', this._authState.currentUser?.uid, `user/`);
+    return await this._firestore.getValue(id,this.PATH);
   }
 
   async createUser(nombre: string, apellidos: string, email: string, user: string, password: string, preferncia1: string, preferncia2: string): Promise<User>{
@@ -35,19 +36,18 @@ export class UserFirebaseService implements UserRepository{
   }
 
   async deleteUser(email: string): Promise<void> {
-    const id = await this._firestore.get('email', email, 'user/');
-    if(id == ''){
-      throw new UserNotFoundException();
-    }
-    return await this._firestore.delete(id, 'user/');
+    const id = await this._firestore.get('email', email, `user/`);
+    if (id == '')
+      throw new UserNotFoundException(); 
+    await this._firestore.delete(`user/`, id);
   }
 
   async loginUser(email: string, password: string): Promise<[Vehiculo[], Place[]]> {
     const userCredential: UserCredential = await this._auth.signin(email, password);
     const uid = userCredential.user.uid;
 
-    const places = await this._firestore.getPlaces();
-    const vehiculos = await this._firestore.consultarVehiculo(`vehiculo/${uid}/listaVehiculos`);
+    const places = await this._firestore.getValues(`Lugar/${this._authState.currentUser?.uid}/listaLugaresInterés`);
+    const vehiculos = await this._firestore.getValues(`vehiculo/${uid}/listaVehiculos`);
 
     return [vehiculos, places];
   }
@@ -57,7 +57,9 @@ export class UserFirebaseService implements UserRepository{
   }
 
   async editUser(type: number, value: string): Promise<void> {
-    const user: User | null = await this._firestore.getUsuario();
+    const id = await this._firestore.get('uid', this._authState.currentUser?.uid, `user/`);
+    
+    const user: User | null = await this._firestore.getValue(id,this.PATH);
     if (user != null) {
       const id = await this._firestore.get('uid', this._authState.currentUser?.uid, `user/`);
       switch(type) {

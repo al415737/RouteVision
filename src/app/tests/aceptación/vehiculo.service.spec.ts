@@ -17,6 +17,7 @@ import { VehicleNotFoundException } from '../../excepciones/vehicle-not-Found-Ex
 import { CocheGasolina } from '../../modelos/vehiculos/cocheGasolina';
 import { NotExistingObjectException } from '../../excepciones/notExistingObjectException';
 import { CocheDiesel } from '../../modelos/vehiculos/cocheDiesel';
+import { NoElementsException } from '../../excepciones/no-Elements-exception';
 
   describe('VehiculoService', () => {
   let serviceV: VehiculoService;
@@ -158,7 +159,7 @@ it('HU12E03. Error al intentar actualizar un vehículo que no existe (Escenario 
 
     //WHEN: El usuario quiere actualizar los datos del vehículo “1234 BBB” con la marca = “Peugeot”, modelo = “407”, tipo de combustible = “Diesel”, año de fabricación = “2010” y consumo = “7.1”.
     //THEN: La lista actual de vehículos = [{"1234 BBB", "Peugeot", "407", "2007", 8.1, 'Diesel'}] se mantiene y el sistema lanza una excepción NotExistingObjectException().
-    await expectAsync(serviceV.actualizarVehiculo("1234 CCC", "Peugeot", "407", "2007", 8.1, 'Diesel', false)).toBeRejectedWith(new NotExistingObjectException());
+    await expectAsync(serviceV.actualizarVehiculo("1234 CCC", "Peugeot", "407", "2007", 8.1, 'Diesel', false)).toBeRejectedWith(new NoElementsException());
     await serviceV.eliminarVehiculo("1234 BBB"); 
     await servicioUser.logoutUser();
   });

@@ -14,12 +14,12 @@ import { CocheGasolina } from '../../modelos/vehiculos/cocheGasolina';
 import { CocheDiesel } from '../../modelos/vehiculos/cocheDiesel';
 import { CocheElectrico } from '../../modelos/vehiculos/cocheElectrico';
 import { NotExistingObjectException } from '../../excepciones/notExistingObjectException';
+import { DataAdapter } from '../../utils/dataAdapter';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FirestoreService {
-  private _authState: AuthStateService = inject(AuthStateService);
 
   private constructor(private _firestore: Firestore, private _auth: AuthService) { }
 
@@ -44,7 +44,6 @@ export class FirestoreService {
 
     return setDoc(docRef, objetoPlano);
   }
-  
   //CREAR ELEMENTOS
 
 
@@ -70,186 +69,31 @@ export class FirestoreService {
     return firstDocument.id;
   }
 
-  async getVehiculo(matricula:string){
-    const _collection = collection(this._firestore, `vehiculo/${this._authState.currentUser?.uid}/listaVehiculos/`);
-    // Referencia a la subcolección listaLugares dentro del documento del usuario
-    const id = await this.get('matricula', matricula, `vehiculo/${this._authState.currentUser?.uid}/listaVehiculos/`);
-    const listaLugaresRef = doc(_collection, id);
-    const vehiculo = await getDoc(listaLugaresRef);
-    
-    if (vehiculo.exists()) {
-      const data = vehiculo.data(); // Objeto plano
-      if(data['tipo'] == 'Gasolina'){
-        const v =  new CocheGasolina(
-          data['matricula'],
-          data['marca'],
-          data['modelo'],
-          data['año_fabricacion'],
-          data['consumo'],
-          data['tipo'],
-        );
-        v.setFavorito(data['favorito']);
-        return v;
-      } else if(data['tipo'] == 'Diesel'){
-        const v =  new CocheDiesel(
-          data['matricula'],
-          data['marca'],
-          data['modelo'],
-          data['año_fabricacion'],
-          data['consumo'],
-          data['tipo'],
-        );
-        v.setFavorito(data['favorito']);
-        return v;
-     } else {
-      const v = new CocheElectrico(
-        data['matricula'],
-        data['marca'],
-        data['modelo'],
-        data['ano_fabricacion'],
-        data['consumo'],
-        data['tipo'],
-      );
-      v.setFavorito(data['favorito']);
-      return v;
-      }
-    }
-    return null;
-  }
-
-    async consultarVehiculo(path: string){
-      const _collection = collection(this._firestore, path);
-
-      const documentos = await getDocs(_collection);
-
-      return documentos.docs.map(doc => { 
-        const data = doc.data();
-        if(data['tipo'] == 'Gasolina'){
-            const v = new CocheGasolina(
-              data['matricula'],
-              data['marca'],
-              data['modelo'],
-              data['ano_fabricacion'],
-              data['consumo'],
-              data['tipo'],
-              );
-          v.setFavorito(data['favorito']);
-          return v;
-
-        } else if(data['tipo'] == 'Diesel'){
-          const v = new CocheDiesel(
-            data['matricula'],
-            data['marca'],
-            data['modelo'],
-            data['ano_fabricacion'],
-            data['consumo'],
-            data['tipo'],
-            );
-        v.setFavorito(data['favorito']);
-        return v;
-        } else {
-          const v = new CocheElectrico(
-            data['matricula'],
-            data['marca'],
-            data['modelo'],
-            data['ano_fabricacion'],
-            data['consumo'],
-            data['tipo'],
-            );
-        v.setFavorito(data['favorito']);
-        return v;
-        }
-      }); 
-    }
-
-  async getUsuario(){
-    const _collection = collection(this._firestore, `user/`);
-    const id = await this.get('uid', this._authState.currentUser?.uid, `user/`);
+  async getValue(id: string, PATH: string): Promise<any> {
+    const _collection = collection(this._firestore, PATH);
     const lista = doc(_collection, id);
-    const usuario = await getDoc(lista);
+    const value = await getDoc(lista);
     
-    if (usuario.exists()) {
-      const data = usuario.data(); // Objeto plano
-        return new User(
-          data['nombre'],
-          data['apellidos'],
-          data['email'],
-          data['user'],
-          data['preferencia1'],
-          data['preferencia2']
-        );
+    if (value.exists()) {
+      const data = value.data(); // Objeto plano
+        return DataAdapter.adapt(PATH, data);
     }
     return null;
   }
 
-  async consultarUsuarios(path: string){
-    const _collection = collection(this._firestore, path);
-
-    const documentos = await getDocs(_collection);
-
-    return documentos.docs.map (doc => {
-      const data = doc.data();
-      return new User(
-        data['nombre'],
-        data['apellidos'],
-        data['email'],
-        data['user'],
-        data['preferencia1'],
-        data['preferencia2']
-      );
-    });
-  }
-
-  async getPlaces(): Promise<Place[]> {
+  async getValues(PATH: string): Promise<any> {
     try {
-      if (this._authState.currentUser == null) {
-        throw new ServerNotOperativeException();
-      }
-        // Referencia a la subcolección listaLugares dentro del documento del usuario
-      const listaLugaresRef = collection(this._firestore, `Lugar/${this._authState.currentUser?.uid}/listaLugaresInterés`);
-      
-      // Obtener todos los documentos de la subcolección
-      const querySnapshot = await getDocs(listaLugaresRef);
+      const listaRef = collection(this._firestore, PATH);
+      const querySnapshot = await getDocs(listaRef);
 
       return querySnapshot.docs.map(doc => { 
         const data = doc.data();
-        const p = new Place(
-          data['idPlace'], 
-          data['toponimo'],
-          data['coordenadas'],
-          data['municipio']
-        );
-        p.setFavorito(data['favorito']);
-        return p;
-      }); 
+        return DataAdapter.adapt(PATH, data);
+      });
     } catch (error) {
       throw new ServerNotOperativeException();
     }
   }
-
-  async ifExistPlace(place: Place) {
-    const _collection = collection(this._firestore, `Lugar/${this._authState.currentUser?.uid}/listaLugaresInterés`);
-
-    const q = query(_collection, where('idPlace', '==', place.idPlace));
-
-    const querySnapshot = await getDocs(q);
-    if (querySnapshot.empty) 
-      return false;
-    
-    return true;
-  }
-
-  async ifExistVehicle(vehicle: Vehiculo) {
-    const _collection = collection(this._firestore, `vehiculo/${this._authState.currentUser?.uid}/listaVehiculos`);
-
-    const q = query(_collection, where('matricula', '==', vehicle.getMatricula()));
-
-    const querySnapshot = await getDocs(q);
-    if (querySnapshot.empty) 
-      return false;
-
-    return true;
-  } 
 
   async ifExist(campo: string, valor: string, path: string){
       const _collection = collection(this._firestore, path);
@@ -264,56 +108,9 @@ export class FirestoreService {
 
       return true;
   }
-
-  async getRoutes(): Promise<Route[]> {
-    try {
-      if (this._authState.currentUser == null) {
-        throw new ServerNotOperativeException();
-      }
-      const listaRutasRef = collection(this._firestore, `ruta/${this._authState.currentUser?.uid}/listaRutasInterés`);
-      const querySnapshot = await getDocs(listaRutasRef);
-      
-
-      return querySnapshot.docs.map(doc => { 
-        const data = doc.data();
-        const v =  new Route(
-          data['nombre'],
-          data['origen'],
-          data['destino'],
-          data['option'],
-          data['movilidad'],
-          data['kilometros'],
-          data['duration'],
-          data['municipio'],
-          data['coste']
-        );
-        v.setFavorito(data['favorito']);
-        return v
-      });
-    } catch (error) {
-      throw new ServerNotOperativeException();
-    }
-    
-  }
   //BUSCAR/COMPROBAR ELEMENTOS
 
   //EDITAR ELEMENTOS
-  async actualizarVehiculo(vehiculo:Vehiculo, id:string){
-    const listaVehiculosRef = doc(
-      this._firestore, 
-      `vehiculo/${this._authState.currentUser?.uid}/listaVehiculos/${id}`
-    );
-  
-    const plainObject = { ...vehiculo };
-    try {
-      await updateDoc(listaVehiculosRef, plainObject);
-      return vehiculo;
-    } catch (error) {
-      console.error('Error al actualizar vehículo:', error);
-      return vehiculo;
-    }
-  }
-
   async edit(value: any, PATH: string) {
     const listaRef = doc(
       this._firestore, 
@@ -323,43 +120,8 @@ export class FirestoreService {
     await updateDoc(listaRef, plainObject);
     return value;  
   }
-
-  
   //EDITAR ELEMENTOS
-  async actualizarPlace(place:Place, id:string){
-    const listaPlaceRef = doc(
-      this._firestore, 
-      `Lugar/${this._authState.currentUser?.uid}/listaLugaresInterés/${id}`
-    );
-  
-    const plainObject = { ...place };
-    try {
-      await updateDoc(listaPlaceRef, plainObject);
-      return place;
-    } catch (error) {
-      console.error('Error al actualizar lugar:', error);
-      return place;
-    }
-  }
-
-  //EDITAR ELEMENTOS
-  async actualizarRoutes(route:Route, id:string){
-    const listaRoutesRef = doc(
-      this._firestore, 
-      `ruta/${this._authState.currentUser?.uid}/listaRutasInterés/${id}`
-    );
-  
-    const plainObject = { ...route };
-    try {
-      await updateDoc(listaRoutesRef, plainObject);
-      return route;
-    } catch (error) {
-      console.error('Error al actualizar rutas:', error);
-      return route;
-    }
-  }
-
-
+ 
   //BORRAR ELEMENTOS
   async delete(PATH: string, id: string): Promise<void> {
     const docRef = doc(this._firestore, PATH, id);

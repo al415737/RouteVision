@@ -8,6 +8,7 @@ import { getAuth } from 'firebase/auth';
 import { firstValueFrom } from 'rxjs';
 import { AuthStateService } from '../../utils/auth-state.service';
 import { NotExistingObjectException } from '../../excepciones/notExistingObjectException';
+import { ServerNotOperativeException } from '../../excepciones/server-not-operative-exception';
 import { NoElementsException } from '../../excepciones/no-Elements-exception';
 
 @Injectable({
@@ -42,11 +43,11 @@ export class PlaceFirebaseService implements PlaceRepository{
     }
 
     async actualizarPlace(place: Place): Promise<any> {
-          const id = await this.firestore.get('idPlace', place.getIdPlace(), `Lugar/${this._authState.currentUser?.uid}/listaLugaresInterés`);
-          if (id == '') {
-            throw new NoElementsException();
-          }
-          return await this.firestore.actualizarPlace(place, id);
+        const id = await this.firestore.get('idPlace', place.getIdPlace(), `Lugar/${this._authState.currentUser?.uid}/listaLugaresInterés`);
+        if (id == '') {
+        throw new NoElementsException();
+        }
+        return await this.firestore.edit(place, `Lugar/${this._authState.currentUser?.uid}/listaLugaresInterés/${id}`);
     }
 
     async deletePlace(idPlace: string): Promise<boolean> {
@@ -92,11 +93,14 @@ export class PlaceFirebaseService implements PlaceRepository{
     }
 
     async getPlaces(): Promise<any> {
-        return await this.firestore.getPlaces();
+        if (this._authState.currentUser == null)
+            throw new ServerNotOperativeException();
+        return await this.firestore.getValues(`Lugar/${this._authState.currentUser.uid}/listaLugaresInterés`);
     }
 
     async marcarFavorito(place: Place, favorito: boolean): Promise<any> {
         place.setFavorito(favorito);
         return await this.actualizarPlace(place);
     }
+
 };

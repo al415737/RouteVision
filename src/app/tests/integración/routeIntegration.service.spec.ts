@@ -146,8 +146,8 @@ describe('RouteIntegrationService', () => {
       const mockRoute: number[] = [52.863, 46.388333333333335];
       spyOn(routeRepo, 'getRouteFSE').and.resolveTo(mockRoute);
 
-      const place: Place = new Place("000", 'Sagunto', [], false, "Valencia");
-      const place2: Place = new Place("001", 'Castellón de la Plana', [], false, "Castellón");
+      const place: Place = new Place("000", 'Sagunto', [], "Valencia");
+      const place2: Place = new Place("001", 'Castellón de la Plana', [], "Castellón");
       const result = await service.getRouteFSE(place, place2, "driving-car", "fastest");
 
       expect(routeRepo.getRouteFSE).toHaveBeenCalledWith(place, place2, "driving-car", "fastest");
@@ -159,8 +159,8 @@ describe('RouteIntegrationService', () => {
       const mockRoute: number[] = [52.863, 46.388333333333335];
       spyOn(routeRepo, 'getRouteFSE').and.resolveTo(mockRoute);
 
-      const place: Place = new Place("000", 'Sagunto', [], false, "Valencia");
-      const place2: Place = new Place("001", 'Castellón de la Plana', [], false, "Castellón");
+      const place: Place = new Place("000", 'Sagunto', [], "Valencia");
+      const place2: Place = new Place("001", 'Castellón de la Plana', [], "Castellón");
 
       try {
           service.getRouteFSE(place, place2, "driving-car", "")
@@ -171,8 +171,8 @@ describe('RouteIntegrationService', () => {
     });
 
     it('H17E01. Guardar una ruta que no existe en el sistema (Escenario válido)', async () => {
-      const place: Place = new Place("000", 'Sagunto', [], false, "Valencia");
-      const place2: Place = new Place("001", 'Castellón de la Plana', [], false, "Castellón");
+      const place: Place = new Place("000", 'Sagunto', [], "Valencia");
+      const place2: Place = new Place("001", 'Castellón de la Plana', [], "Castellón");
       const mockRoute: Route = new Route("ruta01", place.getToponimo(), place2.getToponimo(), "driving-car", "fastest", 90, 60, "Valencia", 1.3);
 
       spyOn(routeRepo, 'createRoute').and.resolveTo(mockRoute);
@@ -184,8 +184,8 @@ describe('RouteIntegrationService', () => {
 
 
     it('H17E02. Intento de guardar una ruta con lugares no registrados (Escenario inválido)', async () => {
-      const placeAux: Place = new Place('005', 'Madrid', [], false, "Madrid");
-      const placeAux2: Place = new Place('006', 'Barcelona', [], false, "Barcelona");
+      const placeAux: Place = new Place('005', 'Madrid', [], "Madrid");
+      const placeAux2: Place = new Place('006', 'Barcelona', [], "Barcelona");
       const mockRoute: Route = new Route("ruta01", placeAux.getToponimo(), placeAux2.getToponimo(), "driving-car", "fastest", 90, 60, "Madrid", 1.3);
 
       spyOn(routeRepo, 'createRoute').and.resolveTo(mockRoute);

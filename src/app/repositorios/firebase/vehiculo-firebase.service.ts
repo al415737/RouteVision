@@ -30,11 +30,14 @@ export class VehiculoFirebaseService implements VehiculoRepository{
     async consultarVehiculo() {
         const uid = getAuth().currentUser?.uid;
         const PATHVEHICULO = `vehiculo/${uid}/listaVehiculos`;
-        return await this.firestore.consultarVehiculo(PATHVEHICULO);
+        return await this.firestore.getValues(PATHVEHICULO);
     }
 
     async getVehiculo(matricula: string): Promise<any> {
-      return await this.firestore.getVehiculo(matricula);
+      const uid = getAuth().currentUser?.uid;
+      const PATHVEHICULO = `vehiculo/${uid}/listaVehiculos`;
+      const id = await this.firestore.get('matricula', matricula, PATHVEHICULO);
+      return await this.firestore.getValue(id, PATHVEHICULO);
     }
 
     async actualizarVehiculo(vehiculo: Vehiculo): Promise<any> {
@@ -42,7 +45,9 @@ export class VehiculoFirebaseService implements VehiculoRepository{
       if (id == '') {
         throw new NoElementsException();
       }
-      return await this.firestore.actualizarVehiculo(vehiculo, id);
+
+      const PATH = `vehiculo/${this._authState.currentUser?.uid}/listaVehiculos/${id}`;
+      return await this.firestore.edit(vehiculo, PATH);
     }
 
     async eliminarVehiculo(matricula: string):Promise<void> {
