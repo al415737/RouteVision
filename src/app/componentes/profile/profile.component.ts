@@ -30,8 +30,12 @@ export default class ProfileComponent {
     this.preferencia2 = usuario?.getPref2();
   }
 
-  async guardarAjustes(){
-    
+  async guardarAjustes(preferencia1: string | undefined, preferencia2: string | undefined){
+    if(preferencia1 == undefined || preferencia2 == undefined){
+        return ;
+    }
+    this._userService.editUser(1, preferencia1);
+    this._userService.editUser(2, preferencia2);
   }
 
 }
