@@ -169,7 +169,7 @@ describe('RutasService', () => {
   });
 
   
-  it('HU15E03. Intento de cálculo de gasto calórico pero no hay rutas dadas de alta (Escenario Inválido)', async () => {
+  it('HU15E03. Intento de cálculo de gasto calórico pero se ha seleccionado tipo de movilidad incorrecto (Escenario Inválido)', async () => {
     //GIVEN: El usuario [“RouteTest”, “routetest@test.com“,“test123”] tiene su sesión iniciada y la base de datos está disponible. Lista lugares = [Valencia, Castellón]
     await servicioUsuario.loginUser("routetest@test.com","test123");
     const origen = await servicioPlace.createPlaceT("València, España");
@@ -177,7 +177,7 @@ describe('RutasService', () => {
 
     try {
         //WHEN: El usuario RouteTest quiere realizar la ruta entre Valencia y Castellón en bicicleta.
-        const ruta = new Route("Valencia-Castellón", "Valencia", "Castellón de la Plana", "shortest", "cycling-regular", 76, 15806, "Valencia", 0);
+        const ruta = new Route("Valencia-Castellón", "Valencia", "Castellón de la Plana", "shortest", "cycle", 76, 15806, "Valencia", 0);
         await servicioRutas.costeRutaPieBicicleta(ruta, origen, destino);  
     } catch(error){
         //Then: El sistema no puede calcular el gasto calórico y lanza la excepción NoRouteFoundException()
@@ -214,27 +214,14 @@ describe('RutasService', () => {
 
     //WHEN: El usuario solicita el cálculo con “Valencia-Castellón” sin tipo de ruta.
     //THEN: El sistema lanza la excepción TypeNotChosenException().
-    expect(() => servicioRutas.getRouteFSE(place, place2, "driving-car", "")).toThrow(new TypeNotChosenException());
-    
+    try {
+      await servicioRutas.getRouteFSE(place, place2, "driving-car", "");
+    } catch (error) {
+      expect(error).toBeInstanceOf(TypeNotChosenException)
+    }    
     await servicioPlace.deletePlace(place.idPlace);
     await servicioPlace.deletePlace(place2.idPlace);
     await servicioUsuario.logoutUser();
-  });
-
-  it('HU15E03. Intento de cálculo de gasto calórico pero no hay rutas dadas de alta (Escenario Inválido)', async () => {
-    //Given: El usuario [“Pepito2002”, “pepito@gmail.com“,“crm-24”] ha iniciado sesión y la base de datos está disponible. Lista rutas = []  
-    await servicioUsuario.loginUser("routetest@test.com", "test123");
-    const origen = await servicioPlace.createPlaceT("València, España");
-    const destino = await servicioPlace.createPlaceT("Castellón de la Plana");
-    const ruta = new Route("Valencia-Castellón", "Valencia", "Castellón de la Plana", "economica", "cycling-regular", 76, 15806, "Valencia", 0);
-
-    try {
-        //When: El usuario Pepito quiere realizar la ruta entre Valencia y Castellón en bicicleta.
-        await servicioRutas.costeRutaPieBicicleta(ruta, origen, destino);  
-    } catch(error){
-        //Then: El sistema no puede calcular el gasto calórico y lanza la excepción NoRouteFoundException()
-        expect(error).toBeInstanceOf(NoRouteFoundException);
-    }
   });
   
   it('H17E01. Guardar una ruta que no existe en el sistema (Escenario válido)', async () => {

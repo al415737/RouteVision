@@ -13,19 +13,19 @@ export class UserService {
   
   constructor(@Inject(USER_REPOSITORY_TOKEN) private userRepo: UserRepository) {}
 
-  createUser(nombre: string, apellidos: string, email: string, user: string, password: string) {
+  async createUser(nombre: string, apellidos: string, email: string, user: string, password: string) {
     if (!nombre.trim() || !apellidos.trim() || !email.trim() || !user.trim() || !password.trim())
       throw new ObligatoryFieldsException();
 
-    return this.userRepo.createUser(nombre, apellidos, email, user, password, '', '');
+    return await this.userRepo.createUser(nombre, apellidos, email, user, password, '', '');
   }
 
-  consultarUsuarios(){
-    return this.userRepo.consultarUsuarios();
+  async consultarUsuarios(){
+    return await this.userRepo.consultarUsuarios();
   }
 
-  getUsuario(){
-    return this.userRepo.getUsuario();
+  async getUsuario(){
+    return await this.userRepo.getUsuario();
   }
 
   async deleteUser(email: string | null | undefined):Promise<void> {
@@ -35,8 +35,8 @@ export class UserService {
     return await this.userRepo.deleteUser(email);
   }
 
-  loginUser(email: string, password: string) {
-    return this.userRepo.loginUser(email, password);
+  async loginUser(email: string, password: string) {
+    return await this.userRepo.loginUser(email, password);
   }
 
   async logoutUser(): Promise<void> {

@@ -46,21 +46,15 @@
         </select>
       }
       
-      @if(user?.getPref2()){
-        <p><b>Movilidad seleccionada:</b> {{ user?.getPref2() }}</p>
-      }
-
-      @if(!user?.getPref2()){
-        <!-- Select para movilidad -->
-        <label for="select-movilidad">Seleccionar Movilidad:</label>
-        <select id="select-movilidad" [(ngModel)]="movilidad">
-          <option value="">--Seleccionar--</option>
-          <option value ='driving-car'>Coche</option>
-          <option value ='driving-car'>Moto</option>
-          <option value ='foot-walking'>A pie</option>
-          <option value= 'cycling-regular'>Bicicleta</option>
-        </select>
-      }
+      <!-- Select para movilidad -->
+      <label for="select-movilidad">Seleccionar Movilidad:</label>
+      <select id="select-movilidad" [(ngModel)]="movilidad">
+        <option value="">--Seleccionar--</option>
+        <option value ='driving-car'>Coche</option>
+        <option value ='driving-car'>Moto</option>
+        <option value ='foot-walking'>A pie</option>
+        <option value= 'cycling-regular'>Bicicleta</option>
+      </select>
       
       @if(movilidad == 'driving-car'){
         <!-- Select para los vehículos -->
