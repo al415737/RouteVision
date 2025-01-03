@@ -28,6 +28,6 @@ export class Place {
     }
 
     setFavorito(favorito: boolean){
-        this.favorito = true;
+        this.favorito = favorito;
     }
 }
