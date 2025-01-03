@@ -74,7 +74,7 @@ Se han implementado:
 
 ## Autores (👥):
 
-l🏳‍🌈🏳‍🌈🏳‍🌈 **Abel Dasí Comes**    
+🏳‍🌈🏳‍🌈🏳‍🌈 **Abel Dasí Comes**    
 
 👾🎮🚀 **Daniel Carpintero García**  
 
