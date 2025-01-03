@@ -15,13 +15,6 @@ export class ProxysCalculoCombustibleService {
 
   constructor(private precioCarburante: PrecioCarburantes, private precioLuz: PrecioLuzService) {}
 
-  // async getGasolineras(): Promise<any> {
-  //   if (this.cacheGasolineras == null){
-  //     this.cacheGasolineras = await firstValueFrom(this.precioCarburante.getGasolineras());
-  //   }
-  //   return this.cacheGasolineras;
-  // }
-
   async getMunicipios(): Promise<any> {
     if (this.cacheMunicipios == null) {
       this.cacheMunicipios = await firstValueFrom(this.precioCarburante.getMunicipios());

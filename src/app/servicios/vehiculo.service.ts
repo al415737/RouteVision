@@ -1,11 +1,8 @@
-
 import { Inject, Injectable } from '@angular/core';
 import { VEHICULO_REPOSITORY_TOKEN, VehiculoRepository } from '../repositorios/interfaces/vehiculo-repository';
 import { NullLicenseException } from '../excepciones/null-license-exception';
 import { Vehiculo } from '../modelos/vehiculos/vehiculo';
-import { CocheGasolina } from '../modelos/vehiculos/cocheGasolina';
-import { CocheElectrico } from '../modelos/vehiculos/cocheElectrico';
-import { CocheDiesel } from '../modelos/vehiculos/cocheDiesel';
+import { VehiculoEnum } from '../modelos/vehiculos/enumVehiculo';
 
 @Injectable({
   providedIn: 'root'
@@ -20,16 +17,7 @@ export class VehiculoService {
       throw new NullLicenseException();
     }
 
-    let vehiculo: Vehiculo;
-
-    if(tipo == 'Gasolina'){
-        vehiculo = new CocheGasolina(matricula, marca, modelo, año_fabricacion, consumo, tipo);
-    } else if(tipo == 'Diesel'){
-        vehiculo = new CocheDiesel(matricula, marca, modelo, año_fabricacion, consumo, tipo);
-    } else {
-        vehiculo = new CocheElectrico(matricula, marca, modelo, año_fabricacion, consumo, tipo);
-    }
-
+    let vehiculo: Vehiculo = VehiculoEnum.crearVehiculo(tipo, matricula, marca, modelo, año_fabricacion, consumo);
     return this.vehiRepo.crearVehiculo(vehiculo);
   }
 
@@ -38,16 +26,7 @@ export class VehiculoService {
       throw new NullLicenseException();
     }
 
-    let vehiculo: Vehiculo;
-    
-    if(tipo == 'Gasolina'){
-      vehiculo = new CocheGasolina(matricula, marca, modelo, año_fabricacion, consumo, tipo);
-    } else if(tipo == 'Diesel'){
-        vehiculo = new CocheDiesel(matricula, marca, modelo, año_fabricacion, consumo, tipo);
-    } else {
-        vehiculo = new CocheElectrico(matricula, marca, modelo, año_fabricacion, consumo, tipo);
-    }
-
+    let vehiculo: Vehiculo = VehiculoEnum.crearVehiculo(tipo, matricula, marca, modelo, año_fabricacion, consumo);
     return this.vehiRepo.actualizarVehiculo(vehiculo);
   }
 

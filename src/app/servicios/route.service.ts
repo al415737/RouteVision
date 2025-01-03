@@ -3,9 +3,7 @@ import { ROUTE_REPOSITORY_TOKEN, RouteRepository } from '../repositorios/interfa
 import { ObligatoryFieldsException } from '../excepciones/obligatory-fields-exception';
 import { TypeNotChosenException } from '../excepciones/type-not-chosen-exception';
 import { InvalidCalculateRoute } from '../excepciones/invalid-calculate-route';
-import { VehicleNotFoundException } from '../excepciones/vehicle-not-Found-Exception';
-import { inject, Inject, Injectable } from '@angular/core';
-import { AuthStateService } from '../utils/auth-state.service';
+import { Inject, Injectable } from '@angular/core';
 import { VEHICULO_REPOSITORY_TOKEN, VehiculoRepository } from '../repositorios/interfaces/vehiculo-repository';
 import { Vehiculo } from '../modelos/vehiculos/vehiculo';
 import { Route } from '../modelos/route';
@@ -53,12 +51,13 @@ export class RouteService {
     return this.routeRepository.getRouteFSE(start, end, movilidad, preferencia);
   }
 
-  costeRutaPieBicicleta(ruta: Route, origen: Place, destino: Place){
+  async costeRutaPieBicicleta(ruta: Route, origen: Place, destino: Place){
     if(ruta.getMovilidad() != 'cycling-regular' && ruta.getMovilidad() != 'foot-walking'){
         throw new InvalidCalculoCosteException();
     }
 
-    if(!this.consultarRutaEspecifica(ruta)){
+    const exist: boolean = await this.consultarRutaEspecifica(ruta);
+    if(!exist){
         throw new NoRouteFoundException();
     }
 
@@ -69,7 +68,6 @@ export class RouteService {
     if(ruta.getOrigen() == '' || ruta.getOrigen() == null || ruta.getDestino() == '' || ruta.getDestino() == null || ruta.getMovilidad() == '' || ruta.getMovilidad() == null){
       throw new InvalidCalculateRoute();
     }
-    console.log("hola")
     return await this.routeRepository.consultarRutaEspecifica(ruta);
   }
 

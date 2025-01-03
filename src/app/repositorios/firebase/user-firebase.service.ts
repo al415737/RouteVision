@@ -5,7 +5,7 @@ import { FirestoreService } from './firestore.service';
 import { Place } from '../../modelos/place';
 import { Vehiculo } from '../../modelos/vehiculos/vehiculo';
 import { AuthService } from './auth.service';
-import { getAuth, UserCredential } from 'firebase/auth';
+import { UserCredential } from 'firebase/auth';
 import { UserNotFoundException } from '../../excepciones/user-not-found-exception';
 import { AuthStateService } from '../../utils/auth-state.service';
 

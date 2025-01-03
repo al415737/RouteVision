@@ -15,7 +15,6 @@ import { USER_REPOSITORY_TOKEN } from '../../repositorios/interfaces/user-reposi
 import { UserFirebaseService } from '../../repositorios/firebase/user-firebase.service';
 import { VehicleNotFoundException } from '../../excepciones/vehicle-not-Found-Exception';
 import { CocheGasolina } from '../../modelos/vehiculos/cocheGasolina';
-import { NotExistingObjectException } from '../../excepciones/notExistingObjectException';
 import { CocheDiesel } from '../../modelos/vehiculos/cocheDiesel';
 import { NoElementsException } from '../../excepciones/no-Elements-exception';
 

@@ -1,10 +1,8 @@
 import { User } from '../modelos/user';
 import { Vehiculo } from '../modelos/vehiculos/vehiculo';
-import { CocheGasolina } from '../modelos/vehiculos/cocheGasolina';
-import { CocheDiesel } from '../modelos/vehiculos/cocheDiesel';
-import { CocheElectrico } from '../modelos/vehiculos/cocheElectrico';
 import { Place } from '../modelos/place';
 import { Route } from '../modelos/route';
+import { VehiculoEnum } from '../modelos/vehiculos/enumVehiculo';
 
 export class DataAdapter {
   static adapt(path: string, data: any): any {
@@ -36,35 +34,7 @@ export class DataAdapter {
   }
 
   static toVehiculo(data: any): Vehiculo {
-    let c: Vehiculo;
-    if (data['tipo'] === 'Precio Gasolina 95 E5' || data['tipo'] === 'Precio Gasolina 98 E5') {
-      c = new CocheGasolina(
-        data['matricula'],
-        data['marca'],
-        data['modelo'],
-        data['año_fabricacion'],
-        data['consumo'],
-        data['tipo']
-      );
-    } else if (data['tipo'] === 'Precio Gasoleo A' || data['tipo'] === 'Precio Gasoleo B') {
-      c = new CocheDiesel(
-        data['matricula'],
-        data['marca'],
-        data['modelo'],
-        data['año_fabricacion'],
-        data['consumo'],
-        data['tipo']
-      );
-    } else {
-      c = new CocheElectrico(
-        data['matricula'],
-        data['marca'],
-        data['modelo'],
-        data['ano_fabricacion'],
-        data['consumo'],
-        data['tipo']
-      );
-    }
+    let c: Vehiculo = VehiculoEnum.crearVehiculo(data['tipo'], data['matricula'], data['marca'], data['modelo'], data['año_fabricacion'], data['consumo']);
     c.setFavorito(data['favorito']);
     return c;
   }

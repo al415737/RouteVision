@@ -1,7 +1,6 @@
 import { Component, inject } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, FormRecord, ReactiveFormsModule, Validators } from '@angular/forms'
+import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms'
 import { hasEmailError, isRequired } from '../../utils/validators';
-//import { toast } from 'ngx-sonner';
 import { toast } from 'ngx-sonner';
 import { Router, RouterLink } from '@angular/router';
 import { UserService } from '../../servicios/user.service';

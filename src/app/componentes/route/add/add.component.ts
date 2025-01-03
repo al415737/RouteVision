@@ -9,7 +9,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouteService } from '../../../servicios/route.service';
 import { Place } from '../../../modelos/place';
 import { CommonModule } from '@angular/common';
-import { geoJSON, LatLngExpression, marker, Marker } from 'leaflet';
 import { UserService } from '../../../servicios/user.service';
 import { User } from '../../../modelos/user';
 import { Vehiculo } from '../../../modelos/vehiculos/vehiculo';

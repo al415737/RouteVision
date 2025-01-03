@@ -9,7 +9,6 @@ import { PLACE_REPOSITORY_TOKEN } from '../../repositorios/interfaces/place-repo
 import { UserFirebaseService } from '../../repositorios/firebase/user-firebase.service';
 import { USER_REPOSITORY_TOKEN } from '../../repositorios/interfaces/user-repository';
 import { PlaceFirebaseService } from '../../repositorios/firebase/place-firebase.service';
-import { OpenRouteService } from '../../APIs/Geocoding/openRoute.service';
 import { FirestoreService } from '../../repositorios/firebase/firestore.service';
 import { provideHttpClient } from '@angular/common/http';
 import { InvalidPlaceException } from '../../excepciones/invalid-place-exception';
