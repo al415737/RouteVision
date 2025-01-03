@@ -79,13 +79,13 @@ describe('UserService', () => {
     //  GIVEN: El usuario UserTest está registrado y la base de datos está disponible. Datos de UserTest:
     // ListaVehículos=[{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1, Combustible = "Gasolina"}]
     // y listaLugaresInterés=[{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049], idLugar = “000”}].
-    await service.loginUser("test@test.com", "test123");
+    await service.loginUser("usertest@test.com", "test123");
     await vehicleService.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Gasolina");
     const lugar = await placeService.createPlaceC([39.98, -0.049]);
     await service.logoutUser();
 
     //  WHEN: El usuario UserTest quiere iniciar sesión con sus datos: [email: “usertest@test.com”, contraseña:  “test123 “].
-    const resultLogin = await service.loginUser("test@test.com", "test123");
+    const resultLogin = await service.loginUser("usertest@test.com", "test123");
     //  THEN: El sistema carga los datos de UserTest.
     // Verifico que el resultado es una lista
     expect(resultLogin).toBeInstanceOf(Array);
@@ -106,7 +106,7 @@ describe('UserService', () => {
       expect(lugar).toBeInstanceOf(Place);
     });
     
-    await service.loginUser("test@test.com", "test123");
+    await service.loginUser("usertest@test.com", "test123");
     await vehicleService.eliminarVehiculo("1234 BBB");
     await placeService.deletePlace(lugar.idPlace);
     await service.logoutUser();
@@ -119,13 +119,13 @@ describe('UserService', () => {
     // WHEN: El usuario UserTest intenta iniciar sesion con la siguiente información: [email: “usertest@test.com”, contraseña: “test1234“].
     // THEN: El sistema no inicia la sesión de UserTest porque la contraseña no es correcta y lanza la excepción WrongPasswordException().
     await expectAsync(
-      service.loginUser("test@test.com", "pepito123_")
+      service.loginUser("usertest@test.com", "pepito123_")
     ).toBeRejectedWith(new WrongPasswordException());
   });
 
   it('HU3-E01. Cierre de sesión de una cuenta de un usuario registrado (Escenario Válido): ', async () => {
     // GIVEN: Lista actual de usuarios conectados. ListaUsuariosConectados = {UserTest}.
-    await service.loginUser("test@test.com", "test123");
+    await service.loginUser("usertest@test.com", "test123");
 
     // WHEN: El usuario UserTest pide que su sesión se cierre.
     await service.logoutUser();
@@ -192,7 +192,7 @@ describe('UserService', () => {
   });
 
   it('HU21-E01. Configuración de un vehículo/método de transporte predeterminado (Escenario Válido): ', async () => {
-    await service.loginUser('usertest@test.com', 'test123');
+    await service.loginUser("usertest@test.com", "test123");
     await service.editUser(1, 'foot-walking');
 
     const user: User | null  = await service.getUsuario();
@@ -206,7 +206,7 @@ describe('UserService', () => {
   });
 
   it('HU21-E03. Configuración de un vehículo/metodo de transporte predeterminado con un vehículo inexistente (Escenario Inválido): ', async () => {
-    await service.loginUser('usertest@test.com', 'test123');
+    await service.loginUser("usertest@test.com", "test123");
     
     try {
       await service.editUser(1, 'foooot');
@@ -218,7 +218,7 @@ describe('UserService', () => {
   });
 
   it('HU22-E01. Establecimiento de la ruta más rápida por defecto (Escenario Válido): ', async () => {
-    await service.loginUser('usertest@test.com', 'test123');
+    await service.loginUser("usertest@test.com", "test123");
     await service.editUser(2, 'fastest');
     
     const user: User | null  = await service.getUsuario();

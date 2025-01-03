@@ -40,7 +40,7 @@ import { CocheDiesel } from '../../modelos/vehiculos/cocheDiesel';
 
   it('HU9E01. Vehículo registrado en el sistema (Escenario Válido)', async () => {
     //GIVEN: El usuario [“VehicleTest”, “vehicletest@test.com“,“test123”] con listaVehículos= [ ].
-    await servicioUser.loginUser("test@test.com", "test123");
+    await servicioUser.loginUser("vehicletest@test.com", "test123");
 
     //WHEN: El usuario intenta dar de alta un vehículo → [Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1, "Diesel"].
     const resul = await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Diesel");
@@ -55,7 +55,7 @@ import { CocheDiesel } from '../../modelos/vehiculos/cocheDiesel';
   it('HU9E05. Registro de vehículo sin matricula (Escenario Inválido)', async () => {
     try {
       //GIVEN: El usuario [“VehicleTest”, “vehicletest@test.com“,“test123”] con listaVehículos= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1, "Precio Gasóleo A"}].
-      await servicioUser.loginUser("test@test.com", "test123");
+      await servicioUser.loginUser("vehicletest@test.com", "test123");
       await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, 'Diesel'); 
 
       try {
@@ -75,7 +75,7 @@ import { CocheDiesel } from '../../modelos/vehiculos/cocheDiesel';
   it('HU10E01. Consulta de vehículos dados de alta (Escenario Válido)', async () => {
     //GIVEN: El usuario [“VehicleTest”, “vehicletest@test.com“,“test123”] con la sesión iniciada y la
     // listaVehículos = [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1, “Gasolina”}].
-    await servicioUser.loginUser("test@test.com", "test123"); 
+    await servicioUser.loginUser("vehicletest@test.com", "test123");
     await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Gasolina");
     
     //WHEN: El usuario pide mostrar sus vehículos.
@@ -106,7 +106,7 @@ import { CocheDiesel } from '../../modelos/vehiculos/cocheDiesel';
   //HISTORIA 11
   it('H11E01. Eliminar vehículo existente del sistema (Escenario Válido): ', async () => {
     //GIVEN: El usuario [“VehicleTest”, “vehicletest@test.com“,“test123”] con la sesión de su cuenta activa y la lista actual de vehículos = [{"1234 BBB", "Peugeot", "407", "2007", 8.1, "Gasolina"}]. 
-    await servicioUser.loginUser("test@test.com", "test123"); 
+    await servicioUser.loginUser("vehicletest@test.com", "test123");
     const vehiculoV = await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Gasolina");
     
     //WHEN: El usuario borra el vehículo {"1234 BBB", "Peugeot", "407", "2007", 8.1, "Gasolina"}.
@@ -122,7 +122,7 @@ import { CocheDiesel } from '../../modelos/vehiculos/cocheDiesel';
 
   it('H11E02. Eliminar vehículo utilizando una matrícula no registrada en la lista de vehículos (Escenario Inválido): ', async () => {
     //GIVEN: El usuario [“VehicleTest”, “vehicletest@test.com“,“test123”] con la sesión de su cuenta activa y la lista actual de vehículos = [{"1234 BBB", "Peugeot", "407", "2007", 8.1, "Gasolina"}]. 
-    await servicioUser.loginUser("test@test.com", "test123"); 
+    await servicioUser.loginUser("vehicletest@test.com", "test123");
     const vehiculo = await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Gasolina");
     
     //WHEN: El usuario borra el vehículo {"3423 WCX", "Fiat", "Punto", "2016", 8.1, "Gasolina"”}.
@@ -137,7 +137,7 @@ import { CocheDiesel } from '../../modelos/vehiculos/cocheDiesel';
 
   it('HU12E01. Actualización correcta de un vehículo (Escenario válido):', async () => {
     //GIVEN: El usuario [“VehicleTest”, “vehicletest@test.com“,“test123”] con la sesión de su cuenta activa y la lista actual de vehículos = [{"1234 BBB", "Peugeot", "407", "2007", 8.1, 'Diesel'}].
-    await servicioUser.loginUser("test@test.com", "test123");
+    await servicioUser.loginUser("vehicletest@test.com", "test123");
     await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, 'Diesel');
     const comparacion = new CocheDiesel("1234 BBB", "Peugeot", "407", "2007", 7.1, 'Diesel', false);
 
@@ -153,7 +153,7 @@ import { CocheDiesel } from '../../modelos/vehiculos/cocheDiesel';
 
 it('HU12E03. Error al intentar actualizar un vehículo que no existe (Escenario inválido):', async () => {
     //GIVEN: El usuario [“VehicleTest”, “vehicletest@test.com“,“test123”] con la sesión de su cuenta activa y la lista actual de vehículos = [{"1234 BBB", "Peugeot", "407", "2007", 8.1, 'Diesel'}].
-    await servicioUser.loginUser("test@test.com", "test123");
+    await servicioUser.loginUser("vehicletest@test.com", "test123");
     await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, 'Diesel');
 
     //WHEN: El usuario quiere actualizar los datos del vehículo “1234 BBB” con la marca = “Peugeot”, modelo = “407”, tipo de combustible = “Diesel”, año de fabricación = “2010” y consumo = “7.1”.
