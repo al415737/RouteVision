@@ -1,1 +1,82 @@
-<p>add works!</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Routes</title>
+  <link rel="stylesheet" href="add.component.css">
+</head>
+<body>
+  <app-header></app-header>
+  <div class="container">
+    <app-map #mapComponent (sendToRoute)="updateKmDuracion($event)"></app-map>
+    <div class="input-container" style="margin-left: 20px;">
+      <h2>Añadir Ruta</h2>
+      
+      <!-- Input para el nombre de la ruta -->
+      <label for="nameRoute">Nombre de la Ruta:</label>
+      <input id="nameRoute" type="text" [(ngModel)]="nombre" placeholder="Escribe como quieres guardar a la ruta"/>
+      
+      <!-- Select para el origen -->
+      <label for="select-origen">Seleccionar Origen:</label>
+      <select id="select-origen" [(ngModel)]="origen">
+        <option *ngFor="let place of places" [ngValue]="place">{{ place.getToponimo() }}</option>
+      </select>
+      
+      <!-- Select para el destino -->
+      <label for="select-destino">Seleccionar Destino:</label>
+      <select id="select-destino" [(ngModel)]="destino">
+        <option *ngFor="let place of places" [ngValue]="place">{{ place.getToponimo() }}</option>
+      </select>
+
+      <!-- Select para opción -->
+      <label for="select-opcion">Seleccionar Opción:</label>
+      <select id="select-opcion" [(ngModel)]="option">
+        <option value = "">--Seleccionar--</option>
+        <option value = 'porDefecto'>Normal</option>
+        <option value = 'fastest'>Rápida</option>
+        <option value = 'shortest'>Corta</option>
+        <option value = 'recommended'>Económica</option>
+      </select>
+      
+      <!-- Select para movilidad -->
+      <label for="select-movilidad">Seleccionar Movilidad:</label>
+      <select id="select-movilidad" [(ngModel)]="movilidad">
+        <option value="">--Seleccionar--</option>
+        <option value ='driving-car'>Coche</option>
+        <option value ='driving-car'>Moto</option>
+        <option value ='foot-walking'>A pie</option>
+        <option value= 'cycling-regular'>Bicicleta</option>
+      </select>
+      
+      @if(movilidad == 'driving-car'){
+        <!-- Select para los vehículos -->
+        <label for="select-vehiculos">Seleccionar Vehículo:</label>
+        <select id="select-vehiculos" [(ngModel)]="vehiculo">
+          <option *ngFor="let v of vehiculos" [ngValue]="v">{{ v.getMatricula() }}</option>
+        </select>
+      }
+
+      <!-- Botón para visualizar el mapa -->
+      <button (click)="visualizarMapa()" class="btn-success">Mostrar ruta</button>
+      
+      @if (duration != 0 && kilometros != 0) {
+        <br>
+        <p>{{kilometros}} <b>Kilometros</b></p> 
+        <p>{{duration}} <b>Minutos</b></p> 
+        @if(costeRuta != 0 && movilidad == 'driving-car'){
+          <p>{{costeRuta}} <b>€</b></p> 
+        }@else if (costeRuta != 0 && movilidad == 'cycling-regular' || movilidad == 'foot-walking') {
+          <p>{{costeRuta}} <b>calorias</b></p> 
+        }
+
+        <!-- Botón para añadir -->
+        <button (click)="anadirRuta()" class="btn-success">Añadir Ruta</button>
+      } 
+
+      <!-- Botón para volver -->
+      <button class="back-button" routerLink="/rutas">Volver</button>
+    </div>
+  </div>
+</body>
+</html>

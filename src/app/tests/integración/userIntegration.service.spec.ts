@@ -17,6 +17,7 @@ import { VEHICULO_REPOSITORY_TOKEN, VehiculoRepository } from '../../repositorio
 import { VehiculoService } from '../../servicios/vehiculo.service';
 import { VehiculoFirebaseService } from '../../repositorios/firebase/vehiculo-firebase.service';
 import { NoElementsException } from '../../excepciones/no-Elements-exception';
+import { PrefereneInvalidException } from '../../excepciones/preference-invalid-exception';
 
 describe('UserIntegrationService', () => {
   let service: UserService;
@@ -79,7 +80,7 @@ describe('UserIntegrationService', () => {
     // WHEN: El usuario Pepito quiere iniciar sesión con sus datos.  user: “pepito23”, contraseña:  “Pepito123?_ “.
     //  THEN: El sistema carga los datos de Pepito. ListaVehículos=[{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}] y listaLugaresInterés=[{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049], idLugar = “000”}].
     
-    const result: [Vehiculo[], Place[]] = [[new CocheGasolina("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasolina 95 E5")], [new Place("001", "Castellón de la Plana", [39.98, -0.049])]];
+    const result: [Vehiculo[], Place[]] = [[new CocheGasolina("1234 BBB", "Peugeot", "407", "2007", 8.1, "Gasolina", true)], [new Place("001", "Castellón de la Plana", [39.98, -0.049], true, "Castellón")]];
     spyOn(userRepo, 'loginUser').and.resolveTo(result);
 
     const resultService = await service.loginUser("test@test.com", "test123");
@@ -93,7 +94,7 @@ describe('UserIntegrationService', () => {
     // WHEN: El usuario Pepito introduce como contraseña: “pepito123_”
     // THEN: El sistema no inicia la sesión de Pepito porque la contraseña introducida no coincide con la que se encuentra en la base de datos para ese usuario. Lanza la excepción WrongPasswordException().
     
-    const result: [Vehiculo[], Place[]] = [[new CocheGasolina("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasolina 95 E5")], [new Place("001", "Castellón de la Plana", [39.98, -0.049])]];
+    const result: [Vehiculo[], Place[]] = [[new CocheGasolina("1234 BBB", "Peugeot", "407", "2007", 8.1, "Gasolina", true)], [new Place("001", "Castellón de la Plana", [39.98, -0.049], true, "Castellón")]];
     spyOn(userRepo, 'loginUser').and.resolveTo(result);
 
     try {
@@ -163,6 +164,82 @@ describe('UserIntegrationService', () => {
          //Then: El sistema lanza una excepción UserNotFoundException().
         expect(error).toBeInstanceOf(UserNotFoundException);
       }
+  });
+
+  it('PRUEBA INTEGRACIÓN --> HU21-E01. Configuración de un vehículo/método de transporte predeterminado (Escenario Válido): ', async () => {
+    const mockUser: User = new User("UserTest", "ADIS", "usertest@test.com", "UserTest", "foot-walking", "");
+    spyOn(userRepo, 'editUser').and.resolveTo();
+    
+    await service.editUser(1, 'foot-walking');
+    expect(userRepo.editUser).toHaveBeenCalledWith(1, 'foot-walking');
+    expect(mockUser.getPref1()).toEqual('foot-walking');
+  });
+
+  it('PRUEBA INTEGRACIÓN --> HU21-E03. Configuración de un vehículo/metodo de transporte predeterminado con un vehículo inexistente (Escenario Inválido): ', async () => {
+    spyOn(userRepo, 'editUser').and.resolveTo();      
+    try {
+      await service.editUser(1, 'foooooot');
+      expect(userRepo.editUser).toHaveBeenCalledWith(1, 'fooooot');
+    } catch (error) {
+      expect(error).toBeInstanceOf(PrefereneInvalidException);    //CAMBIAR NOMBRE :d
+    }
+  });
+
+  it('HU22-E01. Establecimiento de la ruta más rápida por defecto (Escenario Válido): ', async () => {
+    const mockUser: User = new User("UserTest", "ADIS", "usertest@test.com", "UserTest", "", "fastest");
+    spyOn(userRepo, 'editUser').and.resolveTo();
+    
+    await service.editUser(2, 'fastest');
+    expect(userRepo.editUser).toHaveBeenCalledWith(2, 'fastest');
+    expect(mockUser.getPref2()).toEqual('fastest');
+  });
+
+  it('HU22-E0X. Establecimiento de la ruta que no existe por defecto (Escenario Inválido): ', async () => {
+    spyOn(userRepo, 'editUser').and.resolveTo();      
+    try {
+      await service.editUser(2, 'mierdatest');
+      expect(userRepo.editUser).toHaveBeenCalledWith(2, 'mierdatest');
+    } catch (error) {
+      expect(error).toBeInstanceOf(PrefereneInvalidException);
+    }
+  });
+
+  it('PRUEBA INTEGRACIÓN --> HU21-E01. Configuración de un vehículo/método de transporte predeterminado (Escenario Válido): ', async () => {
+    const mockUser: User = new User("UserTest", "ADIS", "usertest@test.com", "UserTest", "foot-walking", "");
+    spyOn(userRepo, 'editUser').and.resolveTo();
+    
+    await service.editUser(1, 'foot-walking');
+    expect(userRepo.editUser).toHaveBeenCalledWith(1, 'foot-walking');
+    expect(mockUser.getPref1()).toEqual('foot-walking');
+  });
+
+  it('PRUEBA INTEGRACIÓN --> HU21-E03. Configuración de un vehículo/metodo de transporte predeterminado con un vehículo inexistente (Escenario Inválido): ', async () => {
+    spyOn(userRepo, 'editUser').and.resolveTo();      
+    try {
+      await service.editUser(1, 'foooooot');
+      expect(userRepo.editUser).toHaveBeenCalledWith(1, 'fooooot');
+    } catch (error) {
+      expect(error).toBeInstanceOf(PrefereneInvalidException);    //CAMBIAR NOMBRE :d
+    }
+  });
+
+  it('HU22-E01. Establecimiento de la ruta más rápida por defecto (Escenario Válido): ', async () => {
+    const mockUser: User = new User("UserTest", "ADIS", "usertest@test.com", "UserTest", "", "fastest");
+    spyOn(userRepo, 'editUser').and.resolveTo();
+    
+    await service.editUser(2, 'fastest');
+    expect(userRepo.editUser).toHaveBeenCalledWith(2, 'fastest');
+    expect(mockUser.getPref2()).toEqual('fastest');
+  });
+
+  it('HU22-E0X. Establecimiento de la ruta que no existe por defecto (Escenario Inválido): ', async () => {
+    spyOn(userRepo, 'editUser').and.resolveTo();      
+    try {
+      await service.editUser(2, 'mierdatest');
+      expect(userRepo.editUser).toHaveBeenCalledWith(2, 'mierdatest');
+    } catch (error) {
+      expect(error).toBeInstanceOf(PrefereneInvalidException);
+    }
   });
 
   it('HU20-E01. Usuario marca como favorito su coche (Escenario Válido)', async() => {

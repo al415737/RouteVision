@@ -16,8 +16,6 @@ export class VehiculoService {
   }
 
   crearVehiculo(matricula: string, marca: string, modelo: string, año_fabricacion: string, consumo: number, tipo: string){
-    console.log('Tipo combustible: ' + tipo);
-    
     if(matricula == '' || matricula == null){
       throw new NullLicenseException();
     }
@@ -25,9 +23,9 @@ export class VehiculoService {
     let vehiculo: Vehiculo;
 
     if(tipo == 'Gasolina'){
-        vehiculo = new CocheGasolina(matricula, marca, modelo, año_fabricacion, consumo, tipo);
-    } else if(tipo == 'Diésel'){
-        vehiculo = new CocheDiesel(matricula, marca, modelo, año_fabricacion, consumo, tipo);
+        vehiculo = new CocheGasolina(matricula, marca, modelo, año_fabricacion, consumo, tipo, false);
+    } else if(tipo == 'Diesel'){
+        vehiculo = new CocheDiesel(matricula, marca, modelo, año_fabricacion, consumo, tipo, false);
     } else {
         vehiculo = new CocheElectrico(matricula, marca, modelo, año_fabricacion, consumo, tipo);
     }
@@ -43,9 +41,9 @@ export class VehiculoService {
     let vehiculo: Vehiculo;
     
     if(tipo == 'Gasolina'){
-      vehiculo = new CocheGasolina(matricula, marca, modelo, año_fabricacion, consumo, tipo);
-    } else if(tipo == 'Diésel'){
-        vehiculo = new CocheDiesel(matricula, marca, modelo, año_fabricacion, consumo, tipo);
+      vehiculo = new CocheGasolina(matricula, marca, modelo, año_fabricacion, consumo, tipo, favorito);
+    } else if(tipo == 'Diesel'){
+        vehiculo = new CocheDiesel(matricula, marca, modelo, año_fabricacion, consumo, tipo, favorito);
     } else {
         vehiculo = new CocheElectrico(matricula, marca, modelo, año_fabricacion, consumo, tipo);
     }

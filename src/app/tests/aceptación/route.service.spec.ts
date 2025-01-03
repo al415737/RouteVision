@@ -17,9 +17,7 @@ import { RouteFirebaseService } from '../../repositorios/firebase/route-firebase
 import { OpenRouteService } from '../../APIs/Geocoding/openRoute.service';
 import { PrecioCarburantes } from '../../APIs/PrecioCarburantes/precioCarburantes.service';
 import { NotExistingObjectException } from '../../excepciones/notExistingObjectException';
-import { VehicleNotFoundException } from '../../excepciones/vehicle-not-Found-Exception';
 import { Route } from '../../modelos/route';
-import { Vehiculo } from '../../modelos/vehiculos/vehiculo';
 import { VehiculoFirebaseService } from '../../repositorios/firebase/vehiculo-firebase.service';
 import { VEHICULO_REPOSITORY_TOKEN } from '../../repositorios/interfaces/vehiculo-repository';
 import { VehiculoService } from '../../servicios/vehiculo.service';
@@ -27,7 +25,6 @@ import { Place } from '../../modelos/place';
 import { ServerNotOperativeException } from '../../excepciones/server-not-operative-exception';
 import { NoRouteFoundException } from '../../excepciones/no-route-found-exception';
 import { IncorrectMethodException } from '../../excepciones/incorrect-method-exception';
-import { CocheGasolina } from '../../modelos/vehiculos/cocheGasolina';
 import { CocheDiesel } from '../../modelos/vehiculos/cocheDiesel';
 
 describe('RutasService', () => {
@@ -123,16 +120,14 @@ describe('RutasService', () => {
   });
 
   it('H14E01. Cálculo del coste asociado a la realización de una ruta en coche (Escenario Válido): ', async () => {
-    //GIVEN:  La API está disponible. El usuario [“RouteTest”, “routetest@test.com“,“test123”] con listaVehículos= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”*407”, Año Fabricación=”2007”, Consumo=8,1, “Precio Gasoleo A”}]
+    //GIVEN:  La API está disponible. El usuario [“RouteTest”, “routetest@test.com“,“test123”] con listaVehículos= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”*407”, Año Fabricación=”2007”, Consumo=8,1, “Diesel”}]
     await servicioUsuario.loginUser("test@test.com", "test123"); 
     
-    //const vehiculo = await servicioVehiculo.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Gasolina");
-    const vehiculo = await servicioVehiculo.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Diésel");
-    //const vehiculo = await servicioVehiculo.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Eléctrico");
+    const vehiculo = await servicioVehiculo.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Diesel");
 
 
-    //WHEN: El usuario quiere saber el coste de una ruta con unos de sus vehículos de tipo coche para saber cuánto dinero le va a costar y se selecciona el vehículo [Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”*407”, Año Fabricación=”2007”, Consumo=8,1, “Precio Gasoleo A”] para la ruta [Origen:Valencia, Destino:Castellón].
-    const ruta = new Route('ruta01', 'Valencia', 'Castellón de la Plana/Castelló de la Plana', 'porDefecto', 'driving-car', 90, 90);
+    //WHEN: El usuario quiere saber el coste de una ruta con unos de sus vehículos de tipo coche para saber cuánto dinero le va a costar y se selecciona el vehículo [Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”*407”, Año Fabricación=”2007”, Consumo=8,1, “Diesel”] para la ruta [Origen:Valencia, Destino:Castellón].
+    const ruta = new Route('ruta01', 'Valencia', 'Castellón de la Plana/Castelló de la Plana', 'porDefecto', 'driving-car', 90, 90, "Valencia", 0);
     
     //THEN: El sistema obtiene el combustible y se realiza el cálculo del coste total del viaje. * Coste: 90km/100 * 8,1L * 1.40€ = 10,21€
 
@@ -144,13 +139,13 @@ describe('RutasService', () => {
 
 
   it('H14E04. Cálculo del coste asociado a la realización de una ruta en coche utilizando una matrícula no registrada en la lista de vehículos (Escenario Inválido): ', async () => {
-    //GIVEN: La API está disponible. El usuario [“RouteTest”, “routetest@test.com“,“test123”] con listaVehículos= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”*407”, Año Fabricación=”2007”, Consumo=8,1, “Precio Gasoleo A”}]
+    //GIVEN: La API está disponible. El usuario [“RouteTest”, “routetest@test.com“,“test123”] con listaVehículos= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”*407”, Año Fabricación=”2007”, Consumo=8,1, “Diesel”}]
     await servicioUsuario.loginUser("test@test.com", "test123"); 
-    const vehiculo = await servicioVehiculo.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Diésel");
+    const vehiculo = await servicioVehiculo.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Diesel");
     
-    //WHEN: El usuario selecciona el vehículo [Matrícula=”1234 CCC”, Marca=”Peugeot”, Modelo=”*407”, Año Fabricación=”2007”, Consumo=8,1, “Precio Gasoleo A”]  y la ruta [Origen:Valencia, Destino:Castellón]
-    const ruta = new Route('ruta01','Valencia', 'Castellón de la Plana/Castelló de la Plana', 'porDefecto', 'driving-car', 90, 90);
-    const vehiculoNoExiste = new CocheDiesel("1234 CCC", "Peugeot", "407", "2007", 8.1, 'Diésel');
+    //WHEN: El usuario selecciona el vehículo [Matrícula=”1234 CCC”, Marca=”Peugeot”, Modelo=”*407”, Año Fabricación=”2007”, Consumo=8,1, “Diesel”]  y la ruta [Origen:Valencia, Destino:Castellón]
+    const ruta = new Route('ruta01','Valencia', 'Castellón de la Plana/Castelló de la Plana', 'porDefecto', 'driving-car', 90, 90, "Valencia", 0);
+    const vehiculoNoExiste = new CocheDiesel("1234 CCC", "Peugeot", "407", "2007", 8.1, 'Diesel');
 
     //THEN: El sistema no obtiene el coste y genera una excepción NotExistingObjectException().
     await expectAsync(servicioRutas.obtenerCosteRuta(vehiculoNoExiste, ruta)).toBeRejectedWith(new NotExistingObjectException());
@@ -165,12 +160,12 @@ describe('RutasService', () => {
     const destino = await servicioPlace.createPlaceT("Castellón de la Plana");
 
     //WHEN: Se calcula el coste de la ruta Valencia-Castellón con la opción bicicleta. 
-    const ruta = await servicioRutas.createRoute("Valencia-Castellón", origen, destino, "cycling-regular", "economica", 76, 15806);
+    const ruta = await servicioRutas.createRoute("Valencia-Castellón", origen, destino, "cycling-regular", "shortest", 76, 15806, 0);
 
     const coste = await servicioRutas.costeRutaPieBicicleta(ruta, origen, destino);
     
     //THEN: El sistema calcula el tiempo que se tarda en realizar la ruta prevista. El coste es de 500 calorías.
-    const costeEsperado = '2195.28';
+    const costeEsperado = '2005.10';
     expect(coste.toFixed(2)).toEqual(costeEsperado);
 
     await servicioPlace.deletePlace(origen.getIdPlace());
@@ -188,7 +183,7 @@ describe('RutasService', () => {
 
     try {
         //WHEN: El usuario RouteTest quiere realizar la ruta entre Valencia y Castellón en bicicleta.
-        const ruta = new Route("Valencia-Castellón", "Valencia", "Castellón de la Plana", "economica", "cycling-regular", 76, 15806);
+        const ruta = new Route("Valencia-Castellón", "Valencia", "Castellón de la Plana", "shortest", "cycling-regular", 76, 15806, "Valencia", 0);
         await servicioRutas.costeRutaPieBicicleta(ruta, origen, destino);  
     } catch(error){
         //Then: El sistema no puede calcular el gasto calórico y lanza la excepción NoRouteFoundException()
@@ -238,7 +233,7 @@ describe('RutasService', () => {
     servicioUsuario.loginUser("test@test.com", "test123");
     const origen = await servicioPlace.createPlaceT("València, España");
     const destino = await servicioPlace.createPlaceT("Castellón de la Plana");
-    const ruta = new Route("Valencia-Castellón", "Valencia", "Castellón de la Plana", "economica", "cycling-regular", 76, 15806);
+    const ruta = new Route("Valencia-Castellón", "Valencia", "Castellón de la Plana", "economica", "cycling-regular", 76, 15806, "Valencia", 0);
 
     try {
         //When: El usuario Pepito quiere realizar la ruta entre Valencia y Castellón en bicicleta.
@@ -255,7 +250,7 @@ describe('RutasService', () => {
     const place2 = await servicioPlace.createPlaceT("Castellón de la Plana");
 
     //WHEN: El usuario quiere añadir la siguiente ruta = {“ruta01”, “Sagunto”, “Castellón”, “driving-car”, “fastest”, 90, 60}.
-    const result = await servicioRutas.createRoute('ruta01', place, place2, "driving-car", "fastest", 90, 60);
+    const result = await servicioRutas.createRoute('ruta01', place, place2, "driving-car", "fastest", 90, 60, 0.43);
     
     //THEN: El sistema guarda la ruta.
     expect(result).toBeInstanceOf(Route);
@@ -273,11 +268,11 @@ describe('RutasService', () => {
     const place2 = await servicioPlace.createPlaceT("Castellón de la Plana");
 
     //WHEN: El usuario quiere añadir la siguiente ruta = {“ruta01”, “Madrid”, “Barcelona”, “driving-car”, “fastest”, 300, 150}.
-    const placeAux: Place = new Place('005', 'Madrid', []);
-    const placeAux2: Place = new Place('006', 'Barcelona', []);
+    const placeAux: Place = new Place('005', 'Madrid', [], false, "Madrid");
+    const placeAux2: Place = new Place('006', 'Barcelona', [], false, "Madrid");
 
     //THEN: El sistema lanza una excepción ServerNotOperativeException().
-    await expectAsync(servicioRutas.createRoute('ruta01', placeAux, placeAux2, "driving-car", "fastest", 300, 150)).toBeRejectedWith(new NotExistingObjectException());
+    await expectAsync(servicioRutas.createRoute('ruta01', placeAux, placeAux2, "driving-car", "fastest", 300, 150, 0)).toBeRejectedWith(new NotExistingObjectException());
     
     await servicioPlace.deletePlace(place.idPlace);
     await servicioPlace.deletePlace(place2.idPlace);
@@ -289,11 +284,11 @@ describe('RutasService', () => {
     await servicioUsuario.loginUser("test@test.com","test123");
     const place = await servicioPlace.createPlaceT("Sagunto");
     const place2 = await servicioPlace.createPlaceT("Alicante");
-    await servicioRutas.createRoute('ruta01', place, place2, "driving-car", "fastest", 90, 60);
+    await servicioRutas.createRoute('ruta01', place, place2, "driving-car", "fastest", 90, 60, 1.3);
 
     const place3 = await servicioPlace.createPlaceT("Valencia");
     const place4 = await servicioPlace.createPlaceT("Castellón de la Plana");
-    await servicioRutas.createRoute('ruta02', place3, place4, "driving-car", "shortest", 84, 64);
+    await servicioRutas.createRoute('ruta02', place3, place4, "driving-car", "shortest", 84, 64, 1.1);
 
   //WHEN: El usuario quiere consultar las rutas que tiene guardadas. 
     const rutas = await servicioRutas.getRoutes();
@@ -321,7 +316,7 @@ describe('RutasService', () => {
     const place = await servicioPlace.createPlaceT("Valencia");
     const place2 = await servicioPlace.createPlaceT("Castellón de la Plana");
 
-    await servicioRutas.createRoute('ruta01', place, place2, "driving-car", "shortest", 84, 64);
+    await servicioRutas.createRoute('ruta01', place, place2, "driving-car", "shortest", 84, 64, 1.1);
     await servicioUsuario.logoutUser();
 
     //WHEN: El usuario quiere consultar las rutas que tiene guardadas.
@@ -343,7 +338,7 @@ describe('RutasService', () => {
     await servicioUsuario.loginUser("test@test.com","test123");
     const place = await servicioPlace.createPlaceT("Valencia");
     const place2 = await servicioPlace.createPlaceT("Castellón de la Plana");
-    await servicioRutas.createRoute('ruta01', place, place2, "driving-car", "shortest", 84, 64);
+    await servicioRutas.createRoute('ruta01', place, place2, "driving-car", "shortest", 84, 64, 1.1);
 
     //WHEN: El usuario quiere eliminar la ruta ruta01.
     await servicioRutas.deleteRoute('ruta01');
@@ -362,7 +357,7 @@ describe('RutasService', () => {
     await servicioUsuario.loginUser("test@test.com","test123");
     const place = await servicioPlace.createPlaceT("Valencia");
     const place2 = await servicioPlace.createPlaceT("Castellón de la Plana");
-    await servicioRutas.createRoute('ruta01', place, place2, "driving-car", "shortest", 84, 64);
+    await servicioRutas.createRoute('ruta01', place, place2, "driving-car", "shortest", 84, 64, 1.1);
     
     //WHEN: El usuario quiere consultar las rutas que tiene guardadas sin estar registrado.
     await servicioUsuario.logoutUser();

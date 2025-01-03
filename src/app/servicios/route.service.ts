@@ -23,7 +23,7 @@ export class RouteService {
   constructor(@Inject(ROUTE_REPOSITORY_TOKEN) private routeRepository: RouteRepository, @Inject(VEHICULO_REPOSITORY_TOKEN) private servicioVehículo: VehiculoRepository) { }
 
   calcularRuta(origen: Place, destino: Place, metodoMov: string) {
-      if(metodoMov != 'driving-car' && metodoMov != 'cycling' && metodoMov != 'foot-walking' && metodoMov != 'foot-hiking'){
+      if(metodoMov != 'driving-car' && metodoMov != 'cycling-regular' && metodoMov != 'foot-walking' && metodoMov != 'foot-hiking'){
           throw new IncorrectMethodException();
       }
 
@@ -65,19 +65,19 @@ export class RouteService {
     return this.routeRepository.costeRutaPieBicicleta(ruta, origen, destino);
   }
 
-  consultarRutaEspecifica(ruta: Route){
+  async consultarRutaEspecifica(ruta: Route){
     if(ruta.getOrigen() == '' || ruta.getOrigen() == null || ruta.getDestino() == '' || ruta.getDestino() == null || ruta.getMovilidad() == '' || ruta.getMovilidad() == null){
       throw new InvalidCalculateRoute();
     }
-
-    return this.routeRepository.consultarRutaEspecifica(ruta);
+    console.log("hola")
+    return await this.routeRepository.consultarRutaEspecifica(ruta);
   }
 
-  createRoute(nombre: string, start: Place, end: Place, movilidad: string, preferencia: string, km: number, duracion: number): Promise<Route> {
+  createRoute(nombre: string, start: Place, end: Place, movilidad: string, preferencia: string, km: number, duracion: number, coste: number): Promise<Route> {
     if (!nombre.trim() && !movilidad.trim() && !preferencia.trim() && km > 0 && duracion > 0)
       throw new ObligatoryFieldsException();
 
-    return this.routeRepository.createRoute(nombre, start, end, movilidad, preferencia, km, duracion, false);
+    return this.routeRepository.createRoute(nombre, start, end, movilidad, preferencia, km, duracion, false, coste);
   }
 
   async deleteRoute(nombre: string): Promise<boolean> {

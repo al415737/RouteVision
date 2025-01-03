@@ -15,6 +15,7 @@ export class OpenRouteService {
 
   searchToponimo(name:string): Observable<any>{
     const url = `${this.baseUrl}/geocode/search?api_key=${this.apiKey}&text=${name}&boundary.country=ES`;
+    
     const headers = new HttpHeaders({
       'Accept': 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8'
     });

@@ -25,10 +25,10 @@ export class RouteFirebaseService implements RouteRepository{
 
   constructor(private _firestore: FirestoreService, private proxy: ProxysCalculoCombustibleService,  private _geocoding: OpenRouteService, private _authState: AuthStateService) {}
   
-  consultarRutaEspecifica(ruta: Route): Promise<boolean> {
+  async consultarRutaEspecifica(ruta: Route): Promise<boolean> {
     const uid = getAuth().currentUser?.uid;
     const PATHROUTE = `ruta/${uid}/listaRutasInterés`;
-    return this._firestore.ifExist("nombre", ruta.getNombre(), PATHROUTE);  //Comprobar si la ruta específica existe
+    return await this._firestore.ifExist("nombre", ruta.getNombre(), PATHROUTE);  //Comprobar si la ruta específica existe
   }
   
   async calcularRuta(origen: Place, destino: Place, metodoMov: string) {
@@ -41,7 +41,7 @@ export class RouteFirebaseService implements RouteRepository{
 
   
   //COSTE DE LA RUTA - IRENE
-  async obtenerCosteRuta(vehiculo: Vehiculo, ruta: Route,): Promise<number> {
+  async obtenerCosteRuta(vehiculo: Vehiculo, ruta: Route): Promise<number> {
     const existVehiculo = this._firestore.ifExistVehicle(vehiculo);
     
     if (!existVehiculo) 
@@ -72,32 +72,29 @@ export class RouteFirebaseService implements RouteRepository{
     } else {  //DIESEL O GASOLINA
       const listaMunicipios = await this.proxy.getMunicipios();
 
-      const municipio = listaMunicipios.find((Municipio: any) => Municipio.Municipio === ruta.getOrigen());
+      const municipio = listaMunicipios.find((Municipio: any) => Municipio.Municipio === ruta.getMunicipio());
       const idMunicipio = municipio.IDMunicipio;
   
       const estacionesEnMunicipio = await this.proxy.getEstacionesEnMunicipio(idMunicipio);
-
       let precioGasolinera;
       if(vehiculo.getTipo() == 'Gasolina'){
         precioGasolinera = estacionesEnMunicipio.ListaEESSPrecio[0]["Precio Gasolina 95 E5"];
-        console.log(precioGasolinera);
       } else { 
         precioGasolinera = estacionesEnMunicipio.ListaEESSPrecio[0]["Precio Gasoleo A"]
-        console.log(precioGasolinera); 
       }
-
-      console.log(`Kilómetros: ${ruta.getKm()}, Precio: ${precioGasolinera}`);
       costeRuta = vehiculo.obtenerCoste(ruta.getKm(), precioGasolinera);
-      console.log('Coste Ruta = ' + costeRuta);
     }
-
-    console.log('El coste de la ruta es: ' + costeRuta + '€');
     return costeRuta;
   }
 
 
   async costeRutaPieBicicleta(ruta: Route, origen: Place, destino: Place){
-    const rutaAPI: any = await this.calcularRuta(origen, destino, ruta.getMovilidad());
+    let rutaAPI:any = null;
+    if (ruta.getOption() === 'porDefecto'){
+      rutaAPI = await this.calcularRuta(origen, destino, ruta.getMovilidad());
+    }else{
+      rutaAPI = await this.getRouteFSE(origen, destino, ruta.getMovilidad(), ruta.getOption());
+    } 
     const duracion = (rutaAPI.features[0].properties.summary.duration) / 3600;
     let coste = 0;
 
@@ -123,14 +120,14 @@ export class RouteFirebaseService implements RouteRepository{
     return response;
   }
 
-  async createRoute(nombre: string, start: Place, end: Place, movilidad: string, preferencia: string, km: number, duracion: number, favorito: boolean): Promise<Route> {
+  async createRoute(nombre: string, start: Place, end: Place, movilidad: string, preferencia: string, km: number, duracion: number, favorito: boolean, coste:number): Promise<Route> {
     const existPlace: boolean = await this._firestore.ifExistPlace(start);
     const existPlace2: boolean = await this._firestore.ifExistPlace(end);
   
     if(!existPlace || !existPlace2)
       throw new NotExistingObjectException();
   
-    const newRoute: Route = new Route(nombre, start.getToponimo(), end.getToponimo(), preferencia, movilidad, km, duracion);
+    const newRoute: Route = new Route(nombre, start.getToponimo(), end.getToponimo(), preferencia, movilidad, km, duracion, favorito, start.getMunicipio(), coste);
     const uid = this._authState.currentUser?.uid;
   
     await this._firestore.createRoute(newRoute, `ruta/${uid}/listaRutasInterés`);

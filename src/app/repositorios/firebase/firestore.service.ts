@@ -112,8 +112,8 @@ export class FirestoreService {
     
     if (vehiculo.exists()) {
       const data = vehiculo.data(); // Objeto plano
-      if(data['tipo'] == 'Precio Gasolina 95 E5' || data['tipo'] == 'Precio Gasolina 98 E5'){
-        const v = new CocheGasolina(
+      if(data['tipo'] == 'Gasolina'){
+        return new CocheGasolina(
           data['matricula'],
           data['marca'],
           data['modelo'],
@@ -121,10 +121,8 @@ export class FirestoreService {
           data['consumo'],
           data['tipo'],
         );
-        v.setFavorito(data['favorito']);
-        return v;
-      } else if(data['tipo'] == 'Precio Gasoleo A' || data['tipo'] == 'Precio Gasoleo B'){
-        const v = new CocheDiesel(
+      } else if(data['tipo'] == 'Diesel'){
+        return new CocheDiesel(
           data['matricula'],
           data['marca'],
           data['modelo'],
@@ -150,52 +148,50 @@ export class FirestoreService {
     return null;
   }
 
-  async consultarVehiculo(path: string){
-    const _collection = collection(this._firestore, path);
+    async consultarVehiculo(path: string){
+      const _collection = collection(this._firestore, path);
 
-    const q = query(_collection, orderBy('favorito', 'desc'));
+      const documentos = await getDocs(_collection);
 
-    const documentos = await getDocs(_collection);
+      return documentos.docs.map(doc => { 
+        const data = doc.data();
+        if(data['tipo'] == 'Gasolina'){
+            const v = new CocheGasolina(
+              data['matricula'],
+              data['marca'],
+              data['modelo'],
+              data['ano_fabricacion'],
+              data['consumo'],
+              data['tipo'],
+              );
+          v.setFavorito(data['favorito']);
+          return v;
 
-    return documentos.docs.map(doc => { 
-      const data = doc.data();
-      if(data['tipo'] == 'Precio Gasolina 95 E5' || data['tipo'] == 'Precio Gasolina 98 E5'){
-          const v = new CocheGasolina(
+        } else if(data['tipo'] == 'Diesel'){
+          const v = new CocheDiesel(
             data['matricula'],
             data['marca'],
             data['modelo'],
             data['ano_fabricacion'],
             data['consumo'],
             data['tipo'],
-          );
-          v.setFavorito(data['favorito']);
-          return v;
-
-      } else if(data['tipo'] == 'Precio Gasoleo A' || data['tipo'] == 'Precio Gasoleo B'){
-        const v = new CocheDiesel(
-          data['matricula'],
-          data['marca'],
-          data['modelo'],
-          data['ano_fabricacion'],
-          data['consumo'],
-          data['tipo'],
-        );
+            );
         v.setFavorito(data['favorito']);
         return v;
-      } else {
-        const v = new CocheElectrico(
-          data['matricula'],
-          data['marca'],
-          data['modelo'],
-          data['ano_fabricacion'],
-          data['consumo'],
-          data['tipo'],
-        );
+        } else {
+          const v = new CocheElectrico(
+            data['matricula'],
+            data['marca'],
+            data['modelo'],
+            data['ano_fabricacion'],
+            data['consumo'],
+            data['tipo'],
+            );
         v.setFavorito(data['favorito']);
         return v;
-      }
-     }); 
-  }
+        }
+      }); 
+    }
 
   async getUsuario(){
     const _collection = collection(this._firestore, `user/`);
@@ -252,6 +248,8 @@ export class FirestoreService {
           data['idPlace'], 
           data['toponimo'],
           data['coordenadas'],
+          data['favorito'],
+          data['municipio']
         );
         p.setFavorito(data['favorito']);
         return p;
@@ -318,6 +316,9 @@ export class FirestoreService {
           data['movilidad'],
           data['kilometros'],
           data['duration'],
+          data['favorito'],
+          data['municipio'],
+          data['coste']
         );
       });
     } catch (error) {
@@ -343,6 +344,17 @@ export class FirestoreService {
       return vehiculo;
     }
   }
+
+  async edit(value: any, PATH: string) {
+    const listaRef = doc(
+      this._firestore, 
+      PATH
+    );
+    const plainObject = { ...value };  
+    await updateDoc(listaRef, plainObject);
+    return value;  
+  }
+
   
   //EDITAR ELEMENTOS
   async actualizarPlace(place:Place, id:string){

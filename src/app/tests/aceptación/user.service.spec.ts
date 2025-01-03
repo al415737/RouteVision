@@ -19,6 +19,8 @@ import { VEHICULO_REPOSITORY_TOKEN } from '../../repositorios/interfaces/vehicul
 import { VehiculoFirebaseService } from '../../repositorios/firebase/vehiculo-firebase.service';
 import { provideHttpClient } from '@angular/common/http';
 import { UserNotFoundException } from '../../excepciones/user-not-found-exception';
+import { NotExistingObjectException } from '../../excepciones/notExistingObjectException';
+import { PrefereneInvalidException } from '../../excepciones/preference-invalid-exception';
 import { CocheGasolina } from '../../modelos/vehiculos/cocheGasolina';
 import { NoElementsException } from '../../excepciones/no-Elements-exception';
 
@@ -81,7 +83,7 @@ describe('UserService', () => {
     // ListaVehículos=[{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}]
     // y listaLugaresInterés=[{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049], idLugar = “000”}].
     await service.loginUser("test@test.com", "test123");
-    await vehicleService.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasolina 95 E5");
+    await vehicleService.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Gasolina");
     const lugar = await placeService.createPlaceC([39.98, -0.049]);
     await service.logoutUser();
 
@@ -189,6 +191,58 @@ describe('UserService', () => {
            await service.loginUser("danitorres@gmail.com", "dani123");
            await service.deleteUser("danitorres@gmail.com");
       }
+  });
+
+  it('HU21-E01. Configuración de un vehículo/método de transporte predeterminado (Escenario Válido): ', async () => {
+    await service.loginUser('usertest@test.com', 'test123');
+    await service.editUser(1, 'foot-walking');
+
+    const user: User | null  = await service.getUsuario();
+    let preference: string = '';
+    if (user != null) 
+      preference = user.getPref1();
+
+    expect(preference).toEqual('foot-walking');
+    await service.editUser(1, '');
+    await service.logoutUser();
+  });
+
+  it('HU21-E03. Configuración de un vehículo/metodo de transporte predeterminado con un vehículo inexistente (Escenario Inválido): ', async () => {
+    await service.loginUser('usertest@test.com', 'test123');
+    
+    try {
+      await service.editUser(1, 'foooot');
+    } catch (error) {
+      expect(error).toBeInstanceOf(PrefereneInvalidException);    //CAMBIAR NOMBRE PORFA, PARECE QUE PONGA prefeIRENE
+    }
+
+    await service.logoutUser();
+  });
+
+  it('HU22-E01. Establecimiento de la ruta más rápida por defecto (Escenario Válido): ', async () => {
+    await service.loginUser('usertest@test.com', 'test123');
+    await service.editUser(2, 'fastest');
+    
+    const user: User | null  = await service.getUsuario();
+    let preference: string = '';
+    if (user != null) 
+      preference = user.getPref2();
+
+    expect(preference).toEqual('fastest');
+    await service.editUser(2, '');
+    await service.logoutUser();
+  });
+
+  it('HU22-E0X. Establecimiento de la ruta que no existe por defecto (Escenario Inválido): ', async () => {
+    await service.loginUser('usertest@test.com', 'test123');
+    
+    try {
+      await service.editUser(2, 'mierdatest');
+    } catch (error) {
+      expect(error).toBeInstanceOf(PrefereneInvalidException);
+    }
+
+    await service.logoutUser();
   });
   
   it('HU20-E01. Usuario marca como favorito su coche (Escenario Válido)', async() => {

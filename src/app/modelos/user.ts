@@ -36,5 +36,11 @@ export class User {
     getPref2() {
         return this.preferencia2;
     }
+    setPref1(value: string) {
+        this.preferencia1 = value;
+    }
+    setPref2(value: string) {
+        this.preferencia2 = value;
+    }
 
 }

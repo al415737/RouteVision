@@ -9,8 +9,11 @@ export class Route {
     private kilometros: number;
     private duration: number;
     private favorito: boolean;
+    private municipio: string;
+    private coste: number;
 
-    constructor (nombre: string, origen: string, destino: string, option: string, movilidad: string, kilometros: number, duration: number) {
+    constructor (nombre: string, origen: string, destino: string, option: string, movilidad: string, kilometros: number,
+        duration: number, municipio: string, coste: number) {
         this.nombre = nombre;
         this.origen = origen;
         this.destino = destino;
@@ -19,6 +22,8 @@ export class Route {
         this.kilometros = kilometros;
         this.duration = duration;
         this.favorito = false;
+        this.municipio = municipio;
+        this.coste = coste;
     }
 
     getNombre() {
@@ -59,6 +64,10 @@ export class Route {
 
     setDuration(duration: number) {
         this.duration = duration;
+    }
+
+    getMunicipio(): string {
+        return this.municipio;
     }
     
     setFavorito(favorito: boolean){

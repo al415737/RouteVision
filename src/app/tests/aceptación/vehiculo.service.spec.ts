@@ -43,8 +43,8 @@ import { CocheDiesel } from '../../modelos/vehiculos/cocheDiesel';
     //GIVEN: El usuario [“VehicleTest”, “vehicletest@test.com“,“test123”] con listaVehículos= [ ].
     await servicioUser.loginUser("test@test.com", "test123");
 
-    //WHEN: El usuario intenta dar de alta un vehículo → [Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1, "Precio Gasoleo A"].
-    const resul = await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasoleo A");
+    //WHEN: El usuario intenta dar de alta un vehículo → [Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1, "Diesel"].
+    const resul = await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Diesel");
 
     //THEN: El sistema registra el vehículo en la parte de la base de datos dirigida a Test→  listaVehículos= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1, "Precio Gasóleo A"}].
     expect(resul).toBeInstanceOf(Vehiculo);
@@ -56,11 +56,11 @@ import { CocheDiesel } from '../../modelos/vehiculos/cocheDiesel';
     try {
       //GIVEN: El usuario [“VehicleTest”, “vehicletest@test.com“,“test123”] con listaVehículos= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1, "Precio Gasóleo A"}].
       await servicioUser.loginUser("test@test.com", "test123");
-      await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, 'Precio Gasoleo A'); 
+      await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, 'Diesel'); 
 
       try {
-        //WHEN: El usuario intenta dar de alta un vehículo → [Matrícula=” ”, Marca=”Seat”, Modelo=”Ibiza”, Año Fabricación=”2003”, Consumo=4,3, “Precio Gasolina 98 E5”].
-        await serviceV.crearVehiculo("", "Seat", "Ibiza", "2003", 4.3, "Precio Gasolina 98 E5");
+        //WHEN: El usuario intenta dar de alta un vehículo → [Matrícula=” ”, Marca=”Seat”, Modelo=”Ibiza”, Año Fabricación=”2003”, Consumo=4,3, “Gasolina”].
+        await serviceV.crearVehiculo("", "Seat", "Ibiza", "2003", 4.3, "Gasolina");
       } catch(error){
         //THEN: l sistema no registra el vehículo y lanza una excepción NullLicenseException() 
         expect(error).toBeInstanceOf(NullLicenseException);
@@ -72,14 +72,14 @@ import { CocheDiesel } from '../../modelos/vehiculos/cocheDiesel';
   });
 
   it('HU10E01. Consulta de vehículos dados de alta (Escenario Válido)', async () => {
-    //GIVEN: El usuario [“VehicleTest”, “vehicletest@test.com“,“test123”] con la sesión iniciada y la listaVehículos = [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1, “Precio Gasolina 95 E5”}].
+    //GIVEN: El usuario [“VehicleTest”, “vehicletest@test.com“,“test123”] con la sesión iniciada y la listaVehículos = [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1, “Gasolina”}].
     await servicioUser.loginUser("test@test.com", "test123"); 
     await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasolina 95 E5");
     
     //WHEN: El usuario pide mostrar sus vehículos.
     const vehiculos = await serviceV.consultarVehiculo(); 
 
-    //THEN: El sistema devuelve la lista de listaVehículos =  [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1, “Precio Gasolina 95 E5”}].
+    //THEN: El sistema devuelve la lista de listaVehículos =  [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1, “Gasolina”}].
     vehiculos.forEach((vehiculo: any) => {
         expect(vehiculo).toBeInstanceOf(Vehiculo);
     });
@@ -103,11 +103,11 @@ import { CocheDiesel } from '../../modelos/vehiculos/cocheDiesel';
 
   //HISTORIA 11
   it('H11E01. Eliminar vehículo existente del sistema (Escenario Válido): ', async () => {
-    //GIVEN: El usuario [“VehicleTest”, “vehicletest@test.com“,“test123”] con la sesión de su cuenta activa y la lista actual de vehículos = [{"1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasolina 95 E5"}]. 
+    //GIVEN: El usuario [“VehicleTest”, “vehicletest@test.com“,“test123”] con la sesión de su cuenta activa y la lista actual de vehículos = [{"1234 BBB", "Peugeot", "407", "2007", 8.1, "Gasolina"}]. 
     await servicioUser.loginUser("test@test.com", "test123"); 
-    const vehiculoV = await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasolina 95 E5");
+    const vehiculoV = await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Gasolina");
     
-    //WHEN: El usuario borra el vehículo {"1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasolina 95 E5"}.
+    //WHEN: El usuario borra el vehículo {"1234 BBB", "Peugeot", "407", "2007", 8.1, "Gasolina"}.
     await serviceV.eliminarVehiculo(vehiculoV.getMatricula());
 
     //THEN: El sistema borra el vehículo y actualiza la lista: [].
@@ -119,13 +119,13 @@ import { CocheDiesel } from '../../modelos/vehiculos/cocheDiesel';
   });
 
   it('H11E02. Eliminar vehículo utilizando una matrícula no registrada en la lista de vehículos (Escenario Inválido): ', async () => {
-    //GIVEN: El usuario [“VehicleTest”, “vehicletest@test.com“,“test123”] con la sesión de su cuenta activa y la lista actual de vehículos = [{"1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasolina 95 E5"}]. 
+    //GIVEN: El usuario [“VehicleTest”, “vehicletest@test.com“,“test123”] con la sesión de su cuenta activa y la lista actual de vehículos = [{"1234 BBB", "Peugeot", "407", "2007", 8.1, "Gasolina"}]. 
     await servicioUser.loginUser("test@test.com", "test123"); 
-    const vehiculo = await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasolina 95 E5");
+    const vehiculo = await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Gasolina");
     
-    //WHEN: El usuario borra el vehículo {"3423 WCX", "Fiat", "Punto", "2016", 8.1, "Precio Gasolina 95 E5"”}.
+    //WHEN: El usuario borra el vehículo {"3423 WCX", "Fiat", "Punto", "2016", 8.1, "Gasolina"”}.
     //THEN: El sistema no borra el vehículo y lanza la excepción VehicleNotFoundException().
-    const vehiculoNoExiste = new CocheGasolina("3423 WCX", "Fiat", "Punto", "2016", 8.1, "Precio Gasolina 95 E5");
+    const vehiculoNoExiste = new CocheGasolina("3423 WCX", "Fiat", "Punto", "2016", 8.1, "Gasolina", false);
     await expectAsync(serviceV.eliminarVehiculo(vehiculoNoExiste.getMatricula()))
     .toBeRejectedWithError(VehicleNotFoundException); // Manejo por tipo de excepción
     
@@ -134,15 +134,15 @@ import { CocheDiesel } from '../../modelos/vehiculos/cocheDiesel';
   });
 
   it('HU12E01. Actualización correcta de un vehículo (Escenario válido):', async () => {
-    //GIVEN: El usuario [“VehicleTest”, “vehicletest@test.com“,“test123”] con la sesión de su cuenta activa y la lista actual de vehículos = [{"1234 BBB", "Peugeot", "407", "2007", 8.1, 'Precio Gasoleo A'}].
+    //GIVEN: El usuario [“VehicleTest”, “vehicletest@test.com“,“test123”] con la sesión de su cuenta activa y la lista actual de vehículos = [{"1234 BBB", "Peugeot", "407", "2007", 8.1, 'Diesel'}].
     await servicioUser.loginUser("test@test.com", "test123");
-    await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, 'Precio Gasoleo A');
-    const comparacion = new CocheDiesel("1234 BBB", "Peugeot", "407", "2007", 7.1, 'Precio Gasoleo B');
+    await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, 'Diesel');
+    const comparacion = new CocheDiesel("1234 BBB", "Peugeot", "407", "2007", 7.1, 'Diesel', false);
 
-    //WHEN: El usuario quiere actualizar los datos del vehículo “1234 BBB” con la marca = “Peugeot”, modelo = “407”, tipo de combustible = “Precio Gasoleo B”, año de fabricación = “2010” y consumo = “7.1”.
-    const resul = await serviceV.actualizarVehiculo("1234 BBB", "Peugeot", "407", "2007", 7.1, 'Precio Gasoleo B', false);
+    //WHEN: El usuario quiere actualizar los datos del vehículo “1234 BBB” con la marca = “Peugeot”, modelo = “407”, tipo de combustible = “Diesel”, año de fabricación = “2010” y consumo = “7.1”.
+    const resul = await serviceV.actualizarVehiculo("1234 BBB", "Peugeot", "407", "2007", 7.1, 'Diesel', false);
 
-    //THEN: Se actualiza los datos del vehículo = {["1234 BBB", "Peugeot", "407", "2007", 7.1, 'Precio Gasoleo B'].
+    //THEN: Se actualiza los datos del vehículo = {["1234 BBB", "Peugeot", "407", "2007", 7.1, 'Diesel'].
     expect(resul).toBeInstanceOf(Vehiculo);
     expect(resul).toEqual(comparacion);
     await serviceV.eliminarVehiculo("1234 BBB"); 
@@ -150,13 +150,13 @@ import { CocheDiesel } from '../../modelos/vehiculos/cocheDiesel';
   });
 
 it('HU12E03. Error al intentar actualizar un vehículo que no existe (Escenario inválido):', async () => {
-    //GIVEN: El usuario [“VehicleTest”, “vehicletest@test.com“,“test123”] con la sesión de su cuenta activa y la lista actual de vehículos = [{"1234 BBB", "Peugeot", "407", "2007", 8.1, 'Precio Gasoleo A'}].
+    //GIVEN: El usuario [“VehicleTest”, “vehicletest@test.com“,“test123”] con la sesión de su cuenta activa y la lista actual de vehículos = [{"1234 BBB", "Peugeot", "407", "2007", 8.1, 'Diesel'}].
     await servicioUser.loginUser("test@test.com", "test123");
-    await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, 'Precio Gasoleo A');
+    await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, 'Diesel');
 
-    //WHEN: El usuario quiere actualizar los datos del vehículo “1234 BBB” con la marca = “Peugeot”, modelo = “407”, tipo de combustible = “Precio Gasoleo B”, año de fabricación = “2010” y consumo = “7.1”.
-    //THEN: La lista actual de vehículos = [{"1234 BBB", "Peugeot", "407", "2007", 8.1, 'Precio Gasoleo A'}] se mantiene y el sistema lanza una excepción NotExistingObjectException().
-    await expectAsync(serviceV.actualizarVehiculo("1234 CCC", "Peugeot", "407", "2007", 8.1, 'Precio Gasoleo A', false)).toBeRejectedWith(new NotExistingObjectException());
+    //WHEN: El usuario quiere actualizar los datos del vehículo “1234 BBB” con la marca = “Peugeot”, modelo = “407”, tipo de combustible = “Diesel”, año de fabricación = “2010” y consumo = “7.1”.
+    //THEN: La lista actual de vehículos = [{"1234 BBB", "Peugeot", "407", "2007", 8.1, 'Diesel'}] se mantiene y el sistema lanza una excepción NotExistingObjectException().
+    await expectAsync(serviceV.actualizarVehiculo("1234 CCC", "Peugeot", "407", "2007", 8.1, 'Diesel', false)).toBeRejectedWith(new NotExistingObjectException());
     await serviceV.eliminarVehiculo("1234 BBB"); 
     await servicioUser.logoutUser();
   });

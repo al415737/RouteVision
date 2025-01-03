@@ -45,7 +45,7 @@ describe('PlaceIntegrationService', () => {
 
   //HISTORIA 5
   it('PRUEBA INTEGRACIÓN --> HU5E01. Registrar nuevo lugar de interés (Caso Válido):', async () => {
-    const mockPlace: Place = new Place('001', "Castellón de la Plana", [39.98, -0.049]);
+    const mockPlace: Place = new Place('001', "Castellón de la Plana", [39.98, -0.049], false, "Castellón");
 
     spyOn(placeRepositorio, 'createPlaceC').and.resolveTo(mockPlace);
     
@@ -55,7 +55,7 @@ describe('PlaceIntegrationService', () => {
   });
 
   it('PRUEBA INTEGRACIÓN --> HU5E02. Registro de un lugar de interés incorrecto (Caso Inválido):', async () => {
-    const mockPlace: Place = new Place('001', "Castellón de la Plana", [39.98, -0.049]);
+    const mockPlace: Place = new Place('001', "Castellón de la Plana", [39.98, -0.049], false, "Castellón");
 
     spyOn(placeRepositorio, 'createPlaceC').and.resolveTo(mockPlace);
   
@@ -70,7 +70,7 @@ describe('PlaceIntegrationService', () => {
 
   //HISTORIA 6
   it('PRUEBA INTEGRACIÓN --> HU6E01. Registro de lugar de interés con un topónimo correcto (Escenario Válido):', async () => {
-    const mockPlace: Place = new Place('002', "Bilbao", [43.26271, -2.92528]);
+    const mockPlace: Place = new Place('002', "Bilbao", [43.26271, -2.92528], false, "Bilbao");
 
     spyOn(placeRepositorio, 'createPlaceT').and.resolveTo(mockPlace);
     
@@ -80,7 +80,7 @@ describe('PlaceIntegrationService', () => {
   });
 
   it('PRUEBA INTEGRACIÓN --> HU6E01. Registro de lugar de interés con un topónimo correcto (Escenario Válido):', async () => {
-    const mockPlace: Place = new Place('002', "Bilbao", [43.26271, -2.92528]);
+    const mockPlace: Place = new Place('002', "Bilbao", [43.26271, -2.92528], false, "Bilbao");
 
     spyOn(placeRepositorio, 'createPlaceT').and.resolveTo(mockPlace);
   
@@ -93,7 +93,7 @@ describe('PlaceIntegrationService', () => {
   });
 
   it('PRUEBA INTEGRACIÓN --> HU7E01. Consulta de lista de lugares dados de alta (Escenario válido):', async () => {
-    const mockPlace: Place[] = [new Place('001', "Castellón de la Plana", [39.98, -0.049]), new Place('002', "Barcelona", [33.98, -0.049])];
+    const mockPlace: Place[] = [new Place('001', "Castellón de la Plana", [39.98, -0.049], false, "Castellón"), new Place('002', "Barcelona", [33.98, -0.049], false, "Barcelona")];
 
     spyOn(placeRepositorio, 'getPlaces').and.resolveTo(mockPlace);
     
@@ -103,7 +103,7 @@ describe('PlaceIntegrationService', () => {
   });
 
   it('PRUEBA INTEGRACIÓN --> HU7E02. Consulta de lista de lugares dados de alta sin estar registrado (Escenario inválido):', async () => {
-    const mockPlace: Place[] = [new Place('001', "Castellón de la Plana", [39.98, -0.049]), new Place('002', "Barcelona", [33.98, -0.049])];
+    const mockPlace: Place[] = [new Place('001', "Castellón de la Plana", [39.98, -0.049], false, "Castellón"), new Place('002', "Barcelona", [33.98, -0.049], false, "Barcelona")];
     spyOn(placeRepositorio, 'getPlaces').and.resolveTo(mockPlace);
     spyOn(authStateService as any, 'currentUser').and.returnValue(null);
   
@@ -117,7 +117,7 @@ describe('PlaceIntegrationService', () => {
   });
 
   it('HU8E01. Eliminación de un lugar de interés de la lista de lugares de interés del usuario (Escenario Válido):', async() => {
-    const mockPlace: Place = new Place('001', "Castellón de la Plana", [39.98, -0.049]);
+    const mockPlace: Place = new Place('001', "Castellón de la Plana", [39.98, -0.049], false, "Castellón");
     spyOn(placeRepositorio, 'deletePlace').and.resolveTo(true);
     const result = await servicePlace.deletePlace(mockPlace.idPlace);
     expect(placeRepositorio.deletePlace).toHaveBeenCalledWith(mockPlace.idPlace);

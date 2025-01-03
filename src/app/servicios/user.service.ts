@@ -3,6 +3,7 @@ import { UserRepository, USER_REPOSITORY_TOKEN } from '../repositorios/interface
 import { ObligatoryFieldsException } from '../excepciones/obligatory-fields-exception';
 import { UserNotFoundException } from '../excepciones/user-not-found-exception';
 import { Auth } from '@angular/fire/auth';
+import { PrefereneInvalidException } from '../excepciones/preference-invalid-exception';
 
 @Injectable({
   providedIn: 'root'
@@ -43,5 +44,14 @@ export class UserService {
       throw new UserNotFoundException();
     }
     await this.userRepo.logoutUser();
+  }
+
+  async editUser(type: number, value: string) {
+    if (type <= 0 || type > 2)
+      throw new PrefereneInvalidException();
+
+    if (value != '' && value != 'fastest' && value != 'shortest' && value != 'recommended' && value != 'porDefecto' && value != 'driving-car' && value != 'foot-walking' && value != 'cycling')
+      throw new PrefereneInvalidException(); 
+    await this.userRepo.editUser(type, value);
   }
 }
