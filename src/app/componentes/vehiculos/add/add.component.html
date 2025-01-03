@@ -20,6 +20,9 @@
             @if (isRequired('matricula')) {
                 <small class="text-red"> Este campo es requerido.</small>
             }
+            @if (getControlError('matricula', 'pattern')){
+              <small class="text-red"> La matrícula no tiene el formato correcto.</small>
+            }
         </div>
         <div class="form-group">
             <label for="marca">Marca</label>
@@ -60,6 +63,9 @@
         <!--PARA EL VALIDADOR:-->
         @if (isRequired('consumo')) {
             <small class="text-red"> Este campo es requerido.</small>
+        }
+        @if (getControlError('consumo', 'consumoInvalido')) {
+          <small class="text-red"> El consumo debe ser mayor que cero.</small>
         }
     </div>
     <div class="form-buttons">

@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { HeaderComponent } from '../../home/header/header.component';
-import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { VehiculoService } from '../../../servicios/vehiculo.service';
 import { Router, RouterLink } from '@angular/router';
 import { isRequired } from '../../../utils/validators';
@@ -30,13 +30,26 @@ export default class AddComponent {
     return isRequired(field, this.form);
   }
 
+  getControlError(controlName: string, errorCode: string): boolean {
+    const control = this.form.get(controlName);
+    return control?.hasError(errorCode) && control?.touched || false;
+  }
+
+  consumoMayorQueCero(control: AbstractControl): ValidationErrors | null {
+    const value = control.value;
+    if (value !== null && value !== undefined && value <= 0) {
+      return { consumoInvalido: true }; // Error personalizado
+    }
+    return null;
+  }
+  
   form = this._formBuilder.group<FormVehicle>({
-    matricula: this._formBuilder.control('', Validators.required),
+    matricula: this._formBuilder.control('', [Validators.required, Validators.pattern(/^[0-9]{4} [A-Z]{3}$/)]),
     marca: this._formBuilder.control('', Validators.required),
     modelo: this._formBuilder.control('', Validators.required),
     fecha: this._formBuilder.control('', Validators.required),
     tipo: this._formBuilder.control('', Validators.required),
-    consumo: this._formBuilder.control('', Validators.required),
+    consumo: this._formBuilder.control('', [Validators.required, this.consumoMayorQueCero]),
   });
 
   private servicioVehiculo = inject(VehiculoService);
