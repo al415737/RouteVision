@@ -1,4 +1,3 @@
-
 import { TestBed } from '@angular/core/testing';
 import { VehiculoService } from '../../servicios/vehiculo.service';
 import { Vehiculo } from '../../modelos/vehiculos/vehiculo';
@@ -46,7 +45,8 @@ import { CocheDiesel } from '../../modelos/vehiculos/cocheDiesel';
     //WHEN: El usuario intenta dar de alta un vehículo → [Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1, "Diesel"].
     const resul = await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Diesel");
 
-    //THEN: El sistema registra el vehículo en la parte de la base de datos dirigida a Test→  listaVehículos= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1, "Precio Gasóleo A"}].
+    //THEN: El sistema registra el vehículo en la parte de la base de datos dirigida a Test
+    // listaVehículos= [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1, "Diesel"}].
     expect(resul).toBeInstanceOf(Vehiculo);
     await serviceV.eliminarVehiculo("1234 BBB"); 
     await servicioUser.logoutUser();
@@ -59,7 +59,8 @@ import { CocheDiesel } from '../../modelos/vehiculos/cocheDiesel';
       await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, 'Diesel'); 
 
       try {
-        //WHEN: El usuario intenta dar de alta un vehículo → [Matrícula=” ”, Marca=”Seat”, Modelo=”Ibiza”, Año Fabricación=”2003”, Consumo=4,3, “Gasolina”].
+        //WHEN: El usuario intenta dar de alta un vehículo → [Matrícula=” ”, Marca=”Seat”, Modelo=”Ibiza”, Año Fabricación=”2003”
+        // Consumo=4,3, “Gasolina”].
         await serviceV.crearVehiculo("", "Seat", "Ibiza", "2003", 4.3, "Gasolina");
       } catch(error){
         //THEN: l sistema no registra el vehículo y lanza una excepción NullLicenseException() 
@@ -72,9 +73,10 @@ import { CocheDiesel } from '../../modelos/vehiculos/cocheDiesel';
   });
 
   it('HU10E01. Consulta de vehículos dados de alta (Escenario Válido)', async () => {
-    //GIVEN: El usuario [“VehicleTest”, “vehicletest@test.com“,“test123”] con la sesión iniciada y la listaVehículos = [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1, “Gasolina”}].
+    //GIVEN: El usuario [“VehicleTest”, “vehicletest@test.com“,“test123”] con la sesión iniciada y la
+    // listaVehículos = [{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1, “Gasolina”}].
     await servicioUser.loginUser("test@test.com", "test123"); 
-    await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Precio Gasolina 95 E5");
+    await serviceV.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Gasolina");
     
     //WHEN: El usuario pide mostrar sus vehículos.
     const vehiculos = await serviceV.consultarVehiculo(); 

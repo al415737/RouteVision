@@ -32,8 +32,6 @@ describe('RutasService', () => {
   let servicioUsuario: UserService;
   let servicioRutas: RouteService;
   let servicioPlace: PlaceService;
-  let openRoute: OpenRouteService;
-  let precioCarburante: PrecioCarburantes;
 
   beforeEach(() => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
@@ -57,8 +55,6 @@ describe('RutasService', () => {
     servicioUsuario = TestBed.inject(UserService);
     servicioRutas = TestBed.inject(RouteService);
     servicioPlace = TestBed.inject(PlaceService);
-    openRoute = TestBed.inject(OpenRouteService);
-    precioCarburante = TestBed.inject(PrecioCarburantes);
   });
 
   it('HU13E01. Cálculo de ruta entre dos puntos de interés (Escenario Válido)', async () => {
@@ -234,7 +230,7 @@ describe('RutasService', () => {
     const place = await servicioPlace.createPlaceT("Sagunto");
     const place2 = await servicioPlace.createPlaceT("Castellón de la Plana");
 
-    //WHEN: El usuario quiere añadir la siguiente ruta = {“ruta01”, “Sagunto”, “Castellón”, “driving-car”, “fastest”, 90, 60}.
+    //WHEN: El usuario quiere añadir la siguiente ruta = {“ruta01”, “Sagunto”, “Castellón”, “driving-car”, “fastest”, 90, 60, 0.43}.
     const result = await servicioRutas.createRoute('ruta01', place, place2, "driving-car", "fastest", 90, 60, 0.43);
     
     //THEN: El sistema guarda la ruta.
@@ -278,7 +274,7 @@ describe('RutasService', () => {
   //WHEN: El usuario quiere consultar las rutas que tiene guardadas. 
     const rutas = await servicioRutas.getRoutes();
 
-  //THEN: El sistema muestra las rutas guardadas. Lista de rutas guardadas =  [{Origen: Sagunto, Destino: Alicante, driving-car, fastest, 90, 60}, {Origen: Valencia, Destino: Castellón, driving-car, shortest, 84, 64}] .
+  //THEN: El sistema muestra las rutas guardadas. Lista de rutas guardadas =  [{Origen: Sagunto, Destino: Alicante, driving-car, fastest, 90, 60, 1.3}, {Origen: Valencia, Destino: Castellón, driving-car, shortest, 84, 64, 1.1}] .
     expect(rutas.length).toBe(2);
     rutas.forEach((ruta: Route) => {
       expect(ruta).toBeInstanceOf(Route);

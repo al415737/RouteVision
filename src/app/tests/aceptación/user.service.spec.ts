@@ -19,7 +19,6 @@ import { VEHICULO_REPOSITORY_TOKEN } from '../../repositorios/interfaces/vehicul
 import { VehiculoFirebaseService } from '../../repositorios/firebase/vehiculo-firebase.service';
 import { provideHttpClient } from '@angular/common/http';
 import { UserNotFoundException } from '../../excepciones/user-not-found-exception';
-import { NotExistingObjectException } from '../../excepciones/notExistingObjectException';
 import { PrefereneInvalidException } from '../../excepciones/preference-invalid-exception';
 
 describe('UserService', () => {
@@ -78,7 +77,7 @@ describe('UserService', () => {
   
   it('HU2E01. Inicio de sesión con datos correctos (Escenario Válido):', async () => {
     //  GIVEN: El usuario UserTest está registrado y la base de datos está disponible. Datos de UserTest:
-    // ListaVehículos=[{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}]
+    // ListaVehículos=[{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1, Combustible = "Gasolina"}]
     // y listaLugaresInterés=[{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049], idLugar = “000”}].
     await service.loginUser("test@test.com", "test123");
     await vehicleService.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Gasolina");

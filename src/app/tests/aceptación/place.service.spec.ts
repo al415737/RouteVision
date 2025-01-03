@@ -46,13 +46,15 @@ describe('PlaceService', () => {
   
 
   it('HU5E01. Registrar nuevo lugar de interés (Caso Válido):', async () => {
-    // GIVEN: El usuario [“PlaceTest”, “placetest@test.com“,“test123”] quiere dar de alta un nuevo lugar de interés. La API está disponible → lugaresInteres= [ ].
+    // GIVEN: El usuario [“PlaceTest”, “placetest@test.com“,“test123”] quiere dar de alta un nuevo lugar de interés.
+    // La API está disponible → lugaresInteres= [ ].
     await serviceUser.loginUser("test@test.com", "test123"); 
     
     // WHEN: Intenta dar de alta un lugar de interés → Coordenadas = [Latitud: 39.98, Longitud: -0.049]
     const createPlace = await servicePlace.createPlaceC([39.98, -0.049]);
 
-    // THEN:  El sistema registra el lugar de interés de PlaceTest. → lugaresInteres = [{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049]}, idLugar = “000”}.
+    // THEN:  El sistema registra el lugar de interés de PlaceTest.
+    // lugaresInteres = [{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049], municipio = "Castellón"}, idLugar = “000”}.
     expect(createPlace).toBeInstanceOf(Place);
     expect(createPlace.idPlace).toBeDefined(); 
     await servicePlace.deletePlace(createPlace.idPlace);
@@ -60,7 +62,8 @@ describe('PlaceService', () => {
   });
 
   it('HU5E02. Registro de un lugar de interés incorrecto (Caso Inválido):', async () => {
-    // GIVEN: El usuario [“PlaceTest”, “placetest@test.com“,“test123”] quiere dar de alta un nuevo lugar de interés. La API está disponible → lugaresInteres= [ ].
+    // GIVEN: El usuario [“PlaceTest”, “placetest@test.com“,“test123”] quiere dar de alta un nuevo lugar de interés.
+    // La API está disponible → lugaresInteres= [ ].
     await serviceUser.loginUser("test@test.com", "test123");
 
     try{
@@ -77,16 +80,16 @@ describe('PlaceService', () => {
   it('HU6E01. Registro de lugar de interés con un topónimo correcto (Escenario Válido):', async () => {
     // La API está disponible y el usuario [“PlaceTest”, “placetest@test.com“,“test123”] tiene en su base de datos
     // la lista → listaLugaresInteres = [{NombreCiudad = “Castelló de la Plana”,
-    // Coordenadas = [Latitud: 39.98, Longitud: -0.049],  idLugar = “000”}.  
+    // Coordenadas = [Latitud: 39.98, Longitud: -0.049],  idLugar = “000”, municipio = "Castellón"}.  
     await serviceUser.loginUser("test@test.com", "test123"); 
     const place = await servicePlace.createPlaceT('Castellón de la Plana');
 
     // WHEN: Intenta dar de alta un lugar de interés → Topónimo = 'Bilbao'
     const createPlaceT = await servicePlace.createPlaceT('Bilbao');
 
-    // THEN: El sistema registra el lugar de interés de Ana2002 → lugaresInteres-Ana2002=
-    // [{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049]},
-    // {NombreCiudad = “Bilbao”, Coordenadas = [Latitud: 43.26271, Longitud: -2.92528]}].
+    // THEN: El sistema registra el lugar de interés de lugaresInteres=
+    // [{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049] municipio = "Castellón"},
+    // {NombreCiudad = “Bilbao”, Coordenadas = [Latitud: 43.26271, Longitud: -2.92528], municipio = "Bilbao"}].
     expect(createPlaceT).toBeInstanceOf(Place);
     expect(createPlaceT.idPlace).toBeDefined(); 
     await servicePlace.deletePlace(createPlaceT.idPlace);
@@ -98,7 +101,7 @@ describe('PlaceService', () => {
   it('HU6E03. Registro de lugar de interés con un topónimo incorrecto (Escenario Inválido):', async () => {
     // El usuario [“PlaceTest”, “placetest@test.com“,“test123”] quiere dar de alta un nuevo lugar de interés.
     // La API está disponible → lugaresInteres= [{NombreCiudad = “Castelló de la Plana”,
-    // Coordenadas = [Latitud: 39.98, Longitud: -0.049],  idLugar = “000”}}}.   
+    // Coordenadas = [Latitud: 39.98, Longitud: -0.049],  idLugar = “000”, municipio = "Castellón"}].   
     await serviceUser.loginUser("test@test.com", "test123");
     const place = await servicePlace.createPlaceT('Castellón de la Plana');
       
@@ -111,7 +114,9 @@ describe('PlaceService', () => {
   });
 
   it('HU7E01. Consulta de lista de lugares dados de alta (Escenario válido):', async() => {
-    // GIVEN: El usuario [“PlaceTest”, “placetest@test.com“,“test123”] con  lugaresInteres = [{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049], idLugar=”000”}, {NombreCiudad = “Bilbao”, Coordenadas = [Latitud: 43.26271, Longitud: -2.92528], idLugar=”001”}] se encuentra registrado. 
+    // GIVEN:  lugaresInteres = [{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049], idLugar=”000”, municipio = “Castellón”},
+    // {NombreCiudad = “Bilbao”, Coordenadas = [Latitud: 43.26271, Longitud: -2.92528], idLugar=”001”, municipio = “Bilbao”}]
+    // se encuentra registrado. 
     await serviceUser.loginUser("test@test.com","test123");
     const lugar1 = await servicePlace.createPlaceC([39.98, -0.049]);
     const lugar2 = await servicePlace.createPlaceT("Bilbao");
@@ -132,7 +137,7 @@ describe('PlaceService', () => {
    });
 
    it('HU7E03. Consulta de lista de lugares dados de alta sin estar registrado:', async() => {
-    //GIVEN: El usuario [“PlaceTest”, “placetest@test.com“,“test123”] con  lugaresInteres = [{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049], idLugar=”000”}, {NombreCiudad = “Bilbao”, Coordenadas = [Latitud: 43.26271, Longitud: -2.92528], idLugar=”001”}] no se encuentra registrado. 
+    //GIVEN: El usuario [“PlaceTest”, “placetest@test.com“,“test123”] con  lugaresInteres = [{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049], idLugar=”000”, municipio = “Castellón”}, {NombreCiudad = “Bilbao”, Coordenadas = [Latitud: 43.26271, Longitud: -2.92528], idLugar=”001”, municipio = “Bilbao”}] no se encuentra registrado. 
     await serviceUser.loginUser("test@test.com","test123");
     const lugar1 = await servicePlace.createPlaceC([39.98, -0.049]);
     const lugar2 = await servicePlace.createPlaceT("Bilbao");
@@ -147,7 +152,7 @@ describe('PlaceService', () => {
   });
 
   it('HU8E01. Eliminación de un lugar de interés de la lista de lugares de interés del usuario (Escenario Válido):', async() => {
-    //GIVEN: El usuario [“PlaceTest”, “placetest@test.com“,“test123”] quiere eliminar uno de sus lugares de interés → lugaresInteres= [{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049], idLugar = “000”}].
+    //GIVEN: El usuario [“PlaceTest”, “placetest@test.com“,“test123”] quiere eliminar uno de sus lugares de interés → lugaresInteres= [{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049], idLugar = “000”, municipio = “Castellón”}].
     await serviceUser.loginUser("test@test.com","test123");
     const lugar = await servicePlace.createPlaceC([39.98, -0.049]);
 
@@ -160,7 +165,8 @@ describe('PlaceService', () => {
    });
 
    it('HU8E02. Eliminación de un lugar de interés que no está en la lista de lugares de interés del usuario (Escenario Inválido):', async() => {
-    //GIVEN: El usuario [“PlaceTest”, “placetest@test.com“,“test123”] quiere eliminar un lugar de interés que no está en su lista de lugares de interés → lugaresInteres =  [{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049], idLugar = “000”}].
+    //GIVEN: El usuario [“PlaceTest”, “placetest@test.com“,“test123”] quiere eliminar un lugar de interés que no está
+    // en su lista de lugares de interés →  lugaresInteres= [{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049], idLugar = “000”, municipio = “Castellón”}].
     await serviceUser.loginUser("test@test.com","test123");
     const lugar = await servicePlace.createPlaceC([39.98, -0.049]);
     //WHEN: Intenta eliminar un lugar de interés → [idLugar = “001”, Topónimo = “Valencia”].
