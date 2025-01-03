@@ -124,12 +124,12 @@ describe('RouteIntegrationService', () => {
       expect(coste).toEqual(mockData);
     }); 
   
-    it('HU15E03. Intento de cálculo de gasto calórico pero no hay rutas dadas de alta (Escenario Inválido)', async () => {
+    it('HU15E03. Intento de cálculo de gasto calórico pero e ha seleccionado tipo de movilidad incorrecto (Escenario Inválido)', async () => {
         //Given: El usuario [“Pepito2002”, “pepito@gmail.com“,“crm-24”] ha iniciado sesión y la base de datos está disponible. Lista rutas = []  
         spyOn(routeRepo, 'costeRutaPieBicicleta').and.resolveTo(NoRouteFoundException);
         const origen = await servicioPlace.createPlaceT("València, España");
         const destino = await servicioPlace.createPlaceT("Castellón de la Plana");
-        const ruta = new Route("Valencia-Castellón", "Valencia", "Castellón de la Plana", "economica", "cycling-regular", 76, 3600, "Valencia", 1.3);
+        const ruta = new Route("Valencia-Castellón", "Valencia", "Castellón de la Plana", "economica", "cycle", 76, 3600, "Valencia", 1.3);
     
         try {
             //When: El usuario Pepito quiere realizar la ruta entre Valencia y Castellón en bicicleta.

@@ -74,12 +74,12 @@ Se han implementado:
 
 ## Autores (👥):
 
-✨🚀 **Abel Dasí Comes**    
+l🏳‍🌈🏳‍🌈🏳‍🌈 **Abel Dasí Comes**    
 
-🚀✨ **Daniel Carpintero García**  
+👾🎮🚀 **Daniel Carpintero García**  
 
-✨🚀 **Irene Martínez Sancho**    
+🎶🌻💜 **Irene Martínez Sancho**    
 
-🚀✨ **Sergio Blasco Torralba**  
+🌍🚀🌕 **Sergio Blasco Torralba**  
 
 > Un equipo comprometido con la excelencia, la innovación y el trabajo en equipo para llevar RouteVision al siguiente nivel. 💡🌍
