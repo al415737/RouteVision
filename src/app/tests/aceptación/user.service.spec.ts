@@ -187,8 +187,6 @@ describe('UserService', () => {
            await service.deleteUser("pepitoramirez@gmail.com");
            await service.loginUser("albaconsuelos@gmail.com", "alba123");
            await service.deleteUser("albaconsuelos@gmail.com");
-           await service.loginUser("danitorres@gmail.com", "dani123");
-           await service.deleteUser("danitorres@gmail.com");
       }
   });
 
