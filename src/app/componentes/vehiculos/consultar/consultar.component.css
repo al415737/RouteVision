@@ -47,13 +47,13 @@
   
   .delete-button {
     color: white;
-    background-color: red;
+    background-color: #f25858;
     border: none;
     border-radius: 50%;
     cursor: pointer;
   }
-  
+
   .delete-button:hover {
-    background-color: darkred;
+    background-color: #b84141;
   }
   
