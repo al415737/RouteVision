@@ -55,7 +55,6 @@ export default class PlaceComponent {
 
   marcarFavorito(place: Place){
       this._placeService.marcarFavorito(place, !place.getFavorito());
-      place.setFavorito(!place.getFavorito());
       this.updateDataSource();
        
       if(place.getFavorito() == true){
