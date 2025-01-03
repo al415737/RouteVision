@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { addDoc, collection, Firestore } from '@angular/fire/firestore';
-import { deleteDoc, doc, DocumentReference, getDoc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
+import { deleteDoc, doc, DocumentReference, getDoc, getDocs, orderBy, query, setDoc, updateDoc, where } from 'firebase/firestore';
 import { User } from '../../modelos/user';
 import { AuthService } from './auth.service';
 import { MailExistingException } from '../../excepciones/mail-existing-exception';
@@ -25,59 +25,26 @@ export class FirestoreService {
 
   //CREAR ELEMENTOS
   async createUser(user: User, password: string) {
-    try {
-      const userCredential = await this._auth.create(user.getEmail(), password);
+    const userCredential = await this._auth.create(user.getEmail(), password);
 
-      const plainObject = { ...user, uid: userCredential.user.uid };
+    const plainObject = { ...user, uid: userCredential.user.uid };
     
-      const _collection = collection(this._firestore, 'user');
+    const _collection = collection(this._firestore, 'user');
 
-      await addDoc(_collection, plainObject);
-    } catch (error) {
-      throw new MailExistingException();
-    }
+    await addDoc(_collection, plainObject);
   }
 
-  async createVehiculo(vehiculo: Vehiculo, path: string) {
-    const _collection = collection(this._firestore, path); 
+  async create(id: string, value: any, PATH: string): Promise<void> {
+    const _collection = collection(this._firestore, PATH);
+
+    const docRef = doc(_collection, id); // Crea una referencia con un ID único
+    const nameID = docRef.id;
+    
+    const objetoPlano = { ...value, nameID }; 
+
+    return setDoc(docRef, objetoPlano);
+  }
   
-    const objetoPlano = { ...vehiculo};
-    return addDoc(_collection, objetoPlano);
-  }
-
-  async createPlaceC(place: Place, path: string) {
-    const _collection = collection(this._firestore, path);
-
-    
-    const docRef = doc(_collection, place.idPlace); // Crea una referencia con un ID único
-    const idPlace = docRef.id;
-    
-    const objetoPlano = { ...place, idPlace };   //se sobreescribe el idPlace de la clase
-
-    return setDoc(docRef, objetoPlano);
-  }
-
-  async createPlaceT(place: Place, path: string) {
-    const _collection = collection(this._firestore, path);
-    
-    const docRef = doc(_collection, place.idPlace); // Crea una referencia con un ID único
-    const idPlace = docRef.id;
-    
-    const objetoPlano = { ...place, idPlace};   //se sobreescribe el idPlace de la clase -- hemos quitado uid
-    return setDoc(docRef, objetoPlano);
-  }
-
-  async createRoute(route: Route, path: string) {
-    const _collection = collection(this._firestore, path);
-
-    
-    const docRef = doc(_collection, route.getNombre()); // Crea una referencia con un ID único
-    const nombre = docRef.id;
-    
-    const objetoPlano = { ...route, nombre }; 
-
-    return setDoc(docRef, objetoPlano);
-  }
   //CREAR ELEMENTOS
 
 
@@ -113,35 +80,38 @@ export class FirestoreService {
     if (vehiculo.exists()) {
       const data = vehiculo.data(); // Objeto plano
       if(data['tipo'] == 'Gasolina'){
-        return new CocheGasolina(
+        const v =  new CocheGasolina(
           data['matricula'],
           data['marca'],
           data['modelo'],
           data['año_fabricacion'],
           data['consumo'],
           data['tipo'],
-          data['favorito']
         );
+        v.setFavorito(data['favorito']);
+        return v;
       } else if(data['tipo'] == 'Diesel'){
-        return new CocheDiesel(
+        const v =  new CocheDiesel(
           data['matricula'],
           data['marca'],
           data['modelo'],
           data['año_fabricacion'],
           data['consumo'],
           data['tipo'],
-          data['favorito']
         );
+        v.setFavorito(data['favorito']);
+        return v;
      } else {
-        return new CocheElectrico(
-          data['matricula'],
-          data['marca'],
-          data['modelo'],
-          data['ano_fabricacion'],
-          data['consumo'],
-          data['tipo'],
-          data['favorito']
-        );
+      const v = new CocheElectrico(
+        data['matricula'],
+        data['marca'],
+        data['modelo'],
+        data['ano_fabricacion'],
+        data['consumo'],
+        data['tipo'],
+      );
+      v.setFavorito(data['favorito']);
+      return v;
       }
     }
     return null;
@@ -155,35 +125,39 @@ export class FirestoreService {
       return documentos.docs.map(doc => { 
         const data = doc.data();
         if(data['tipo'] == 'Gasolina'){
-            return new CocheGasolina(
+            const v = new CocheGasolina(
               data['matricula'],
               data['marca'],
               data['modelo'],
-              data['año_fabricacion'],
+              data['ano_fabricacion'],
               data['consumo'],
               data['tipo'],
-              data['favorito']
-            );
+              );
+          v.setFavorito(data['favorito']);
+          return v;
+
         } else if(data['tipo'] == 'Diesel'){
-          return new CocheDiesel(
-            data['matricula'],
-            data['marca'],
-            data['modelo'],
-            data['año_fabricacion'],
-            data['consumo'],
-            data['tipo'],
-            data['favorito']
-          );
-        } else {
-          return new CocheElectrico(
+          const v = new CocheDiesel(
             data['matricula'],
             data['marca'],
             data['modelo'],
             data['ano_fabricacion'],
             data['consumo'],
             data['tipo'],
-            data['favorito']
-          );
+            );
+        v.setFavorito(data['favorito']);
+        return v;
+        } else {
+          const v = new CocheElectrico(
+            data['matricula'],
+            data['marca'],
+            data['modelo'],
+            data['ano_fabricacion'],
+            data['consumo'],
+            data['tipo'],
+            );
+        v.setFavorito(data['favorito']);
+        return v;
         }
       }); 
     }
@@ -239,13 +213,14 @@ export class FirestoreService {
 
       return querySnapshot.docs.map(doc => { 
         const data = doc.data();
-        return new Place(
+        const p = new Place(
           data['idPlace'], 
           data['toponimo'],
           data['coordenadas'],
-          data['favorito'],
           data['municipio']
         );
+        p.setFavorito(data['favorito']);
+        return p;
       }); 
     } catch (error) {
       throw new ServerNotOperativeException();
@@ -301,7 +276,7 @@ export class FirestoreService {
 
       return querySnapshot.docs.map(doc => { 
         const data = doc.data();
-        return new Route(
+        const v =  new Route(
           data['nombre'],
           data['origen'],
           data['destino'],
@@ -309,10 +284,11 @@ export class FirestoreService {
           data['movilidad'],
           data['kilometros'],
           data['duration'],
-          data['favorito'],
           data['municipio'],
           data['coste']
         );
+        v.setFavorito(data['favorito']);
+        return v
       });
     } catch (error) {
       throw new ServerNotOperativeException();
@@ -348,28 +324,49 @@ export class FirestoreService {
     return value;  
   }
 
+  
   //EDITAR ELEMENTOS
+  async actualizarPlace(place:Place, id:string){
+    const listaPlaceRef = doc(
+      this._firestore, 
+      `Lugar/${this._authState.currentUser?.uid}/listaLugaresInterés/${id}`
+    );
+  
+    const plainObject = { ...place };
+    try {
+      await updateDoc(listaPlaceRef, plainObject);
+      return place;
+    } catch (error) {
+      console.error('Error al actualizar lugar:', error);
+      return place;
+    }
+  }
+
+  //EDITAR ELEMENTOS
+  async actualizarRoutes(route:Route, id:string){
+    const listaRoutesRef = doc(
+      this._firestore, 
+      `ruta/${this._authState.currentUser?.uid}/listaRutasInterés/${id}`
+    );
+  
+    const plainObject = { ...route };
+    try {
+      await updateDoc(listaRoutesRef, plainObject);
+      return route;
+    } catch (error) {
+      console.error('Error al actualizar rutas:', error);
+      return route;
+    }
+  }
+
 
   //BORRAR ELEMENTOS
-  async deleteUser(id: string, PATH: string): Promise<void> {
+  async delete(PATH: string, id: string): Promise<void> {
     const docRef = doc(this._firestore, PATH, id);
     await deleteDoc(docRef);
-    await this._auth.delete();      
-  }
 
-  async eliminarVehiculo(path: string, id: string):Promise<void>{
-    const docRef = doc(this._firestore, path, id);
-    await deleteDoc(docRef);
-  }
-
-  async deletePlace(path: string, idPlace: string){
-    const docRef: DocumentReference = doc(this._firestore, path, idPlace);
-    await deleteDoc(docRef);
-  }
-
-  async deleteRoute(path: string, nombre: string){
-    const docRef: DocumentReference = doc(this._firestore, path, nombre);
-    await deleteDoc(docRef);
+    if (PATH == `user/`)
+      await this._auth.delete();
   }
   //BORRAR ELEMENTOS
 }

@@ -10,6 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { RouteService } from '../../servicios/route.service';
 import { Route } from '../../modelos/route';
 import { DeleteComponent } from './delete/delete.component';
+import { toast } from 'ngx-sonner';
 
 @Component({
   selector: 'app-route',
@@ -25,8 +26,7 @@ export default class RouteComponent {
   rutas: Route[] = [];
   currentPage = 0;
   dataSource = new MatTableDataSource<Route>();
-  displayedColumns: string[] = ['nombre', 'origen', 'destino', 'option', 'movilidad', 'kilometros', 'duration','coste', 'delete'];
-
+  displayedColumns: string[] = ['nombre', 'origen', 'destino', 'option', 'movilidad', 'kilometros', 'duration', 'coste', 'favorito','delete'];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   async ngOnInit(): Promise<void> {
@@ -38,6 +38,7 @@ export default class RouteComponent {
     try {
       const data = await this._routeService.getRoutes();
       this.rutas = data;
+      this.rutas = this.rutas.sort((a, b) => (b.getFavorito() ? 1 : 0) - (a.getFavorito() ? 1 : 0));
       this.dataSource = new MatTableDataSource<Route>(this.rutas);
       this.dataSource.paginator = this.paginator;
     } catch (err) {
@@ -51,5 +52,16 @@ export default class RouteComponent {
     }).afterClosed().subscribe(() => {
       this.updateDataSource();
     }) ;
+  }
+
+  marcarFavorito(route: Route){
+      this._routeService.marcarFavorito(route, !route.getFavorito());
+      this.updateDataSource();
+       
+      if(route.getFavorito() == true){
+        toast.success('Ruta marcado como favorito.');
+      } else {
+        toast.success('Ruta ya no es favorito.');
+      }
   }
 }

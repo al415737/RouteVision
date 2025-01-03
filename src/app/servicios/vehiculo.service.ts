@@ -23,11 +23,11 @@ export class VehiculoService {
     let vehiculo: Vehiculo;
 
     if(tipo == 'Gasolina'){
-        vehiculo = new CocheGasolina(matricula, marca, modelo, año_fabricacion, consumo, tipo, false);
+        vehiculo = new CocheGasolina(matricula, marca, modelo, año_fabricacion, consumo, tipo);
     } else if(tipo == 'Diesel'){
-        vehiculo = new CocheDiesel(matricula, marca, modelo, año_fabricacion, consumo, tipo, false);
+        vehiculo = new CocheDiesel(matricula, marca, modelo, año_fabricacion, consumo, tipo);
     } else {
-        vehiculo = new CocheElectrico(matricula, marca, modelo, año_fabricacion, consumo, tipo, false);
+        vehiculo = new CocheElectrico(matricula, marca, modelo, año_fabricacion, consumo, tipo);
     }
 
     return this.vehiRepo.crearVehiculo(vehiculo);
@@ -41,17 +41,17 @@ export class VehiculoService {
     let vehiculo: Vehiculo;
     
     if(tipo == 'Gasolina'){
-      vehiculo = new CocheGasolina(matricula, marca, modelo, año_fabricacion, consumo, tipo, favorito);
+      vehiculo = new CocheGasolina(matricula, marca, modelo, año_fabricacion, consumo, tipo);
     } else if(tipo == 'Diesel'){
-        vehiculo = new CocheDiesel(matricula, marca, modelo, año_fabricacion, consumo, tipo, favorito);
+        vehiculo = new CocheDiesel(matricula, marca, modelo, año_fabricacion, consumo, tipo);
     } else {
-        vehiculo = new CocheElectrico(matricula, marca, modelo, año_fabricacion, consumo, tipo, favorito);
+        vehiculo = new CocheElectrico(matricula, marca, modelo, año_fabricacion, consumo, tipo);
     }
 
     return this.vehiRepo.actualizarVehiculo(vehiculo);
   }
 
-  consultarVehiculo(){
+  async consultarVehiculo(){
     return this.vehiRepo.consultarVehiculo();
   }
 
@@ -62,4 +62,9 @@ export class VehiculoService {
   async eliminarVehiculo(matricula: string):Promise<void>{
     await this.vehiRepo.eliminarVehiculo(matricula);
   }
+
+  async marcarFavorito(vehiculo: Vehiculo, favorito: boolean){
+      return await this.vehiRepo.marcarFavorito(vehiculo, favorito);
+  }
+
 }

@@ -19,8 +19,9 @@ import { VEHICULO_REPOSITORY_TOKEN } from '../../repositorios/interfaces/vehicul
 import { VehiculoFirebaseService } from '../../repositorios/firebase/vehiculo-firebase.service';
 import { provideHttpClient } from '@angular/common/http';
 import { UserNotFoundException } from '../../excepciones/user-not-found-exception';
-import { NotExistingObjectException } from '../../excepciones/notExistingObjectException';
 import { PrefereneInvalidException } from '../../excepciones/preference-invalid-exception';
+import { CocheGasolina } from '../../modelos/vehiculos/cocheGasolina';
+import { NoElementsException } from '../../excepciones/no-Elements-exception';
 
 describe('UserService', () => {
   let service: UserService;
@@ -78,15 +79,15 @@ describe('UserService', () => {
   
   it('HU2E01. Inicio de sesión con datos correctos (Escenario Válido):', async () => {
     //  GIVEN: El usuario UserTest está registrado y la base de datos está disponible. Datos de UserTest:
-    // ListaVehículos=[{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8,1L/100 km}]
+    // ListaVehículos=[{Matrícula=”1234 BBB”, Marca=”Peugeot”, Modelo=”407”, Año Fabricación=”2007”, Consumo=8.1, Combustible = "Gasolina"}]
     // y listaLugaresInterés=[{NombreCiudad = “Castelló de la Plana”, Coordenadas = [Latitud: 39.98, Longitud: -0.049], idLugar = “000”}].
-    await service.loginUser("test@test.com", "test123");
+    await service.loginUser("usertest@test.com", "test123");
     await vehicleService.crearVehiculo("1234 BBB", "Peugeot", "407", "2007", 8.1, "Gasolina");
     const lugar = await placeService.createPlaceC([39.98, -0.049]);
     await service.logoutUser();
 
     //  WHEN: El usuario UserTest quiere iniciar sesión con sus datos: [email: “usertest@test.com”, contraseña:  “test123 “].
-    const resultLogin = await service.loginUser("test@test.com", "test123");
+    const resultLogin = await service.loginUser("usertest@test.com", "test123");
     //  THEN: El sistema carga los datos de UserTest.
     // Verifico que el resultado es una lista
     expect(resultLogin).toBeInstanceOf(Array);
@@ -107,7 +108,7 @@ describe('UserService', () => {
       expect(lugar).toBeInstanceOf(Place);
     });
     
-    await service.loginUser("test@test.com", "test123");
+    await service.loginUser("usertest@test.com", "test123");
     await vehicleService.eliminarVehiculo("1234 BBB");
     await placeService.deletePlace(lugar.idPlace);
     await service.logoutUser();
@@ -120,13 +121,13 @@ describe('UserService', () => {
     // WHEN: El usuario UserTest intenta iniciar sesion con la siguiente información: [email: “usertest@test.com”, contraseña: “test1234“].
     // THEN: El sistema no inicia la sesión de UserTest porque la contraseña no es correcta y lanza la excepción WrongPasswordException().
     await expectAsync(
-      service.loginUser("test@test.com", "pepito123_")
+      service.loginUser("usertest@test.com", "pepito123_")
     ).toBeRejectedWith(new WrongPasswordException());
   });
 
   it('HU3-E01. Cierre de sesión de una cuenta de un usuario registrado (Escenario Válido): ', async () => {
     // GIVEN: Lista actual de usuarios conectados. ListaUsuariosConectados = {UserTest}.
-    await service.loginUser("test@test.com", "test123");
+    await service.loginUser("usertest@test.com", "test123");
 
     // WHEN: El usuario UserTest pide que su sesión se cierre.
     await service.logoutUser();
@@ -158,8 +159,7 @@ describe('UserService', () => {
     //WHEN: El usuario Pepa quiere eliminar su cuenta del sistema.
     await service.deleteUser('pepagimena@gmail.com');
 
-
-    //Then: Lista actual de usuarios {Pepito}
+    //Then: Lista actual de usuarios {Pepito, Alba, Dani}
     const usuariosEnSistema = await service.consultarUsuarios();
 
     const userPepa = usuariosEnSistema.find(usuario => usuario.getEmail() === 'pepagimena@gmail.com');
@@ -176,24 +176,24 @@ describe('UserService', () => {
     await service.createUser("Alba", "Consuelos", "albaconsuelos@gmail.com", "alba", "alba123");
     await service.logoutUser();
 
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    try {
-        //When: El usuario Random quiere cerrar sesión y eliminar su cuenta del sistema.
-        await service.logoutUser();
-    } catch(error){
-          //Then: El sistema lanza una excepción UserNotFoundException().
-          expect(error).toBeInstanceOf(UserNotFoundException);
-    } finally {
-          await service.loginUser("pepitoramirez@gmail.com", "pepito123");
-          await service.deleteUser("pepitoramirez@gmail.com");
-          await service.loginUser("albaconsuelos@gmail.com", "alba123");
-          await service.deleteUser("albaconsuelos@gmail.com");
-    }
+      try {
+          //When: El usuario Random quiere cerrar sesión y eliminar su cuenta del sistema.
+          await service.deleteUser("pepagimena@gmail.com");
+      } catch(error){
+           //Then: El sistema lanza una excepción UserNotFoundException().
+           expect(error).toBeInstanceOf(UserNotFoundException);
+      } finally {
+           await service.loginUser("pepitoramirez@gmail.com", "pepito123");
+           await service.deleteUser("pepitoramirez@gmail.com");
+           await service.loginUser("albaconsuelos@gmail.com", "alba123");
+           await service.deleteUser("albaconsuelos@gmail.com");
+           await service.loginUser("danitorres@gmail.com", "dani123");
+           await service.deleteUser("danitorres@gmail.com");
+      }
   });
 
   it('HU21-E01. Configuración de un vehículo/método de transporte predeterminado (Escenario Válido): ', async () => {
-    await service.loginUser('usertest@test.com', 'test123');
+    await service.loginUser("usertest@test.com", "test123");
     await service.editUser(1, 'foot-walking');
 
     const user: User | null  = await service.getUsuario();
@@ -207,7 +207,7 @@ describe('UserService', () => {
   });
 
   it('HU21-E03. Configuración de un vehículo/metodo de transporte predeterminado con un vehículo inexistente (Escenario Inválido): ', async () => {
-    await service.loginUser('usertest@test.com', 'test123');
+    await service.loginUser("usertest@test.com", "test123");
     
     try {
       await service.editUser(1, 'foooot');
@@ -219,7 +219,7 @@ describe('UserService', () => {
   });
 
   it('HU22-E01. Establecimiento de la ruta más rápida por defecto (Escenario Válido): ', async () => {
-    await service.loginUser('usertest@test.com', 'test123');
+    await service.loginUser("usertest@test.com", "test123");
     await service.editUser(2, 'fastest');
     
     const user: User | null  = await service.getUsuario();
@@ -243,6 +243,39 @@ describe('UserService', () => {
 
     await service.logoutUser();
   });
+  
+  it('HU20-E01. Usuario marca como favorito su coche (Escenario Válido)', async() => {
+    //Given: El usuario [“Pepito2002”, “pepito@gmail.com“,“ppt-24”] tiene iniciada su cuenta y la base de datos está disponible. Lista de vehículos: [ {“8291 DTS” , 2002, “Seat”, “León”, 5.1L/100km, 'Precio Gasolina 98 E5'}, {"1234 BBB", "Peugeot", "407", "2007", 8.1, 'Precio Gasoleo A'} ]. 
+    await service.loginUser("usertest@test.com", "test123");
+    const vehiculo = await vehicleService.crearVehiculo("8291 DTS", "Seat", "León", "2002", 5.1, "Precio Gasolina 95 E5");
+
+    //When: El usuario quiere marcar como favorito su vehículo → [ Matrícula: “8291 DTS” , AñoFabricación: 2002, Marca: “Seat”, Modelo: “León”, Consumo: 5.1L/100km ].
+    await vehicleService.marcarFavorito(vehiculo, true);
+    
+    //Then: El sistema marca como favorito al vehículo, es decir, este vehículo se añade a una lista de listaVehículosFavoritos → [ Matrícula: “8291 DTS” , AñoFabricación: 2002, Marca: “Seat”, Modelo: “León”, Consumo: 5.1L/100km ]. 
+    const vehi = await vehicleService.getVehiculo(vehiculo.getMatricula());
+
+    expect(vehi.getFavorito()).toBe(true);
+
+    await vehicleService.eliminarVehiculo("8291 DTS");
+    await service.logoutUser();
+  
+  });
+  
+  it('HU20-E03. Intento de marcar como favorito pero no tiene elementos registrados (Escenario Inválido)', async() => {
+    //Given: El usuario [“Pepito2002”, “pepito@gmail.com“,“ppt-24”] ha iniciado sesión, la base de datos está disponible, pero no tiene ningún elemento registrado. Lista de vehículos = [ ].
+    await service.loginUser("usertest@test.com", "test123");
+    const vehiculo = new CocheGasolina("8291 DTS", "Seat", "León", "2002", 5.1, "Precio Gasolina 95 E5");
+
+    try {
+      //When: El usuario quiere marcar como favorito a su vehículo.
+      await vehicleService.marcarFavorito(vehiculo, true);
+    } catch(error){
+      //Then: El sistema no puede marcar como favorito nada y lanza la excepción NoElementsException().
+      expect(error).toBeInstanceOf(NoElementsException);
+    }
+  });
+
 });
 
 

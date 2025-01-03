@@ -158,11 +158,11 @@ export class MapComponent {
       let costeRuta = 0;
      
       if(movilidad === 'foot-walking' || movilidad === 'cycling-regular'){
-        let ruta = new Route(nombre, origen.getToponimo(), destino.getToponimo(), option, movilidad, distance, duration, false, origen.getMunicipio(), 0);
+        let ruta = new Route(nombre, origen.getToponimo(), destino.getToponimo(), option, movilidad, distance, duration, origen.getMunicipio(), 0);
         costeRuta = await this.routeService.costeRutaPieBicicleta(ruta, origen, destino);
       }
       else if(vehiculo != null){
-        costeRuta = await this.routeService.obtenerCosteRuta(vehiculo, new Route(nombre, origen.getToponimo(), destino.getToponimo(), option, movilidad, distance, duration, false, origen.getMunicipio(), 0));
+        costeRuta = await this.routeService.obtenerCosteRuta(vehiculo, new Route(nombre, origen.getToponimo(), destino.getToponimo(), option, movilidad, distance, duration, origen.getMunicipio(), 0));
       }
 
       this.sendToRoute.emit({ distance, duration, costeRuta });

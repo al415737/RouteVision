@@ -7,14 +7,14 @@ export abstract class Vehiculo {
     private tipo: string;
     private favorito: boolean;
 
-    constructor (matricula: string, marca: string, modelo: string, ano_fabricacion: string, consumo: number, tipo: string, fav: boolean) {
+    constructor (matricula: string, marca: string, modelo: string, ano_fabricacion: string, consumo: number, tipo: string) {
         this.matricula = matricula;
         this.marca = marca;
         this.modelo = modelo;
         this.ano_fabricacion = ano_fabricacion;
         this.consumo = consumo;
         this.tipo = tipo;
-        this.favorito = fav;
+        this.favorito = false;
     }
 
     getMatricula(): string {
@@ -39,6 +39,10 @@ export abstract class Vehiculo {
 
     getTipo(){
         return this.tipo;
+    }
+
+    setFavorito(favorito: boolean){
+        this.favorito = favorito;
     }
 
     getFavorito(){

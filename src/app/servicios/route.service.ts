@@ -77,7 +77,7 @@ export class RouteService {
     if (!nombre.trim() && !movilidad.trim() && !preferencia.trim() && km > 0 && duracion > 0)
       throw new ObligatoryFieldsException();
 
-    return this.routeRepository.createRoute(nombre, start, end, movilidad, preferencia, km, duracion, false, coste);
+    return this.routeRepository.createRoute(nombre, start, end, movilidad, preferencia, km, duracion, coste);
   }
 
   async deleteRoute(nombre: string): Promise<boolean> {
@@ -87,4 +87,9 @@ export class RouteService {
   async getRoutes(): Promise<Route[]> {
     return this.routeRepository.getRoutes();
   }
+
+  async marcarFavorito(ruta: Route, favorito: boolean){
+      return await this.routeRepository.marcarFavorito(ruta, favorito);
+  }
+
 }
