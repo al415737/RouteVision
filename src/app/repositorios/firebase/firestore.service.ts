@@ -20,7 +20,6 @@ import { DataAdapter } from '../../utils/dataAdapter';
   providedIn: 'root'
 })
 export class FirestoreService {
-  private _authState: AuthStateService = inject(AuthStateService);
 
   private constructor(private _firestore: Firestore, private _auth: AuthService) { }
 
@@ -45,7 +44,6 @@ export class FirestoreService {
 
     return setDoc(docRef, objetoPlano);
   }
-  
   //CREAR ELEMENTOS
 
 
@@ -110,26 +108,9 @@ export class FirestoreService {
 
       return true;
   }
-  
   //BUSCAR/COMPROBAR ELEMENTOS
 
   //EDITAR ELEMENTOS
-  async actualizarVehiculo(vehiculo:Vehiculo, id:string){
-    const listaVehiculosRef = doc(
-      this._firestore, 
-      `vehiculo/${this._authState.currentUser?.uid}/listaVehiculos/${id}`
-    );
-  
-    const plainObject = { ...vehiculo };
-    try {
-      await updateDoc(listaVehiculosRef, plainObject);
-      return vehiculo;
-    } catch (error) {
-      console.error('Error al actualizar vehículo:', error);
-      return vehiculo;
-    }
-  }
-
   async edit(value: any, PATH: string) {
     const listaRef = doc(
       this._firestore, 
@@ -139,7 +120,6 @@ export class FirestoreService {
     await updateDoc(listaRef, plainObject);
     return value;  
   }
-
   //EDITAR ELEMENTOS
 
   //BORRAR ELEMENTOS

@@ -44,7 +44,9 @@ export class VehiculoFirebaseService implements VehiculoRepository{
       if (id == '') {
         throw new NotExistingObjectException();
       }
-      return await this.firestore.actualizarVehiculo(vehiculo, id);
+
+      const PATH = `vehiculo/${this._authState.currentUser?.uid}/listaVehiculos/${id}`;
+      return await this.firestore.edit(vehiculo, PATH);
     }
 
     async eliminarVehiculo(matricula: string):Promise<void> {
