@@ -28,17 +28,18 @@ export default class PlaceComponent {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  async ngOnInit(): Promise<void> {
+  async ngAfterViewInit() {
     this.updateDataSource();
+    this.dataSource.paginator = this.paginator;
+    console.log('Paginator inicializado:', this.paginator);
+    console.log('Datos en el DataSource:', this.dataSource.data);
   }
 
   async updateDataSource() {
     try {
       const data = await this._placeService.getPlaces();
-      this.places = data;
-      this.places = this.places.sort((a, b) => (b.getFavorito() ? 1 : 0) - (a.getFavorito() ? 1 : 0));
-      this.dataSource = new MatTableDataSource<Place>(this.places);
-      this.dataSource.paginator = this.paginator;
+      this.places = data.sort((a:Place, b:Place) => (b.getFavorito() ? 1 : 0) - (a.getFavorito() ? 1 : 0));
+      this.dataSource.data = this.places; 
     } catch (err) {
       console.log(err);
     }

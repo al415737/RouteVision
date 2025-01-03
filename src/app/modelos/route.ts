@@ -1,5 +1,3 @@
-import { or } from "firebase/firestore";
-
 export class Route {
     private nombre: string;
     private origen: string;

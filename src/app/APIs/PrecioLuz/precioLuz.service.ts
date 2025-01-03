@@ -1,7 +1,6 @@
-import { DatePipe } from '@angular/common';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Inject, Injectable, inject } from '@angular/core';
-//import { inject, Injectable } from '@angular/core';
+
+import { HttpClient } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -10,8 +9,6 @@ import { Observable } from 'rxjs';
 
 export class PrecioLuzService {
   private http = inject(HttpClient)
-
-  //constructor(private datePipe: DatePipe) {}
   
   getPrecios(): Observable<any> {
     const today = new Date();

@@ -2,12 +2,13 @@ import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { tileLayer, Map, marker, geoJSON, Marker, LatLngBounds, LatLng, LatLngExpression } from 'leaflet';
 import { OpenRouteService } from '../../APIs/Geocoding/openRoute.service';
 import { InvalidPlaceException } from '../../excepciones/invalid-place-exception';
-import { catchError, map, of, throwError } from 'rxjs';
+import { catchError, map, throwError } from 'rxjs';
 import { InvalidCoordenatesException } from '../../excepciones/invalid-coordenates-exception';
 import { Place } from '../../modelos/place';
 import { RouteService } from '../../servicios/route.service';
 import { Vehiculo } from '../../modelos/vehiculos/vehiculo';
 import { Route } from '../../modelos/route';
+import { toast } from 'ngx-sonner';
 
 
 @Component({
@@ -78,6 +79,7 @@ export class MapComponent {
               lng: response.features[i].geometry.coordinates[0]
             };
             const feature = response.features[i].properties.label;
+            console.log(response.features[i])
             this.currentMarker = marker(latlng).bindTooltip(feature, {
               permanent: true,
               className: "my-label",
@@ -119,7 +121,7 @@ export class MapComponent {
               lat: response.features[i].geometry.coordinates[1],
               lng: response.features[i].geometry.coordinates[0]
             };
-    
+            console.log(response.features[i])
             this.currentMarker = marker(latlng).bindTooltip(feature, {
               permanent: true,
               className: "my-label",
@@ -162,21 +164,28 @@ export class MapComponent {
         costeRuta = await this.routeService.obtenerCosteRuta(vehiculo, new Route(nombre, origen.getToponimo(), destino.getToponimo(), option, movilidad, distance, duration, origen.getMunicipio(), 0));
       }
 
-      this.sendToRoute.emit({ distance, duration, costeRuta });
+      if (costeRuta == -1) {
+        toast.error('El lugar de origen no dispone de gasolineras. Por favor, elija un lugar con gasolineras cercanas.');
+      }else if(costeRuta == -2){
+        toast.error('No existe tu municipio en la base de datos de gasolineras. Por favor, contacta con el administrador.');
+      }
+      else{
+        this.sendToRoute.emit({ distance, duration, costeRuta });
     
-      const origenCoords: LatLngExpression = [origen.getCoordenadas()[1], origen.getCoordenadas()[0]];
-      const destinoCoords: LatLngExpression = [destino.getCoordenadas()[1], destino.getCoordenadas()[0]];
-    
-      const marker1 = marker(origenCoords).addTo(this.map).bindPopup(origen.getToponimo());
-      const marker2 = marker(destinoCoords).addTo(this.map).bindPopup(destino.getToponimo());
-    
-      this.listaMarkers.push(marker1, marker2);
-    
-      const bounds = new LatLngBounds([marker1.getLatLng(), marker2.getLatLng()]);
-      this.map.fitBounds(bounds);
-    
-      const routeLayer = geoJSON(responseRuta).addTo(this.map);
-      this.routeLayer.push(routeLayer);
+        const origenCoords: LatLngExpression = [origen.getCoordenadas()[1], origen.getCoordenadas()[0]];
+        const destinoCoords: LatLngExpression = [destino.getCoordenadas()[1], destino.getCoordenadas()[0]];
+      
+        const marker1 = marker(origenCoords).addTo(this.map).bindPopup(origen.getToponimo());
+        const marker2 = marker(destinoCoords).addTo(this.map).bindPopup(destino.getToponimo());
+      
+        this.listaMarkers.push(marker1, marker2);
+      
+        const bounds = new LatLngBounds([marker1.getLatLng(), marker2.getLatLng()]);
+        this.map.fitBounds(bounds);
+      
+        const routeLayer = geoJSON(responseRuta).addTo(this.map);
+        this.routeLayer.push(routeLayer);
+      }
     }
     
     reset() {

@@ -1,6 +1,3 @@
-import { Place } from "./place";
-import { Vehiculo } from "./vehiculos/vehiculo";
-
 export class User {
     private nombre: string;
     private apellidos: string;

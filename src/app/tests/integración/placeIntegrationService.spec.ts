@@ -60,7 +60,7 @@ describe('PlaceIntegrationService', () => {
     spyOn(placeRepositorio, 'createPlaceC').and.resolveTo(mockPlace);
   
     try{
-      servicePlace.createPlaceC([899.99, ]);
+      await servicePlace.createPlaceC([899.99, ]);
       expect(placeRepositorio.createPlaceC).toHaveBeenCalledWith([899.99, ]);
     } catch(error) {
       expect(error).toBeInstanceOf(InvalidCoordenatesException);
@@ -74,8 +74,8 @@ describe('PlaceIntegrationService', () => {
 
     spyOn(placeRepositorio, 'createPlaceT').and.resolveTo(mockPlace);
     
-    const result = await servicePlace.createPlaceT('Bilbao');
-    expect(placeRepositorio.createPlaceT).toHaveBeenCalledWith('Bilbao');
+    const result = await servicePlace.createPlaceT("Bilbao");
+    expect(placeRepositorio.createPlaceT).toHaveBeenCalledWith("Bilbao");
     expect(result).toEqual(mockPlace);
   });
 
@@ -85,7 +85,7 @@ describe('PlaceIntegrationService', () => {
     spyOn(placeRepositorio, 'createPlaceT').and.resolveTo(mockPlace);
   
     try{
-      servicePlace.createPlaceT('');
+      await servicePlace.createPlaceT('');
       expect(placeRepositorio.createPlaceT).toHaveBeenCalledWith('');
     } catch(error) {
       expect(error).toBeInstanceOf(InvalidPlaceException);
@@ -108,7 +108,7 @@ describe('PlaceIntegrationService', () => {
     spyOn(authStateService as any, 'currentUser').and.returnValue(null);
   
     try{
-      servicePlace.getPlaces();
+      await servicePlace.getPlaces();
       expect(placeRepositorio.getPlaces).toHaveBeenCalledWith();
     } catch(error) {
       expect(error).toBeInstanceOf(ServerNotOperativeException);

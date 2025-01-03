@@ -9,7 +9,6 @@ import { Vehiculo } from '../modelos/vehiculos/vehiculo';
 import { Route } from '../modelos/route';
 import { NotExistingObjectException } from '../excepciones/notExistingObjectException';
 import { NoRouteFoundException } from '../excepciones/no-route-found-exception';
-import { InvalidCalculoCosteException } from '../excepciones/invalid-calculo-coste-exception';
 import { IncorrectMethodException } from '../excepciones/incorrect-method-exception';
 
 

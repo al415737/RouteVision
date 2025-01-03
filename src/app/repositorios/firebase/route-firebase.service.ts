@@ -60,22 +60,26 @@ export class RouteFirebaseService implements RouteRepository{
       const listaPrecios = await this.proxy.getPreciosLuz();
       // Buscar el precio correspondiente a la hora actual
       const pvpc = listaPrecios.included.find((item: any) => item.type === 'PVPC');
-      console.log('Precios: ' + pvpc);
 
       // Extraemos los valores de precio
       const precios = pvpc.attributes.values;
         
       const precioKWh = precios[indiceHora].value / 1000; // Convertir €/MWh a €/kWh
       costeRuta = vehiculo.obtenerCoste(ruta.getKm(), precioKWh);
-      console.log(`Hora actual: ${indiceHora}, Precio €/kWh: ${precioKWh}, Coste Ruta: ${costeRuta}`);
 
     } else {  //DIESEL O GASOLINA
       const listaMunicipios = await this.proxy.getMunicipios();
 
       const municipio = listaMunicipios.find((Municipio: any) => Municipio.Municipio === ruta.getMunicipio());
+      if (municipio == undefined){
+        return -2;
+      }
       const idMunicipio = municipio.IDMunicipio;
   
       const estacionesEnMunicipio = await this.proxy.getEstacionesEnMunicipio(idMunicipio);
+      if (estacionesEnMunicipio.ListaEESSPrecio.length == 0){
+        return -1;
+      }
       let precioGasolinera;
       if(vehiculo.getTipo() == 'Gasolina'){
         precioGasolinera = estacionesEnMunicipio.ListaEESSPrecio[0]["Precio Gasolina 95 E5"];

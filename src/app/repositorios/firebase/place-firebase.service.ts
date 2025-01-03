@@ -28,8 +28,8 @@ export class PlaceFirebaseService implements PlaceRepository{
     const PATHPLACE = `Lugar/${uid}/listaLugaresInterés`;
 
     this.toponimo = await firstValueFrom(this.geocoding.searchCoordenadas(coordenadas[0],coordenadas[1]));
-    let lugar = this.toponimo.features[0].properties.name;
-    let municipio = this.toponimo.features[0].properties.region;
+    let lugar = await this.toponimo.features[0].properties.name;
+    let municipio = await this.toponimo.features[0].properties.locality;
 
     const docRef = await this.firestore.getAutoIdReference(PATHPLACE);
     const idPlace = docRef.id;
@@ -68,13 +68,14 @@ export class PlaceFirebaseService implements PlaceRepository{
         const PATHPLACE = `Lugar/${uid}/listaLugaresInterés`;
         let municipio: string = '';
 
+        
         this.coordenadas = await new Promise((resolve, reject) => {
             this.geocoding.searchToponimo(toponimo).subscribe({
                 next: (response: any) => {
                     if (!response.features || response.features.length === 0) {
                         reject(new InvalidPlaceException());
                     } else {
-                        municipio = response.features[0].properties.region;
+                        municipio = response.features[0].properties.locality;
                         resolve(response.features[0].geometry.coordinates);
                     }
                 },

@@ -49,6 +49,7 @@ export default class AddComponent {
 
   buscarCoordenadas(){
     if (this.mapComponent) {
+      console.log(this.latitude, this.longitude)
       if (this.latitude && this.longitude) {
         this.mapComponent.buscarCoordenadas(parseFloat(this.latitude), parseFloat(this.longitude)).subscribe({
           error: (err:any) => {

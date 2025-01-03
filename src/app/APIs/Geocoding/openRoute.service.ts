@@ -7,14 +7,14 @@ import { Observable } from 'rxjs';
 })
 export class OpenRouteService {
 
-  private apiKey: string = '5b3ce3597851110001cf624838a5b428b37d48899c94060b843a8b87';
+  private apiKey: string = '5b3ce3597851110001cf62487479b84e9b7e446386382d5668b60fce';
   private baseUrl: string = 'https://api.openrouteservice.org';
   private http = inject(HttpClient)
   constructor() { }
 
 
   searchToponimo(name:string): Observable<any>{
-    const url = `${this.baseUrl}/geocode/search?api_key=${this.apiKey}&text=${name}&boundary.country=ES`;
+    const url = `${this.baseUrl}/geocode/search?api_key=${this.apiKey}&text=${name}&boundary.country=ES&layers=locality`;
     
     const headers = new HttpHeaders({
       'Accept': 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8'
@@ -24,7 +24,7 @@ export class OpenRouteService {
   }
 
   searchCoordenadas(latitud: any, longitud: any): Observable<any>{
-    const url = `${this.baseUrl}/geocode/reverse?api_key=${this.apiKey}&point.lon=${longitud}&point.lat=${latitud}&boundary.country=ES`;
+    const url = `${this.baseUrl}/geocode/reverse?api_key=${this.apiKey}&point.lon=${longitud}&point.lat=${latitud}&boundary.country=ES&layers=locality`;
     const headers = new HttpHeaders({
       'Accept': 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8'
     });
