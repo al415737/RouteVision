@@ -1,42 +1,43 @@
 <header class="header">
-    <div class="container">
-      <div class="logo-title">
-        <div class="logo">
-          <img src=".././../../assets/images/Logo.png" alt="Logo" />
-        </div>
-        <h1 class="title">RouteVision</h1>
+  <div class="container">
+    <div class="logo-title">
+      <div class="logo">
+        <img src=".././../../assets/images/Logo Pequeño.png" alt="Logo" />
       </div>
-      
-      <nav class="navigation">
-        <ul class="nav-list">
-          <li class="nav-item">
-            <a routerLink="/home" class="nav-link">Home</a>
-          </li>
-          <li class="nav-item">
-            <a routerLink="/lugares" class="nav-link">Lugar</a>
-          </li>
-          <li class="nav-item">
-            <a routerLink="/rutas" class="nav-link">Rutas</a>
-          </li>
-          <li class="nav-item">
-            <a routerLink="/vehiculos" class="nav-link">Vehículos</a>
-          </li>
-        </ul>
-      </nav>
-      
-      <div class="settings">
-        <button (click)="toggleSettings()" class="settings-button">
-          <img src="../../../assets/icons/user-gear.svg" alt="Vehículos Icon" class="settings-icon">
-        </button>
-        @if (isSettingsOpen) {
-          <div class="dropdown">
-            <div class="dropdown-content">
-              <a routerLink="/settings" class="dropdown-item">Ajustes</a>
-              <a class="dropdown-item" (click)="onDelete()">Borrar Cuenta</a>
-              <a (click)="logout()" class="dropdown-item">Logout</a>
-            </div>
-          </div>
-        }
-      </div>
+       
+      <h1 class="title">RouteVision</h1>
     </div>
-  </header>
+
+    <nav class="navigation">  
+      <ul class="nav-list">
+        <li class="nav-item">
+          <a routerLink="/home" class="nav-link">Home</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/lugares" class="nav-link">Lugar</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/rutas" class="nav-link">Rutas</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/vehiculos" class="nav-link">Vehículos</a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="settings">
+      <button (click)="toggleSettings()" class="settings-button">
+        <img src="../../../assets/icons/user-gear.svg" alt="Settings Icon" class="settings-icon" />
+      </button>
+      @if (isSettingsOpen) {
+        <div class="dropdown">
+          <div class="dropdown-content">
+            <a routerLink="/settings" class="dropdown-item">Ajustes</a>
+            <a class="dropdown-item" (click)="onDelete()">Borrar Cuenta</a>
+            <a (click)="logout()" class="dropdown-item">Logout</a>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</header>
