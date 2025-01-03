@@ -51,7 +51,7 @@ export class RouteFirebaseService implements RouteRepository{
     let costeRuta: number;
     costeRuta = 0;
 
-    if(vehiculo.getTipo() == 'Eléctrico'){  //ELECTRICO
+    if(vehiculo.getTipo() == 'Electrico'){  //ELECTRICO
       const fechaHoy = new Date();
 
       const indiceHora = fechaHoy.getHours(); // Obtener la hora (0-23)

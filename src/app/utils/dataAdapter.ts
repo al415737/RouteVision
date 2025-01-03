@@ -34,7 +34,7 @@ export class DataAdapter {
   }
 
   static toVehiculo(data: any): Vehiculo {
-    let c: Vehiculo = VehiculoEnum.crearVehiculo(data['tipo'], data['matricula'], data['marca'], data['modelo'], data['año_fabricacion'], data['consumo']);
+    let c: Vehiculo = VehiculoEnum.crearVehiculo(data['tipo'], data['matricula'], data['marca'], data['modelo'], data['ano_fabricacion'], data['consumo']);
     c.setFavorito(data['favorito']);
     return c;
   }
